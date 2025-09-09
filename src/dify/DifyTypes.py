@@ -1,0 +1,145 @@
+from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field
+from datetime import datetime
+
+
+class DifyNode(BaseModel):
+    """Dify节点模型"""
+    id: str
+    type: str = "custom"
+    position: Dict[str, float]
+    positionAbsolute: Optional[Dict[str, float]] = None
+    sourcePosition: Optional[str] = None
+    targetPosition: Optional[str] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    selected: Optional[bool] = False
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+
+class DifyEdge(BaseModel):
+    """Dify边模型"""
+    id: str
+    type: str = "custom"
+    source: str
+    target: str
+    sourceHandle: Optional[str] = "source"
+    targetHandle: Optional[str] = "target"
+    data: Dict[str, Any] = Field(default_factory=dict)
+    zIndex: Optional[int] = 0
+
+
+class DifyGraph(BaseModel):
+    """Dify图模型"""
+    edges: List[DifyEdge] = Field(default_factory=list)
+    nodes: List[DifyNode] = Field(default_factory=list)
+    viewport: Optional[Dict[str, float]] = None
+
+
+class DifyWorkflow(BaseModel):
+    """Dify工作流模型"""
+    conversation_variables: List = Field(default_factory=list)
+    environment_variables: List = Field(default_factory=list)
+    features: Dict[str, Any] = Field(default_factory=dict)
+    graph: DifyGraph = Field(default_factory=DifyGraph)
+
+
+class DifyApp(BaseModel):
+    """Dify应用模型"""
+    description: str = ""
+    icon: str = "🤖"
+    icon_background: str = "#FFEAD5"
+    mode: str = "workflow"
+    name: str = ""
+    use_icon_as_answer_icon: bool = False
+
+
+class DifyConfig(BaseModel):
+    """完整的Dify配置模型"""
+    app: DifyApp = Field(default_factory=DifyApp)
+    dependencies: List = Field(default_factory=list)
+    kind: str = "app"
+    version: str = "0.3.1"
+    workflow: DifyWorkflow = Field(default_factory=DifyWorkflow)
+
+
+# Dify节点状态类型定义
+class DifyStartNodeData(BaseModel):
+    """Dify开始节点数据"""
+    desc: str = ""
+    selected: bool = False
+    title: str = "开始"
+    type: str = "start"
+    variables: List = Field(default_factory=list)
+
+
+class DifyLLMNodeData(BaseModel):
+    """Dify LLM节点数据"""
+    context: Dict[str, Any] = Field(default_factory=lambda: {"enabled": False, "variable_selector": []})
+    desc: str = ""
+    model: Dict[str, Any] = Field(default_factory=lambda: {
+        "completion_params": {"temperature": 0.7},
+        "mode": "chat",
+        "name": "",
+        "provider": ""
+    })
+    prompt_template: List[Dict[str, str]] = Field(default_factory=lambda: [{"role": "system", "text": ""}])
+    selected: bool = False
+    title: str = "LLM"
+    type: str = "llm"
+    variables: List = Field(default_factory=list)
+    vision: Dict[str, bool] = Field(default_factory=lambda: {"enabled": False})
+
+
+class DifyKnowledgeRetrievalNodeData(BaseModel):
+    """Dify知识检索节点数据"""
+    dataset_ids: List[str] = Field(default_factory=list)
+    desc: str = ""
+    multiple_retrieval_config: Dict[str, Any] = Field(default_factory=lambda: {
+        "reranking_enable": False,
+        "top_k": 4
+    })
+    query_variable_selector: List = Field(default_factory=list)
+    retrieval_mode: str = "multiple"
+    selected: bool = False
+    title: str = "知识检索"
+    type: str = "knowledge-retrieval"
+
+
+class DifyEndNodeData(BaseModel):
+    """Dify结束节点数据"""
+    desc: str = ""
+    outputs: List = Field(default_factory=list)
+    selected: bool = False
+    title: str = "结束"
+    type: str = "end"
+
+
+# 节点数据工厂
+DIFY_NODE_DATA_FACTORY = {
+    "start": DifyStartNodeData,
+    "llm": DifyLLMNodeData,
+    "knowledge-retrieval": DifyKnowledgeRetrievalNodeData,
+    "end": DifyEndNodeData,
+}
+
+
+def create_dify_node_data(node_type: str, **kwargs) -> BaseModel:
+    """
+    根据节点类型创建对应的节点数据实例
+    
+    Args:
+        node_type: 节点类型
+        **kwargs: 初始化参数
+        
+    Returns:
+        对应的节点数据实例
+        
+    Raises:
+        ValueError: 当node_type不支持时
+    """
+    data_class = DIFY_NODE_DATA_FACTORY.get(node_type)
+    if not data_class:
+        raise ValueError(f"Unsupported node_type: {node_type}")
+    
+    return data_class(**kwargs)

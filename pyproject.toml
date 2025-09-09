@@ -1,0 +1,32 @@
+[project]
+name = "autoagentsai"
+version = "0.1.35"
+description = "SDK for interacting with Autoagents.ai API"
+readme = "README.md"
+authors = [
+    { name = "Hehua Fan", email = "forhheart5532@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.11.7",
+    "requests>=2.32.4",
+    "python-pptx>=0.6.21",
+    "matplotlib",
+    "pandas",
+    "seaborn",
+    "mcp[cli]",
+    "e2b-code-interpreter",
+    "openpyxl",
+    "supabase",
+    "SQLAlchemy",
+    "psycopg2-binary",
+    "playwright",
+    "bs4"
+]
+
+[project.scripts]
+autoagents-python-sdk = "autoagents_python_sdk:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

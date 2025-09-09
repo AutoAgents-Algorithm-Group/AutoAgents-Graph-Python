@@ -1,0 +1,6 @@
+# Hades - AI工作流构建引擎依赖
+
+# 核心依赖
+pydantic>=2.0.0          # 数据验证和类型定义
+requests>=2.25.0         # HTTP请求和API调用
+PyYAML>=6.0.0           # YAML文件处理和生成
