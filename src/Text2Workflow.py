@@ -76,16 +76,12 @@ class Text2Workflow:
             "ForEachState": "forEach"
         }
         
-        # Dify State类型到节点类型的映射
+        # Dify State类型到节点类型的映射（只使用DifyTypes）
         dify_state_mapping = {
-            "QuestionInputState": "start",
-            "AiChatState": "llm",
-            "ConfirmReplyState": "end", 
-            "KnowledgeSearchState": "knowledge-retrieval",
-            "DifyStartNodeData": "start",
-            "DifyLLMNodeData": "llm",
-            "DifyKnowledgeRetrievalNodeData": "knowledge-retrieval",
-            "DifyEndNodeData": "end"
+            "DifyStartState": "start",
+            "DifyLLMState": "llm",
+            "DifyKnowledgeRetrievalState": "knowledge-retrieval",
+            "DifyEndState": "end"
         }
         
         state_class_name = state.__class__.__name__
@@ -98,14 +94,14 @@ class Text2Workflow:
             raise ValueError(f"Unsupported platform: {self.platform}")
     
     def add_node(self, 
-                 node_id: str,
+                 id: str,
                  state: BaseModel,
                  position: Optional[Dict[str, float]] = None) -> Any:
         """
         通用节点添加方法，根据传入的BaseModel自动判断节点类型
         
         Args:
-            node_id: 节点ID
+            id: 节点ID
             state: BaseModel实例，用于确定节点类型和配置
             position: 节点位置
             
@@ -118,89 +114,25 @@ class Text2Workflow:
         if self.platform == "agentify":
             # AgentsPro平台直接使用FlowGraph的add_node
             return self.graph.add_node(
-                id=node_id,
+                id=id,
                 position=position or {"x": 100, "y": 200},
                 state=state
             )
         
         elif self.platform == "dify":
-            # Dify平台需要转换状态到节点类型
+            # Dify平台只使用DifyTypes中定义的类型
             node_type = self._get_node_type_from_state(state)
             
-            # 处理特殊的Dify原生节点数据
-            if state.__class__.__name__.startswith('Dify'):  # Dify原生节点数据
-                # 直接使用Dify节点数据，跳过create_dify_node_data
-                node_data = state.dict()
-                # 创建节点时直接使用节点数据
-                node = self.graph._create_node_direct(node_id, node_type, position or {"x": 100, "y": 200}, node_data)
-                self.graph.nodes.append(node)
-                return node
-            else:
-                # 从AgentsPro状态转换为Dify节点数据
-                node_data = self._convert_agentify_state_to_dify_data(state, node_type)
-                
-                return self.graph.add_node(
-                    node_id=node_id,
-                    node_type=node_type,
-                    position=position or {"x": 100, "y": 200},
-                    **node_data
-                )
-    
-    def _convert_agentify_state_to_dify_data(self, state: BaseModel, node_type: str) -> Dict[str, Any]:
-        """
-        将AgentsPro状态转换为Dify节点数据
-        
-        Args:
-            state: AgentsPro状态实例
-            node_type: Dify节点类型
+            if node_type == "unknown":
+                raise ValueError(f"Unsupported state type for Dify platform: {state.__class__.__name__}. Please use DifyTypes (DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState).")
             
-        Returns:
-            Dify节点数据字典
-        """
-        state_dict = state.dict() if hasattr(state, 'dict') else {}
-        
-        if node_type == "llm":
-            # AiChatState -> LLM节点
-            return {
-                "model": {
-                    "completion_params": {"temperature": state_dict.get("temperature", 0.7)},
-                    "mode": "chat",
-                    "name": state_dict.get("model", "doubao-deepseek-v3"),
-                    "provider": ""
-                },
-                "prompt_template": [{"role": "system", "text": state_dict.get("text", "")}],
-                "title": "LLM"
-            }
-        
-        elif node_type == "knowledge-retrieval":
-            # KnowledgeSearchState -> 知识检索节点
-            return {
-                "dataset_ids": state_dict.get("datasets", []),
-                "multiple_retrieval_config": {
-                    "reranking_enable": state_dict.get("enableRerank", False),
-                    "top_k": state_dict.get("topK", 4)
-                },
-                "title": "知识检索"
-            }
-        
-        elif node_type == "start":
-            # QuestionInputState -> 开始节点
-            return {
-                "title": "开始",
-                "variables": []
-            }
-        
-        elif node_type == "end":
-            # ConfirmReplyState -> 结束节点
-            return {
-                "title": "结束",
-                "outputs": []
-            }
-        
-        else:
-            # 其他类型使用默认配置
-            return {"title": node_type.title()}
-    
+            # 直接使用Dify节点数据
+            node_data = state.dict()
+            
+            # 创建节点时直接使用节点数据
+            node = self.graph._create_node_direct(id, node_type, position or {"x": 100, "y": 200}, node_data)
+            self.graph.nodes.append(node)
+            return node
     
     
     def add_edge(self, 

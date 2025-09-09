@@ -4,8 +4,12 @@ from typing import Optional, List, Dict, Any
 
 from .DifyTypes import (
     DifyConfig, DifyApp, DifyWorkflow, DifyGraph as DifyGraphModel,
-    DifyNode, DifyEdge, create_dify_node_data
+    DifyNode, DifyEdge, create_dify_node_state
 )
+
+# Dify工作流常量
+START = "start"
+END = "end"
 
 
 class DifyGraphBuilder:
@@ -90,8 +94,8 @@ class DifyGraphBuilder:
         }
     
     def add_node(self, 
-                 node_id: str,
-                 node_type: str,
+                 id: str,
+                 type: str,
                  position: Dict[str, float],
                  title: Optional[str] = None,
                  width: int = 244,
@@ -101,8 +105,8 @@ class DifyGraphBuilder:
         添加节点到Dify工作流中
         
         Args:
-            node_id: 节点ID
-            node_type: 节点类型 (start, llm, knowledge-retrieval, end等)
+            id: 节点ID
+            type: 节点类型 (start, llm, knowledge-retrieval, end等)
             position: 节点位置 {"x": 100, "y": 200}
             title: 节点标题，如果不提供则使用默认值
             width: 节点宽度
@@ -113,7 +117,7 @@ class DifyGraphBuilder:
             创建的DifyNode实例
         """
         # 创建节点数据
-        node_data = create_dify_node_data(node_type, **node_data_kwargs)
+        node_data = create_dify_node_state(type, **node_data_kwargs)
         
         # 如果提供了title，更新节点数据
         if title:
@@ -121,7 +125,7 @@ class DifyGraphBuilder:
         
         # 创建节点
         node = DifyNode(
-            id=node_id,
+            id=id,
             type="custom",
             position=position,
             positionAbsolute=position.copy(),
@@ -131,10 +135,10 @@ class DifyGraphBuilder:
         )
         
         # 设置节点的源和目标位置
-        if node_type == "start":
+        if type == "start":
             node.sourcePosition = "right"
             node.targetPosition = "left"
-        elif node_type == "end":
+        elif type == "end":
             node.sourcePosition = "right"
             node.targetPosition = "left"
         else:
@@ -144,13 +148,13 @@ class DifyGraphBuilder:
         self.nodes.append(node)
         return node
     
-    def _create_node_direct(self, node_id: str, node_type: str, position: Dict[str, float], node_data: Dict[str, Any]) -> DifyNode:
+    def _create_node_direct(self, id: str, type: str, position: Dict[str, float], node_data: Dict[str, Any]) -> DifyNode:
         """
         直接创建节点，跳过数据验证（用于处理已验证的Dify原生数据）
         
         Args:
-            node_id: 节点ID
-            node_type: 节点类型
+            id: 节点ID
+            type: 节点类型
             position: 节点位置
             node_data: 节点数据
             
@@ -159,7 +163,7 @@ class DifyGraphBuilder:
         """
         # 创建节点
         node = DifyNode(
-            id=node_id,
+            id=id,
             type="custom",
             position=position,
             positionAbsolute=position.copy(),
@@ -169,10 +173,10 @@ class DifyGraphBuilder:
         )
         
         # 设置节点的源和目标位置
-        if node_type == "start":
+        if type == "start":
             node.sourcePosition = "right"
             node.targetPosition = "left"
-        elif node_type == "end":
+        elif type == "end":
             node.sourcePosition = "right"
             node.targetPosition = "left"
         else:
@@ -335,7 +339,3 @@ class DifyGraphBuilder:
             yaml_content = f.read()
         
         return cls.from_yaml(yaml_content)
-
-
-# 导出DifyGraphBuilder为主要类
-# 注意：DifyGraph也是一个Pydantic模型，所以我们使用DifyGraphBuilder作为主要的构建器类

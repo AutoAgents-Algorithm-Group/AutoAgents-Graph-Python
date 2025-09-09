@@ -101,16 +101,16 @@ python test_dify.py
 - **AddMemoryVariableState** - 内存变量节点
 
 ### Dify平台节点
-- **DifyStartNodeData** - 开始节点
-- **DifyLLMNodeData** - LLM节点
-- **DifyKnowledgeRetrievalNodeData** - 知识检索节点
-- **DifyEndNodeData** - 结束节点
+- **DifyStartState** - 开始节点
+- **DifyLLMState** - LLM节点
+- **DifyKnowledgeRetrievalState** - 知识检索节点
+- **DifyEndState** - 结束节点
 
-### 自动转换支持
-Hades支持Agentify节点自动转换为Dify格式：
-- `AiChatState` → `DifyLLMNodeData`
-- `KnowledgeSearchState` → `DifyKnowledgeRetrievalNodeData`
-- `ConfirmReplyState` → `DifyEndNodeData`
+### 类型系统设计
+Hades采用平台专用的类型系统：
+- **Agentify平台**: 使用 `agentify.types` 中的状态类
+- **Dify平台**: 使用 `dify.DifyTypes` 中的状态类
+- **Text2Workflow**: 提供统一接口，但保持类型纯净性
 
 ## 🔧 核心功能
 

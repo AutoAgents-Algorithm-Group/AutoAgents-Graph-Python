@@ -3,44 +3,80 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from src.Text2Workflow import Text2Workflow
-from src.agentify.types import QuestionInputState, AiChatState, ConfirmReplyState
-from src.dify import DifyStartNodeData, DifyLLMNodeData, DifyEndNodeData
+from src.dify.DifyTypes import DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState
+from src.dify import START, END
 
 
 def main():
-    # Dify平台测试
+    # 创建智能问答助手
     workflow = Text2Workflow(
         platform="dify",
-        app_name="简单测试助手"
+        app_name="智能问答助手",
+        app_description="基于知识库的智能问答系统"
     )
 
-    workflow.add_node("start", DifyStartNodeData(title="开始"), {"x": 50, "y": 200})
-    workflow.add_node("ai", AiChatState(model="doubao-deepseek-v3", text="你好！"), {"x": 300, "y": 200})
-    workflow.add_node("end", DifyEndNodeData(title="结束"), {"x": 550, "y": 200})
-
-    workflow.add_edge("start", "ai")
-    workflow.add_edge("ai", "end")
-
-    yaml_output = workflow.compile()
-    workflow.save("test_dify_output.yaml")
-    print(f"Dify测试完成，YAML长度: {len(yaml_output)}")
-
-    # Agentify平台测试  
-    workflow2 = Text2Workflow(
-        platform="agentify",
-        personal_auth_key="test_key",
-        personal_auth_secret="test_secret"
+    # 添加节点
+    workflow.add_node(
+        id=START,
+        position={"x": 50, "y": 200},
+        state=DifyStartState(
+            title="开始",
+            variables=[]
+        ),
     )
 
-    workflow2.add_node("input", QuestionInputState(inputText=True), {"x": 50, "y": 200})
-    workflow2.add_node("ai", AiChatState(model="doubao-deepseek-v3", text="请问有什么可以帮助您的？"), {"x": 300, "y": 200})
-    workflow2.add_node("reply", ConfirmReplyState(text="感谢使用！"), {"x": 550, "y": 200})
+    workflow.add_node(
+        id="knowledge_search",
+        position={"x": 300, "y": 200},
+        state=DifyKnowledgeRetrievalState(
+            title="知识检索",
+            dataset_ids=["knowledge_base"],
+            multiple_retrieval_config={
+                "reranking_enable": True,
+                "top_k": 5
+            }
+        ),
+    )
 
-    workflow2.add_edge("input", "ai", "finish", "switchAny")
-    workflow2.add_edge("ai", "reply", "finish", "switchAny")
+    workflow.add_node(
+        id="ai_answer",
+        state=DifyLLMState(
+            title="智能回答",
+            model={
+                "completion_params": {"temperature": 0.3},
+                "mode": "chat",
+                "name": "doubao-deepseek-v3",
+                "provider": ""
+            },
+            prompt_template=[{
+                "role": "system", 
+                "text": """基于检索到的知识内容，为用户提供准确、详细的回答。
 
-    workflow2.save("test_agentify_output.json")
-    print("Agentify测试完成")
+知识内容：{{@knowledge_search_text}}
+用户问题：{{@start_userChatInput}}
+
+请根据知识内容回答用户问题，如果知识内容无法回答问题，请如实告知。"""
+            }]
+        ),
+        position={"x": 550, "y": 200},
+    )
+
+    workflow.add_node(
+        id=END,
+        position={"x": 800, "y": 200},
+        state=DifyEndState(
+            title="结束",
+            outputs=[]
+        ),
+    )
+
+    # 添加连接边
+    workflow.add_edge(START, "knowledge_search")
+    workflow.add_edge("knowledge_search", "ai_answer")
+    workflow.add_edge("ai_answer", END)
+
+    # 编译工作流
+    workflow.compile()
 
 
 if __name__ == "__main__":

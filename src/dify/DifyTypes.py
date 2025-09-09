@@ -64,8 +64,8 @@ class DifyConfig(BaseModel):
 
 
 # Dify节点状态类型定义
-class DifyStartNodeData(BaseModel):
-    """Dify开始节点数据"""
+class DifyStartState(BaseModel):
+    """Dify开始节点状态"""
     desc: str = ""
     selected: bool = False
     title: str = "开始"
@@ -73,8 +73,8 @@ class DifyStartNodeData(BaseModel):
     variables: List = Field(default_factory=list)
 
 
-class DifyLLMNodeData(BaseModel):
-    """Dify LLM节点数据"""
+class DifyLLMState(BaseModel):
+    """Dify LLM节点状态"""
     context: Dict[str, Any] = Field(default_factory=lambda: {"enabled": False, "variable_selector": []})
     desc: str = ""
     model: Dict[str, Any] = Field(default_factory=lambda: {
@@ -91,8 +91,8 @@ class DifyLLMNodeData(BaseModel):
     vision: Dict[str, bool] = Field(default_factory=lambda: {"enabled": False})
 
 
-class DifyKnowledgeRetrievalNodeData(BaseModel):
-    """Dify知识检索节点数据"""
+class DifyKnowledgeRetrievalState(BaseModel):
+    """Dify知识检索节点状态"""
     dataset_ids: List[str] = Field(default_factory=list)
     desc: str = ""
     multiple_retrieval_config: Dict[str, Any] = Field(default_factory=lambda: {
@@ -106,8 +106,8 @@ class DifyKnowledgeRetrievalNodeData(BaseModel):
     type: str = "knowledge-retrieval"
 
 
-class DifyEndNodeData(BaseModel):
-    """Dify结束节点数据"""
+class DifyEndState(BaseModel):
+    """Dify结束节点状态"""
     desc: str = ""
     outputs: List = Field(default_factory=list)
     selected: bool = False
@@ -115,31 +115,31 @@ class DifyEndNodeData(BaseModel):
     type: str = "end"
 
 
-# 节点数据工厂
-DIFY_NODE_DATA_FACTORY = {
-    "start": DifyStartNodeData,
-    "llm": DifyLLMNodeData,
-    "knowledge-retrieval": DifyKnowledgeRetrievalNodeData,
-    "end": DifyEndNodeData,
+# 节点状态工厂
+DIFY_NODE_STATE_FACTORY = {
+    "start": DifyStartState,
+    "llm": DifyLLMState,
+    "knowledge-retrieval": DifyKnowledgeRetrievalState,
+    "end": DifyEndState,
 }
 
 
-def create_dify_node_data(node_type: str, **kwargs) -> BaseModel:
+def create_dify_node_state(node_type: str, **kwargs) -> BaseModel:
     """
-    根据节点类型创建对应的节点数据实例
+    根据节点类型创建对应的节点状态实例
     
     Args:
         node_type: 节点类型
         **kwargs: 初始化参数
         
     Returns:
-        对应的节点数据实例
+        对应的节点状态实例
         
     Raises:
         ValueError: 当node_type不支持时
     """
-    data_class = DIFY_NODE_DATA_FACTORY.get(node_type)
-    if not data_class:
+    state_class = DIFY_NODE_STATE_FACTORY.get(node_type)
+    if not state_class:
         raise ValueError(f"Unsupported node_type: {node_type}")
     
-    return data_class(**kwargs)
+    return state_class(**kwargs)
