@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any, Union
 from pydantic import BaseModel
-from agentify.FlowGraph import FlowGraph
-from dify.DifyGraph import DifyGraphBuilder
+from .agentify.FlowGraph import FlowGraph
+from .dify.DifyGraph import DifyGraphBuilder
 
 
 class Text2Workflow:

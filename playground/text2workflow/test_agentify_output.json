@@ -1,0 +1,417 @@
+{
+  "nodes": [
+    {
+      "id": "input",
+      "type": "custom",
+      "initialized": false,
+      "position": {
+        "x": 50,
+        "y": 200
+      },
+      "data": {
+        "inputs": [
+          {
+            "key": "switch",
+            "type": "target",
+            "label": "联动激活",
+            "value": false,
+            "keyType": "trigger",
+            "connected": true,
+            "valueType": "boolean",
+            "description": "同时满足上游所有条件方可激活当前组件执行逻辑"
+          },
+          {
+            "key": "switchAny",
+            "type": "target",
+            "label": "任一激活",
+            "value": false,
+            "keyType": "triggerAny",
+            "connected": true,
+            "valueType": "boolean",
+            "description": "同时满足上游任一条件即可激活当前组件执行逻辑"
+          },
+          {
+            "key": "inputText",
+            "type": "switch",
+            "label": "输入文本",
+            "value": true,
+            "valueType": "boolean",
+            "description": "输入文本开关"
+          },
+          {
+            "key": "uploadFile",
+            "type": "switch",
+            "label": "上传文档",
+            "value": false,
+            "valueType": "boolean",
+            "description": "上传文档开关"
+          },
+          {
+            "key": "uploadPicture",
+            "type": "switch",
+            "label": "上传图片",
+            "value": false,
+            "valueType": "boolean",
+            "description": "上传图片开关"
+          },
+          {
+            "key": "fileUpload",
+            "type": "switch",
+            "label": "文档审查",
+            "value": false,
+            "valueType": "boolean",
+            "description": "文档审查开关"
+          },
+          {
+            "key": "fileContrast",
+            "type": "checkBox",
+            "label": "是否文档对比",
+            "value": false,
+            "valueType": "boolean",
+            "description": "是否开启文档比对功能"
+          },
+          {
+            "key": "fileInfo",
+            "type": "table",
+            "label": "文档分组",
+            "value": [],
+            "valueType": "any",
+            "description": "上传的文件列表,如果开启了文档对比,每个分组只能上传一个文件"
+          },
+          {
+            "key": "initialInput",
+            "type": "hidden",
+            "label": "是否作为初始全局input",
+            "value": true,
+            "valueType": "boolean",
+            "description": "是否作为初始全局input"
+          }
+        ],
+        "outputs": [
+          {
+            "key": "userChatInput",
+            "type": "source",
+            "label": "文本信息",
+            "targets": [],
+            "valueType": "string",
+            "description": "引用变量：{{userChatInput}}"
+          },
+          {
+            "key": "files",
+            "type": "source",
+            "label": "文档信息",
+            "targets": [],
+            "valueType": "file",
+            "description": "以JSON数组格式输出用户上传文档列表，若为文档比对，包含分组信息"
+          },
+          {
+            "key": "images",
+            "type": "source",
+            "label": "图片信息",
+            "targets": [],
+            "valueType": "image",
+            "description": "以JSON数组格式输出用户上传的图片列表"
+          },
+          {
+            "key": "unclickedButton",
+            "type": "source",
+            "label": "未点击按钮",
+            "targets": [],
+            "valueType": "boolean",
+            "description": "当未点击任何按钮时值为true"
+          },
+          {
+            "key": "finish",
+            "type": "source",
+            "label": "模块运行结束",
+            "targets": [],
+            "valueType": "boolean",
+            "description": "运行完成后开关打开,下游链接组件开始运行。"
+          }
+        ],
+        "disabled": false,
+        "moduleType": "questionInput",
+        "name": "用户提问",
+        "intro": "用户输入入口,对话中用户的输入信息,与其他模块连接,一般作为起始模块",
+        "category": "用户提问"
+      }
+    },
+    {
+      "id": "ai",
+      "type": "custom",
+      "initialized": false,
+      "position": {
+        "x": 300,
+        "y": 200
+      },
+      "data": {
+        "inputs": [
+          {
+            "key": "switch",
+            "type": "target",
+            "label": "联动激活",
+            "value": false,
+            "keyType": "trigger",
+            "connected": true,
+            "valueType": "boolean",
+            "description": "同时满足上游所有条件方可激活当前组件执行逻辑"
+          },
+          {
+            "key": "switchAny",
+            "type": "target",
+            "label": "任一激活",
+            "value": false,
+            "keyType": "triggerAny",
+            "connected": true,
+            "valueType": "boolean",
+            "description": "同时满足上游任一条件即可激活当前组件执行逻辑"
+          },
+          {
+            "key": "text",
+            "type": "target",
+            "label": "信息输入",
+            "value": "请问有什么可以帮助您的？",
+            "connected": true,
+            "valueType": "string",
+            "description": "引用变量：{{text}}"
+          },
+          {
+            "key": "images",
+            "type": "target",
+            "label": "图片输入",
+            "value": [],
+            "connected": true,
+            "valueType": "image",
+            "description": "引用变量：{{images}}"
+          },
+          {
+            "key": "knSearch",
+            "type": "target",
+            "label": "知识库搜索结果",
+            "value": "",
+            "connected": true,
+            "valueType": "search",
+            "description": "引用变量：{{knSearch}}"
+          },
+          {
+            "key": "knConfig",
+            "type": "target",
+            "label": "知识库高级配置",
+            "value": "",
+            "connected": false,
+            "valueType": "text",
+            "description": "知识库高级配置"
+          },
+          {
+            "key": "historyText",
+            "type": "inputNumber",
+            "label": "聊天上下文",
+            "value": 3,
+            "min": 0,
+            "max": 6,
+            "step": 1,
+            "connected": false,
+            "valueType": "chatHistory",
+            "description": ""
+          },
+          {
+            "key": "model",
+            "type": "selectChatModel",
+            "label": "选择模型",
+            "value": "doubao-deepseek-v3",
+            "required": true,
+            "valueType": "string",
+            "description": ""
+          },
+          {
+            "key": "quotePrompt",
+            "type": "textarea",
+            "label": "提示词 (Prompt)",
+            "value": "",
+            "valueType": "string",
+            "description": "模型引导词"
+          },
+          {
+            "key": "stream",
+            "type": "switch",
+            "label": "回复对用户可见",
+            "value": true,
+            "connected": false,
+            "valueType": "boolean",
+            "description": "控制回复内容是否输出给用户"
+          },
+          {
+            "key": "temperature",
+            "type": "slider",
+            "label": "回复创意性",
+            "value": 0.0,
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "markList": {
+              "0": "严谨",
+              "1": "创意"
+            },
+            "valueType": "number",
+            "description": "控制回复创意性"
+          },
+          {
+            "key": "maxToken",
+            "type": "slider",
+            "label": "回复字数上限",
+            "value": 5000,
+            "min": 100,
+            "max": 5000,
+            "step": 50,
+            "markList": {
+              "5000": "5000"
+            },
+            "valueType": "number"
+          }
+        ],
+        "outputs": [
+          {
+            "key": "isResponseAnswerText",
+            "type": "source",
+            "label": "回复结束",
+            "targets": [],
+            "valueType": "boolean",
+            "description": "模型运行结束后触发"
+          },
+          {
+            "key": "answerText",
+            "type": "source",
+            "label": "回复内容",
+            "targets": [],
+            "valueType": "string",
+            "description": "大模型返回结果"
+          },
+          {
+            "key": "finish",
+            "type": "source",
+            "label": "模块运行结束",
+            "targets": [],
+            "valueType": "boolean",
+            "description": "运行完成后触发"
+          }
+        ],
+        "disabled": false,
+        "moduleType": "aiChat",
+        "name": "智能对话",
+        "intro": "AI 对话模型，根据信息输入和提示词（Prompt）加工生成所需信息，展示给用户，完成与用户互动。",
+        "category": "大模型"
+      }
+    },
+    {
+      "id": "reply",
+      "type": "custom",
+      "initialized": false,
+      "position": {
+        "x": 550,
+        "y": 200
+      },
+      "data": {
+        "inputs": [
+          {
+            "key": "switch",
+            "type": "target",
+            "label": "联动激活",
+            "value": false,
+            "keyType": "trigger",
+            "connected": true,
+            "valueType": "boolean",
+            "description": "同时满足上游所有条件方可激活当前组件执行逻辑"
+          },
+          {
+            "key": "switchAny",
+            "type": "target",
+            "label": "任一激活",
+            "value": false,
+            "keyType": "triggerAny",
+            "connected": true,
+            "valueType": "boolean",
+            "description": "同时满足上游任一条件即可激活当前组件执行逻辑"
+          },
+          {
+            "key": "stream",
+            "type": "switch",
+            "label": "回复对用户可见",
+            "value": true,
+            "connected": false,
+            "valueType": "boolean",
+            "description": "控制回复内容是否输出给用户"
+          },
+          {
+            "key": "text",
+            "type": "textarea",
+            "label": "回复内容",
+            "value": "感谢使用！",
+            "connected": true,
+            "valueType": "string",
+            "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}"
+          }
+        ],
+        "outputs": [
+          {
+            "key": "text",
+            "type": "source",
+            "label": "回复内容",
+            "value": "",
+            "valueType": "string",
+            "description": "回复内容原样输出。"
+          },
+          {
+            "key": "finish",
+            "type": "source",
+            "label": "模块运行结束",
+            "targets": [],
+            "valueType": "boolean",
+            "description": "运行完成后开关打开，下游链接组件开始运行。"
+          }
+        ],
+        "disabled": false,
+        "moduleType": "confirmreply",
+        "name": "确定回复",
+        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
+        "category": "大模型"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "f8af8e1e-57f6-4cb9-a27c-e56642fc872b",
+      "type": "custom",
+      "source": "input",
+      "target": "ai",
+      "sourceHandle": "finish",
+      "targetHandle": "switchAny",
+      "data": {},
+      "label": "",
+      "animated": false,
+      "sourceX": 0,
+      "sourceY": 0,
+      "targetX": 0,
+      "targetY": 0
+    },
+    {
+      "id": "b66689dd-8b6c-4ec1-844e-37b7b905ac88",
+      "type": "custom",
+      "source": "ai",
+      "target": "reply",
+      "sourceHandle": "finish",
+      "targetHandle": "switchAny",
+      "data": {},
+      "label": "",
+      "animated": false,
+      "sourceX": 0,
+      "sourceY": 0,
+      "targetX": 0,
+      "targetY": 0
+    }
+  ],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1.0
+  }
+}
