@@ -77,6 +77,7 @@ def main():
 
     # 编译工作流
     workflow.compile()
+    workflow.save("playground/text2workflow/dify_workflow_output.yaml")
 
 
 if __name__ == "__main__":

@@ -1,9 +1,9 @@
 app:
-  description: 基于AutoAgents SDK构建的工作流
+  description: 基于知识库的智能问答系统
   icon: 🤖
   icon_background: '#FFEAD5'
   mode: workflow
-  name: 简单测试助手
+  name: 智能问答助手
   use_icon_as_answer_icon: false
 dependencies: []
 kind: app
@@ -56,20 +56,31 @@ workflow:
       voice: ''
   graph:
     edges:
-    - id: start-source-ai-target
+    - id: start-source-knowledge_search-target
       type: custom
       source: start
-      target: ai
+      target: knowledge_search
       sourceHandle: source
       targetHandle: target
       data:
         isInLoop: false
         sourceType: start
+        targetType: knowledge-retrieval
+      zIndex: 0
+    - id: knowledge_search-source-ai_answer-target
+      type: custom
+      source: knowledge_search
+      target: ai_answer
+      sourceHandle: source
+      targetHandle: target
+      data:
+        isInLoop: false
+        sourceType: knowledge-retrieval
         targetType: llm
       zIndex: 0
-    - id: ai-source-end-target
+    - id: ai_answer-source-end-target
       type: custom
-      source: ai
+      source: ai_answer
       target: end
       sourceHandle: source
       targetHandle: target
@@ -98,7 +109,7 @@ workflow:
         title: 开始
         type: start
         variables: []
-    - id: ai
+    - id: knowledge_search
       type: custom
       position:
         x: 300.0
@@ -112,21 +123,54 @@ workflow:
       height: 54
       selected: false
       data:
+        dataset_ids:
+        - knowledge_base
+        desc: ''
+        multiple_retrieval_config:
+          reranking_enable: true
+          top_k: 5
+        query_variable_selector: []
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索
+        type: knowledge-retrieval
+    - id: ai_answer
+      type: custom
+      position:
+        x: 550.0
+        y: 200.0
+      positionAbsolute:
+        x: 550.0
+        y: 200.0
+      sourcePosition: right
+      targetPosition: left
+      width: 244
+      height: 54
+      selected: false
+      data:
         context:
           enabled: false
           variable_selector: []
         desc: ''
         model:
           completion_params:
-            temperature: 0.0
+            temperature: 0.3
           mode: chat
           name: doubao-deepseek-v3
           provider: ''
         prompt_template:
         - role: system
-          text: 你好！
+          text: '基于检索到的知识内容，为用户提供准确、详细的回答。
+
+
+            知识内容：{{@knowledge_search_text}}
+
+            用户问题：{{@start_userChatInput}}
+
+
+            请根据知识内容回答用户问题，如果知识内容无法回答问题，请如实告知。'
         selected: false
-        title: LLM
+        title: 智能回答
         type: llm
         variables: []
         vision:
@@ -134,10 +178,10 @@ workflow:
     - id: end
       type: custom
       position:
-        x: 550.0
+        x: 800.0
         y: 200.0
       positionAbsolute:
-        x: 550.0
+        x: 800.0
         y: 200.0
       sourcePosition: right
       targetPosition: left
