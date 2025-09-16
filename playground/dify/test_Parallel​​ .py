@@ -10,16 +10,16 @@ from src.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
 def main():
     # 生成唯一ID
-    llm_node_1_id = str(uuid.uuid4())  # 苹果吃法id
-    llm_node_2_id = str(uuid.uuid4())  # 苹果特点
-    llm_node_3_id = str(uuid.uuid4())  # 苹果坏处
-    llm_summary_id = str(uuid.uuid4())  # 总结苹果
+    llm_node_1_id = str(uuid.uuid4())  # GenerateCoT-1
+    llm_node_2_id = str(uuid.uuid4())  # GenerateCoT-2  
+    llm_node_3_id = str(uuid.uuid4())  # GenerateCoT-3
+    llm_summary_id = str(uuid.uuid4())  # ScEnsemble集成
 
     # 创建Dify平台工作流
     workflow = Text2Workflow(
         platform="dify",
-        app_name="苹果的介绍-代码生成",
-        app_description="基于Text2Workflow构建的Dify工作流"
+        app_name="Multi-CoT Ensemble工作流",
+        app_description="基于aflow框架的多轮思维链集成工作流"
     )
 
     # 添加开始节点
@@ -29,12 +29,12 @@ def main():
         state=DifyStartState(title="开始"),
     )
 
-    # 添加LLM节点
+    # 添加LLM节点 - GenerateCoT
     workflow.add_node(
         id=llm_node_1_id,
         state=DifyLLMState(
-            title="苹果吃法",
-            prompt_template=[{"role": "system", "text": "说一下苹果的吃法，100字左右。"}],
+            title="GenerateCoT-1",
+            prompt_template=[{"role": "system", "text": "使用思维链推理方法分析问题，逐步推理并给出结论。"}],
             model={
                 "completion_params": {"temperature": 0.7},
                 "mode": "chat",
@@ -45,12 +45,12 @@ def main():
         position={"x": 276, "y": 263}
     )
 
-    # 添加LLM节点
+    # 添加LLM节点 - GenerateCoT
     workflow.add_node(
         id=llm_node_2_id,
         state=DifyLLMState(
-            title="苹果特点",
-            prompt_template=[{"role": "system", "text": "说一下苹果的特点，100字左右。"}],
+            title="GenerateCoT-2",
+            prompt_template=[{"role": "system", "text": "使用思维链推理方法分析问题，逐步推理并给出结论。"}],
             model={
                 "completion_params": {"temperature": 0.7},
                 "mode": "chat",
@@ -61,12 +61,12 @@ def main():
         position={"x": 276, "y": 82}
     )
 
-    # 添加LLM节点
+    # 添加LLM节点 - GenerateCoT
     workflow.add_node(
         id=llm_node_3_id,
         state=DifyLLMState(
-            title="苹果坏处",
-            prompt_template=[{"role": "system", "text": "说一下苹果的坏处，100字左右。"}],
+            title="GenerateCoT-3",
+            prompt_template=[{"role": "system", "text": "使用思维链推理方法分析问题，逐步推理并给出结论。"}],
             model={
                 "completion_params": {"temperature": 0.7},
                 "mode": "chat",
@@ -77,18 +77,21 @@ def main():
         position={"x": 276, "y": 459}
     )
 
-    # 添加LLM总结节点
+    # 添加ScEnsemble集成节点
     workflow.add_node(
         id=llm_summary_id,
         state=DifyLLMState(
-            title="总结苹果",
+            title="ScEnsemble",
             prompt_template=[{"role": "system", "text": f"""
-            合并总结上游LLM输出内容，最后进行输出。最多200字。
-            LLM_Output_1：{{#{llm_node_1_id}.text#}}
-
-            LLM_Output_2：{{#{llm_node_2_id}.text#}}
-
-            LLM_Output_3：{{#{llm_node_3_id}.text#}}
+            使用Self-Consistency Ensemble方法，对多个思维链推理结果进行集成分析，选择最一致和可靠的答案。
+            
+            方案A：{{#{llm_node_1_id}.text#}}
+            
+            方案B：{{#{llm_node_2_id}.text#}}
+            
+            方案C：{{#{llm_node_3_id}.text#}}
+            
+            请分析这三个方案的一致性，并选择最可靠的答案或进行合理的集成。
             """}],
             model={
                 "completion_params": {"temperature": 0.7},
@@ -100,12 +103,20 @@ def main():
                 "schema": {
                     "additionalProperties": False,
                     "properties": {
-                        "output": {
+                        "selected_solution": {
                             "type": "string",
-                            "description": "总结结果的输出"
+                            "description": "选择的最佳方案标识(A/B/C)"
+                        },
+                        "reasoning": {
+                            "type": "string", 
+                            "description": "选择该方案的推理过程"
+                        },
+                        "final_answer": {
+                            "type": "string",
+                            "description": "最终集成后的答案"
                         }
                     },
-                    "required": ["output"],
+                    "required": ["selected_solution", "reasoning", "final_answer"],
                     "type": "object"
                 }
             },
@@ -134,7 +145,7 @@ def main():
     yaml_result = workflow.compile()
     workflow.save("playground/dify/dify_workflow_output-Parallel.yaml")
 
-    print(f"Dify工作流测试完成，YAML长度: {len(yaml_result)} 字符")
+    print(f"Multi-CoT Ensemble工作流生成完成，YAML长度: {len(yaml_result)} 字符")
 
 
 if __name__ == "__main__":

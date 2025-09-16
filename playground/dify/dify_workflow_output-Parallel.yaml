@@ -1,9 +1,9 @@
 app:
-  description: 基于Text2Workflow构建的Dify工作流
+  description: 基于aflow框架的多轮思维链集成工作流
   icon: 🤖
   icon_background: '#FFEAD5'
   mode: workflow
-  name: 苹果的介绍-代码生成
+  name: Multi-CoT Ensemble工作流
   use_icon_as_answer_icon: false
 dependencies: []
 kind: app
@@ -56,10 +56,10 @@ workflow:
       voice: ''
   graph:
     edges:
-    - id: start-source-88044785-fde7-4fa4-a5b3-00819384c2e4-target
+    - id: start-source-60517431-3260-4e40-9b15-d42c490eaf92-target
       type: custom
       source: start
-      target: 88044785-fde7-4fa4-a5b3-00819384c2e4
+      target: 60517431-3260-4e40-9b15-d42c490eaf92
       sourceHandle: source
       targetHandle: target
       data:
@@ -67,10 +67,10 @@ workflow:
         sourceType: start
         targetType: llm
       zIndex: 0
-    - id: start-source-a752b911-90f9-462f-9735-e17b31b8e368-target
+    - id: start-source-69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f-target
       type: custom
       source: start
-      target: a752b911-90f9-462f-9735-e17b31b8e368
+      target: 69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f
       sourceHandle: source
       targetHandle: target
       data:
@@ -78,10 +78,10 @@ workflow:
         sourceType: start
         targetType: llm
       zIndex: 0
-    - id: start-source-19574026-025b-4c22-988c-251ca9d04746-target
+    - id: start-source-3065e0e4-783a-4891-ae8a-dbd885ed09ac-target
       type: custom
       source: start
-      target: 19574026-025b-4c22-988c-251ca9d04746
+      target: 3065e0e4-783a-4891-ae8a-dbd885ed09ac
       sourceHandle: source
       targetHandle: target
       data:
@@ -89,10 +89,10 @@ workflow:
         sourceType: start
         targetType: llm
       zIndex: 0
-    - id: 88044785-fde7-4fa4-a5b3-00819384c2e4-source-01578523-af1c-4ef7-8420-84ae86c078cc-target
+    - id: 60517431-3260-4e40-9b15-d42c490eaf92-source-6ea471fa-c09b-434a-ab2f-9a02cd12a8cf-target
       type: custom
-      source: 88044785-fde7-4fa4-a5b3-00819384c2e4
-      target: 01578523-af1c-4ef7-8420-84ae86c078cc
+      source: 60517431-3260-4e40-9b15-d42c490eaf92
+      target: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
       sourceHandle: source
       targetHandle: target
       data:
@@ -100,10 +100,10 @@ workflow:
         sourceType: llm
         targetType: llm
       zIndex: 0
-    - id: a752b911-90f9-462f-9735-e17b31b8e368-source-01578523-af1c-4ef7-8420-84ae86c078cc-target
+    - id: 69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f-source-6ea471fa-c09b-434a-ab2f-9a02cd12a8cf-target
       type: custom
-      source: a752b911-90f9-462f-9735-e17b31b8e368
-      target: 01578523-af1c-4ef7-8420-84ae86c078cc
+      source: 69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f
+      target: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
       sourceHandle: source
       targetHandle: target
       data:
@@ -111,10 +111,10 @@ workflow:
         sourceType: llm
         targetType: llm
       zIndex: 0
-    - id: 19574026-025b-4c22-988c-251ca9d04746-source-01578523-af1c-4ef7-8420-84ae86c078cc-target
+    - id: 3065e0e4-783a-4891-ae8a-dbd885ed09ac-source-6ea471fa-c09b-434a-ab2f-9a02cd12a8cf-target
       type: custom
-      source: 19574026-025b-4c22-988c-251ca9d04746
-      target: 01578523-af1c-4ef7-8420-84ae86c078cc
+      source: 3065e0e4-783a-4891-ae8a-dbd885ed09ac
+      target: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
       sourceHandle: source
       targetHandle: target
       data:
@@ -122,9 +122,9 @@ workflow:
         sourceType: llm
         targetType: llm
       zIndex: 0
-    - id: 01578523-af1c-4ef7-8420-84ae86c078cc-source-end-target
+    - id: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf-source-end-target
       type: custom
-      source: 01578523-af1c-4ef7-8420-84ae86c078cc
+      source: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
       target: end
       sourceHandle: source
       targetHandle: target
@@ -153,7 +153,7 @@ workflow:
         title: 开始
         type: start
         variables: []
-    - id: 88044785-fde7-4fa4-a5b3-00819384c2e4
+    - id: 60517431-3260-4e40-9b15-d42c490eaf92
       type: custom
       position:
         x: 276.0
@@ -179,16 +179,16 @@ workflow:
           provider: ''
         prompt_template:
         - role: system
-          text: 说一下苹果的吃法，100字左右。
+          text: 使用思维链推理方法分析问题，逐步推理并给出结论。
         selected: false
         structured_output: null
         structured_output_enabled: false
-        title: 苹果吃法
+        title: GenerateCoT-1
         type: llm
         variables: []
         vision:
           enabled: false
-    - id: a752b911-90f9-462f-9735-e17b31b8e368
+    - id: 69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f
       type: custom
       position:
         x: 276.0
@@ -214,16 +214,16 @@ workflow:
           provider: ''
         prompt_template:
         - role: system
-          text: 说一下苹果的特点，100字左右。
+          text: 使用思维链推理方法分析问题，逐步推理并给出结论。
         selected: false
         structured_output: null
         structured_output_enabled: false
-        title: 苹果特点
+        title: GenerateCoT-2
         type: llm
         variables: []
         vision:
           enabled: false
-    - id: 19574026-025b-4c22-988c-251ca9d04746
+    - id: 3065e0e4-783a-4891-ae8a-dbd885ed09ac
       type: custom
       position:
         x: 276.0
@@ -249,16 +249,16 @@ workflow:
           provider: ''
         prompt_template:
         - role: system
-          text: 说一下苹果的坏处，100字左右。
+          text: 使用思维链推理方法分析问题，逐步推理并给出结论。
         selected: false
         structured_output: null
         structured_output_enabled: false
-        title: 苹果坏处
+        title: GenerateCoT-3
         type: llm
         variables: []
         vision:
           enabled: false
-    - id: 01578523-af1c-4ef7-8420-84ae86c078cc
+    - id: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
       type: custom
       position:
         x: 572.0
@@ -284,23 +284,33 @@ workflow:
           provider: langgenius/openai/openai
         prompt_template:
         - role: system
-          text: "\n            合并总结上游LLM输出内容，最后进行输出。最多200字。\n            LLM_Output_1：{#88044785-fde7-4fa4-a5b3-00819384c2e4.text#}\n\
-            \n            LLM_Output_2：{#a752b911-90f9-462f-9735-e17b31b8e368.text#}\n\
-            \n            LLM_Output_3：{#19574026-025b-4c22-988c-251ca9d04746.text#}\n\
-            \            "
+          text: "\n            使用Self-Consistency Ensemble方法，对多个思维链推理结果进行集成分析，选择最一致和可靠的答案。\n\
+            \            \n            方案A：{#60517431-3260-4e40-9b15-d42c490eaf92.text#}\n\
+            \            \n            方案B：{#69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f.text#}\n\
+            \            \n            方案C：{#3065e0e4-783a-4891-ae8a-dbd885ed09ac.text#}\n\
+            \            \n            请分析这三个方案的一致性，并选择最可靠的答案或进行合理的集成。\n         \
+            \   "
         selected: false
         structured_output:
           schema:
             additionalProperties: false
             properties:
-              output:
+              selected_solution:
                 type: string
-                description: 总结结果的输出
+                description: 选择的最佳方案标识(A/B/C)
+              reasoning:
+                type: string
+                description: 选择该方案的推理过程
+              final_answer:
+                type: string
+                description: 最终集成后的答案
             required:
-            - output
+            - selected_solution
+            - reasoning
+            - final_answer
             type: object
         structured_output_enabled: true
-        title: 总结苹果
+        title: ScEnsemble
         type: llm
         variables: []
         vision:

@@ -1,3 +1,5 @@
 __pycache__/
 DS_Store
 .idea/
+playground/dify/temp/
+playground/dify/async_llm.py
