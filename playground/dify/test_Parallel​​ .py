@@ -25,7 +25,7 @@ def main():
     # 添加开始节点
     workflow.add_node(
         id=START,
-        position={"x": 50, "y": 200},
+        position={"x": 0, "y": 200},
         state=DifyStartState(title="开始"),
     )
 
@@ -34,7 +34,11 @@ def main():
         id=llm_node_1_id,
         state=DifyLLMState(
             title="GenerateCoT-1",
-            prompt_template=[{"role": "system", "text": "使用思维链推理方法分析问题，逐步推理并给出结论。"}],
+            prompt_template=[{"role": "system", "text": """使用思维链推理方法分析问题，逐步推理并给出结论。
+
+用户输入：{{#start.sys_input#}}
+
+请进行详细的思维链推理分析。"""}],
             model={
                 "completion_params": {"temperature": 0.7},
                 "mode": "chat",
@@ -50,7 +54,11 @@ def main():
         id=llm_node_2_id,
         state=DifyLLMState(
             title="GenerateCoT-2",
-            prompt_template=[{"role": "system", "text": "使用思维链推理方法分析问题，逐步推理并给出结论。"}],
+            prompt_template=[{"role": "system", "text": """使用思维链推理方法分析问题，逐步推理并给出结论。
+
+用户输入：{{#start.sys_input#}}
+
+请进行详细的思维链推理分析。"""}],
             model={
                 "completion_params": {"temperature": 0.7},
                 "mode": "chat",
@@ -66,7 +74,11 @@ def main():
         id=llm_node_3_id,
         state=DifyLLMState(
             title="GenerateCoT-3",
-            prompt_template=[{"role": "system", "text": "使用思维链推理方法分析问题，逐步推理并给出结论。"}],
+            prompt_template=[{"role": "system", "text": """使用思维链推理方法分析问题，逐步推理并给出结论。
+
+用户输入：{{#start.sys_input#}}
+
+请进行详细的思维链推理分析。"""}],
             model={
                 "completion_params": {"temperature": 0.7},
                 "mode": "chat",
@@ -85,11 +97,13 @@ def main():
             prompt_template=[{"role": "system", "text": f"""
             使用Self-Consistency Ensemble方法，对多个思维链推理结果进行集成分析，选择最一致和可靠的答案。
             
-            方案A：{{#{llm_node_1_id}.text#}}
+            原始问题：{{{{#start.sys_input#}}}}
             
-            方案B：{{#{llm_node_2_id}.text#}}
+            方案A：{{{{#{llm_node_1_id}.text#}}}}
             
-            方案C：{{#{llm_node_3_id}.text#}}
+            方案B：{{{{#{llm_node_2_id}.text#}}}}
+            
+            方案C：{{{{#{llm_node_3_id}.text#}}}}
             
             请分析这三个方案的一致性，并选择最可靠的答案或进行合理的集成。
             """}],

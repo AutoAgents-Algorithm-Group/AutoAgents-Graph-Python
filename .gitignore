@@ -3,3 +3,5 @@ DS_Store
 .idea/
 playground/dify/temp/
 playground/dify/async_llm.py
+playground/text2workflow/dify_workflow_output.yaml
+playground/text2workflow/dify_workflow_output.yaml

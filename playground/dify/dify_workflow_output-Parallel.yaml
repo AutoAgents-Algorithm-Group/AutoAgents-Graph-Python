@@ -56,10 +56,10 @@ workflow:
       voice: ''
   graph:
     edges:
-    - id: start-source-60517431-3260-4e40-9b15-d42c490eaf92-target
+    - id: start-source-bbd185dc-af95-4f63-965c-f527a0c12a4e-target
       type: custom
       source: start
-      target: 60517431-3260-4e40-9b15-d42c490eaf92
+      target: bbd185dc-af95-4f63-965c-f527a0c12a4e
       sourceHandle: source
       targetHandle: target
       data:
@@ -67,10 +67,10 @@ workflow:
         sourceType: start
         targetType: llm
       zIndex: 0
-    - id: start-source-69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f-target
+    - id: start-source-76bb7f1f-521a-4b34-a75a-7a74d2623dab-target
       type: custom
       source: start
-      target: 69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f
+      target: 76bb7f1f-521a-4b34-a75a-7a74d2623dab
       sourceHandle: source
       targetHandle: target
       data:
@@ -78,10 +78,10 @@ workflow:
         sourceType: start
         targetType: llm
       zIndex: 0
-    - id: start-source-3065e0e4-783a-4891-ae8a-dbd885ed09ac-target
+    - id: start-source-a10f670c-978d-4fd6-b3ab-f2f2d76514fe-target
       type: custom
       source: start
-      target: 3065e0e4-783a-4891-ae8a-dbd885ed09ac
+      target: a10f670c-978d-4fd6-b3ab-f2f2d76514fe
       sourceHandle: source
       targetHandle: target
       data:
@@ -89,10 +89,10 @@ workflow:
         sourceType: start
         targetType: llm
       zIndex: 0
-    - id: 60517431-3260-4e40-9b15-d42c490eaf92-source-6ea471fa-c09b-434a-ab2f-9a02cd12a8cf-target
+    - id: bbd185dc-af95-4f63-965c-f527a0c12a4e-source-131b003c-176d-4b1a-ab78-043e8cc86075-target
       type: custom
-      source: 60517431-3260-4e40-9b15-d42c490eaf92
-      target: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
+      source: bbd185dc-af95-4f63-965c-f527a0c12a4e
+      target: 131b003c-176d-4b1a-ab78-043e8cc86075
       sourceHandle: source
       targetHandle: target
       data:
@@ -100,10 +100,10 @@ workflow:
         sourceType: llm
         targetType: llm
       zIndex: 0
-    - id: 69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f-source-6ea471fa-c09b-434a-ab2f-9a02cd12a8cf-target
+    - id: 76bb7f1f-521a-4b34-a75a-7a74d2623dab-source-131b003c-176d-4b1a-ab78-043e8cc86075-target
       type: custom
-      source: 69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f
-      target: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
+      source: 76bb7f1f-521a-4b34-a75a-7a74d2623dab
+      target: 131b003c-176d-4b1a-ab78-043e8cc86075
       sourceHandle: source
       targetHandle: target
       data:
@@ -111,10 +111,10 @@ workflow:
         sourceType: llm
         targetType: llm
       zIndex: 0
-    - id: 3065e0e4-783a-4891-ae8a-dbd885ed09ac-source-6ea471fa-c09b-434a-ab2f-9a02cd12a8cf-target
+    - id: a10f670c-978d-4fd6-b3ab-f2f2d76514fe-source-131b003c-176d-4b1a-ab78-043e8cc86075-target
       type: custom
-      source: 3065e0e4-783a-4891-ae8a-dbd885ed09ac
-      target: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
+      source: a10f670c-978d-4fd6-b3ab-f2f2d76514fe
+      target: 131b003c-176d-4b1a-ab78-043e8cc86075
       sourceHandle: source
       targetHandle: target
       data:
@@ -122,9 +122,9 @@ workflow:
         sourceType: llm
         targetType: llm
       zIndex: 0
-    - id: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf-source-end-target
+    - id: 131b003c-176d-4b1a-ab78-043e8cc86075-source-end-target
       type: custom
-      source: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
+      source: 131b003c-176d-4b1a-ab78-043e8cc86075
       target: end
       sourceHandle: source
       targetHandle: target
@@ -137,10 +137,10 @@ workflow:
     - id: start
       type: custom
       position:
-        x: 50.0
+        x: 0.0
         y: 200.0
       positionAbsolute:
-        x: 50.0
+        x: 0.0
         y: 200.0
       sourcePosition: right
       targetPosition: left
@@ -152,8 +152,14 @@ workflow:
         selected: false
         title: 开始
         type: start
-        variables: []
-    - id: 60517431-3260-4e40-9b15-d42c490eaf92
+        variables:
+        - label: 系统输入
+          max_length: 48000
+          options: []
+          required: true
+          type: text-input
+          variable: sys_input
+    - id: bbd185dc-af95-4f63-965c-f527a0c12a4e
       type: custom
       position:
         x: 276.0
@@ -179,7 +185,13 @@ workflow:
           provider: ''
         prompt_template:
         - role: system
-          text: 使用思维链推理方法分析问题，逐步推理并给出结论。
+          text: '使用思维链推理方法分析问题，逐步推理并给出结论。
+
+
+            用户输入：{{#start.sys_input#}}
+
+
+            请进行详细的思维链推理分析。'
         selected: false
         structured_output: null
         structured_output_enabled: false
@@ -188,7 +200,7 @@ workflow:
         variables: []
         vision:
           enabled: false
-    - id: 69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f
+    - id: 76bb7f1f-521a-4b34-a75a-7a74d2623dab
       type: custom
       position:
         x: 276.0
@@ -214,7 +226,13 @@ workflow:
           provider: ''
         prompt_template:
         - role: system
-          text: 使用思维链推理方法分析问题，逐步推理并给出结论。
+          text: '使用思维链推理方法分析问题，逐步推理并给出结论。
+
+
+            用户输入：{{#start.sys_input#}}
+
+
+            请进行详细的思维链推理分析。'
         selected: false
         structured_output: null
         structured_output_enabled: false
@@ -223,7 +241,7 @@ workflow:
         variables: []
         vision:
           enabled: false
-    - id: 3065e0e4-783a-4891-ae8a-dbd885ed09ac
+    - id: a10f670c-978d-4fd6-b3ab-f2f2d76514fe
       type: custom
       position:
         x: 276.0
@@ -249,7 +267,13 @@ workflow:
           provider: ''
         prompt_template:
         - role: system
-          text: 使用思维链推理方法分析问题，逐步推理并给出结论。
+          text: '使用思维链推理方法分析问题，逐步推理并给出结论。
+
+
+            用户输入：{{#start.sys_input#}}
+
+
+            请进行详细的思维链推理分析。'
         selected: false
         structured_output: null
         structured_output_enabled: false
@@ -258,7 +282,7 @@ workflow:
         variables: []
         vision:
           enabled: false
-    - id: 6ea471fa-c09b-434a-ab2f-9a02cd12a8cf
+    - id: 131b003c-176d-4b1a-ab78-043e8cc86075
       type: custom
       position:
         x: 572.0
@@ -285,9 +309,10 @@ workflow:
         prompt_template:
         - role: system
           text: "\n            使用Self-Consistency Ensemble方法，对多个思维链推理结果进行集成分析，选择最一致和可靠的答案。\n\
-            \            \n            方案A：{#60517431-3260-4e40-9b15-d42c490eaf92.text#}\n\
-            \            \n            方案B：{#69c7fe0a-a3db-4e49-80fc-04efb3bb6e3f.text#}\n\
-            \            \n            方案C：{#3065e0e4-783a-4891-ae8a-dbd885ed09ac.text#}\n\
+            \            \n            原始问题：{{#start.sys_input#}}\n            \n\
+            \            方案A：{{#bbd185dc-af95-4f63-965c-f527a0c12a4e.text#}}\n   \
+            \         \n            方案B：{{#76bb7f1f-521a-4b34-a75a-7a74d2623dab.text#}}\n\
+            \            \n            方案C：{{#a10f670c-978d-4fd6-b3ab-f2f2d76514fe.text#}}\n\
             \            \n            请分析这三个方案的一致性，并选择最可靠的答案或进行合理的集成。\n         \
             \   "
         selected: false

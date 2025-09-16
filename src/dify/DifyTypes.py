@@ -70,7 +70,16 @@ class DifyStartState(BaseModel):
     selected: bool = False
     title: str = "开始"
     type: str = "start"
-    variables: List = Field(default_factory=list)
+    variables: List = Field(default_factory=lambda: [
+        {
+            "label": "系统输入",
+            "max_length": 48000,
+            "options": [],
+            "required": True,
+            "type": "text-input",
+            "variable": "sys_input"
+        }
+    ])
 
 
 class DifyLLMState(BaseModel):
