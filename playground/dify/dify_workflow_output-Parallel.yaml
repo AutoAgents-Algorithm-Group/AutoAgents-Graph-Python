@@ -1,0 +1,330 @@
+app:
+  description: 基于Text2Workflow构建的Dify工作流
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: 苹果的介绍-代码生成
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.3.1
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - id: start-source-88044785-fde7-4fa4-a5b3-00819384c2e4-target
+      type: custom
+      source: start
+      target: 88044785-fde7-4fa4-a5b3-00819384c2e4
+      sourceHandle: source
+      targetHandle: target
+      data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      zIndex: 0
+    - id: start-source-a752b911-90f9-462f-9735-e17b31b8e368-target
+      type: custom
+      source: start
+      target: a752b911-90f9-462f-9735-e17b31b8e368
+      sourceHandle: source
+      targetHandle: target
+      data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      zIndex: 0
+    - id: start-source-19574026-025b-4c22-988c-251ca9d04746-target
+      type: custom
+      source: start
+      target: 19574026-025b-4c22-988c-251ca9d04746
+      sourceHandle: source
+      targetHandle: target
+      data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      zIndex: 0
+    - id: 88044785-fde7-4fa4-a5b3-00819384c2e4-source-01578523-af1c-4ef7-8420-84ae86c078cc-target
+      type: custom
+      source: 88044785-fde7-4fa4-a5b3-00819384c2e4
+      target: 01578523-af1c-4ef7-8420-84ae86c078cc
+      sourceHandle: source
+      targetHandle: target
+      data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      zIndex: 0
+    - id: a752b911-90f9-462f-9735-e17b31b8e368-source-01578523-af1c-4ef7-8420-84ae86c078cc-target
+      type: custom
+      source: a752b911-90f9-462f-9735-e17b31b8e368
+      target: 01578523-af1c-4ef7-8420-84ae86c078cc
+      sourceHandle: source
+      targetHandle: target
+      data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      zIndex: 0
+    - id: 19574026-025b-4c22-988c-251ca9d04746-source-01578523-af1c-4ef7-8420-84ae86c078cc-target
+      type: custom
+      source: 19574026-025b-4c22-988c-251ca9d04746
+      target: 01578523-af1c-4ef7-8420-84ae86c078cc
+      sourceHandle: source
+      targetHandle: target
+      data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      zIndex: 0
+    - id: 01578523-af1c-4ef7-8420-84ae86c078cc-source-end-target
+      type: custom
+      source: 01578523-af1c-4ef7-8420-84ae86c078cc
+      target: end
+      sourceHandle: source
+      targetHandle: target
+      data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      zIndex: 0
+    nodes:
+    - id: start
+      type: custom
+      position:
+        x: 50.0
+        y: 200.0
+      positionAbsolute:
+        x: 50.0
+        y: 200.0
+      sourcePosition: right
+      targetPosition: left
+      width: 244
+      height: 54
+      selected: false
+      data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables: []
+    - id: 88044785-fde7-4fa4-a5b3-00819384c2e4
+      type: custom
+      position:
+        x: 276.0
+        y: 263.0
+      positionAbsolute:
+        x: 276.0
+        y: 263.0
+      sourcePosition: right
+      targetPosition: left
+      width: 244
+      height: 54
+      selected: false
+      data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4
+          provider: ''
+        prompt_template:
+        - role: system
+          text: 说一下苹果的吃法，100字左右。
+        selected: false
+        structured_output: null
+        structured_output_enabled: false
+        title: 苹果吃法
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+    - id: a752b911-90f9-462f-9735-e17b31b8e368
+      type: custom
+      position:
+        x: 276.0
+        y: 82.0
+      positionAbsolute:
+        x: 276.0
+        y: 82.0
+      sourcePosition: right
+      targetPosition: left
+      width: 244
+      height: 54
+      selected: false
+      data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4
+          provider: ''
+        prompt_template:
+        - role: system
+          text: 说一下苹果的特点，100字左右。
+        selected: false
+        structured_output: null
+        structured_output_enabled: false
+        title: 苹果特点
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+    - id: 19574026-025b-4c22-988c-251ca9d04746
+      type: custom
+      position:
+        x: 276.0
+        y: 459.0
+      positionAbsolute:
+        x: 276.0
+        y: 459.0
+      sourcePosition: right
+      targetPosition: left
+      width: 244
+      height: 54
+      selected: false
+      data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4
+          provider: ''
+        prompt_template:
+        - role: system
+          text: 说一下苹果的坏处，100字左右。
+        selected: false
+        structured_output: null
+        structured_output_enabled: false
+        title: 苹果坏处
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+    - id: 01578523-af1c-4ef7-8420-84ae86c078cc
+      type: custom
+      position:
+        x: 572.0
+        y: 254.0
+      positionAbsolute:
+        x: 572.0
+        y: 254.0
+      sourcePosition: right
+      targetPosition: left
+      width: 244
+      height: 54
+      selected: false
+      data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4o
+          provider: langgenius/openai/openai
+        prompt_template:
+        - role: system
+          text: "\n            合并总结上游LLM输出内容，最后进行输出。最多200字。\n            LLM_Output_1：{#88044785-fde7-4fa4-a5b3-00819384c2e4.text#}\n\
+            \n            LLM_Output_2：{#a752b911-90f9-462f-9735-e17b31b8e368.text#}\n\
+            \n            LLM_Output_3：{#19574026-025b-4c22-988c-251ca9d04746.text#}\n\
+            \            "
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              output:
+                type: string
+                description: 总结结果的输出
+            required:
+            - output
+            type: object
+        structured_output_enabled: true
+        title: 总结苹果
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+    - id: end
+      type: custom
+      position:
+        x: 852.0
+        y: 254.0
+      positionAbsolute:
+        x: 852.0
+        y: 254.0
+      sourcePosition: right
+      targetPosition: left
+      width: 244
+      height: 54
+      selected: false
+      data:
+        desc: ''
+        outputs: []
+        selected: false
+        title: 处理完成
+        type: end
+    viewport:
+      x: 0.0
+      y: 0.0
+      zoom: 1.0

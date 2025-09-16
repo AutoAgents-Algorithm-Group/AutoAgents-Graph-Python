@@ -9,7 +9,7 @@ from .DifyTypes import (
 
 # Dify工作流常量
 START = "start"
-
+END = "end"
 
 
 class DifyGraphBuilder:
@@ -45,7 +45,10 @@ class DifyGraphBuilder:
         # 节点和边列表
         self.nodes: List[DifyNode] = []
         self.edges: List[DifyEdge] = []
-        
+
+        # 设置默认viewport
+        self.workflow.graph.viewport = {"x": 0, "y": 0, "zoom": 1.0}
+
         # 默认特性配置
         self._init_default_features()
     

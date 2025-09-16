@@ -33,7 +33,7 @@ class DifyGraph(BaseModel):
     """Dify图模型"""
     edges: List[DifyEdge] = Field(default_factory=list)
     nodes: List[DifyNode] = Field(default_factory=list)
-    viewport: Optional[Dict[str, float]] = None
+    viewport: Dict[str, float] = Field(default_factory=lambda: {"x": 0, "y": 0, "zoom": 1.0})
 
 
 class DifyWorkflow(BaseModel):
@@ -85,6 +85,8 @@ class DifyLLMState(BaseModel):
     })
     prompt_template: List[Dict[str, str]] = Field(default_factory=lambda: [{"role": "system", "text": ""}])
     selected: bool = False
+    structured_output: Optional[Dict[str, Any]] = None
+    structured_output_enabled: bool = False
     title: str = "LLM"
     type: str = "llm"
     variables: List = Field(default_factory=list)
