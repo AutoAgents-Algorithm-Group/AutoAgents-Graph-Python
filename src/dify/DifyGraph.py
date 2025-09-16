@@ -9,7 +9,7 @@ from .DifyTypes import (
 
 # Dify工作流常量
 START = "start"
-END = "end"
+
 
 
 class DifyGraphBuilder:
