@@ -1,7 +1,7 @@
 import uuid
 
-from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, ForEachState, ConfirmReplyState
+from src.autoagents_graph.agentify import FlowGraph, START
+from src.autoagents_graph.agentify.types import QuestionInputState, ForEachState, ConfirmReplyState
 
 
 def main():

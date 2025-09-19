@@ -1,6 +1,6 @@
 import json
 
-from autoagents_graph.agentify import FlowInterpreter, START
+from src.autoagents_graph.agentify import FlowInterpreter, START
 
 
 def main():    

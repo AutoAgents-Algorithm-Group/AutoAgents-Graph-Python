@@ -1,8 +1,7 @@
 import uuid
 
-from autoagents_graph import Text2Workflow
-# 只使用DifyTypes，不再混用agentify.types
-from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
+from src.autoagents_graph import Text2Workflow
+from src.autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
 
 def main():
