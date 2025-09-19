@@ -21,13 +21,13 @@
 
 ## Table of Contents
 
-- [Why Choose AutoAgents Graph?](#why-choose-autoagents-graph)
+- [Why AutoAgents Graph?](#why-autoagents-graph)
 - [Quick Start](#quick-start)
 - [Architecture](#architecture)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Why Choose AutoAgents Graph?
+## Why AutoAgents Graph?
 
 AutoAgents Graph is a revolutionary AI workflow cross-platform engine that allows you to freely convert workflows between different AI platforms through a unified API. It enables seamless navigation through complex AI ecosystems with intelligent workflow orchestration.
 
@@ -38,31 +38,15 @@ AutoAgents Graph is a revolutionary AI workflow cross-platform engine that allow
 
 ## Quick Start
 
-### System Requirements
+### Prerequisites
 - Python 3.11+
-- pip or poetry
 
-### Installation & Setup
-
+### Installation
 ```bash
-# Install from PyPI
 pip install autoagents-graph
-
-# Quick experience
-python -c "
-from autoagents_graph import Text2Workflow
-from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
-
-# Create a simple Dify workflow
-workflow = Text2Workflow(platform='dify', app_name='Test Workflow')
-workflow.add_node(START, state=DifyStartState(title='Start'))
-workflow.add_node(END, state=DifyEndState(title='End'))
-workflow.add_edge(START, END)
-print(workflow.compile())
-"
 ```
 
-### Basic Usage
+## Examples
 
 AutoAgents Graph provides three main usage patterns:
 
@@ -106,36 +90,6 @@ flow.add_edge(START, "ai")
 flow.compile(name="Smart Chat Assistant")
 ```
 
-
-## Architecture
-
-### Core Components
-
-```
-autoagents-graph/
-├── src/                        # Core source code
-│   ├── autoagents-graph/       # Main package
-│   │   ├── agentify/          # Agentify platform engine
-│   │   │   ├── FlowGraph.py   # Workflow graph builder
-│   │   │   ├── NodeRegistry.py# Node registry
-│   │   │   └── types/         # Node type definitions
-│   │   ├── dify/              # Dify platform adapter
-│   │   │   ├── DifyGraph.py   # Dify workflow builder
-│   │   │   └── DifyTypes.py   # Dify node types
-│   │   └── Text2Workflow.py   # Cross-platform converter
-└── playground/                 # Examples and tests
-    ├── agentify/              # Agentify platform examples
-    ├── dify/                  # Dify platform examples
-    └── text2workflow/         # Cross-platform examples
-```
-
-### Design Philosophy
-
-- **Unified Abstraction**: Workflows from different platforms unified as node-edge graph models
-- **Intelligent Adaptation**: Automatic node type recognition and cross-platform conversion
-- **Modular Design**: Each platform independently implemented for easy extension and maintenance
-- **Type Safety**: Complete type system ensuring compile-time error detection
-
 ### Supported Node Types
 
 #### Agentify Platform Nodes
@@ -176,5 +130,3 @@ We welcome community contributions! Please check the contribution guidelines for
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-If you have any questions or suggestions, please contact us through [Issues](https://github.com/forhheart/autoagents-graph/issues).

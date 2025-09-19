@@ -23,7 +23,8 @@
 
 - [为什么选择AutoAgents Graph？](#为什么选择autoagents-graph)
 - [快速开始](#快速开始)
-- [架构设计](#架构设计)
+- [示例](#示例)
+- [支持的节点类型](#支持的节点类型)
 - [贡献指南](#贡献指南)
 - [许可证](#许可证)
 
@@ -40,29 +41,13 @@ AutoAgents Graph 是一个革命性的AI工作流跨平台转换引擎，让你�
 
 ### 系统要求
 - Python 3.11+
-- pip 或 poetry
 
-### 安装与设置
-
+### 安装
 ```bash
-# 从PyPI安装
 pip install autoagents-graph
-
-# 快速体验
-python -c "
-from autoagents_graph import Text2Workflow
-from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
-
-# 创建一个简单的Dify工作流
-workflow = Text2Workflow(platform='dify', app_name='测试工作流')
-workflow.add_node(START, state=DifyStartState(title='开始'))
-workflow.add_node(END, state=DifyEndState(title='结束'))
-workflow.add_edge(START, END)
-print(workflow.compile())
-"
 ```
 
-### 基本使用
+## 示例
 
 AutoAgents Graph 提供三种主要使用方式：
 
@@ -106,36 +91,6 @@ flow.add_edge(START, "ai")
 flow.compile(name="智能对话助手")
 ```
 
-
-## 架构设计
-
-### 核心组件
-
-```
-autoagents-graph/
-├── src/                        # 核心源代码
-│   ├── autoagents-graph/       # 主包
-│   │   ├── agentify/          # Agentify平台引擎
-│   │   │   ├── FlowGraph.py   # 工作流图构建器
-│   │   │   ├── NodeRegistry.py# 节点注册表
-│   │   │   └── types/         # 节点类型定义
-│   │   ├── dify/              # Dify平台适配器
-│   │   │   ├── DifyGraph.py   # Dify工作流构建器
-│   │   │   └── DifyTypes.py   # Dify节点类型
-│   │   └── Text2Workflow.py   # 跨平台转换器
-└── playground/                 # 示例和测试
-    ├── agentify/              # Agentify平台示例
-    ├── dify/                  # Dify平台示例
-    └── text2workflow/         # 跨平台示例
-```
-
-### 设计理念
-
-- **统一抽象**：不同平台的工作流统一为节点-边图模型
-- **智能适配**：自动识别节点类型并进行平台间转换
-- **模块化**：每个平台独立实现，便于扩展和维护
-- **类型安全**：完整的类型系统确保开发时期错误检测
-
 ### 支持的节点类型
 
 #### Agentify平台节点
@@ -176,5 +131,3 @@ autoagents-graph/
 ## 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
-
-如有问题或建议，请通过 [Issues](https://github.com/forhheart/autoagents-graph/issues) 联系我们。

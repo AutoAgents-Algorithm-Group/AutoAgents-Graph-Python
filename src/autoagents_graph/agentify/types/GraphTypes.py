@@ -69,8 +69,8 @@ class AiChatState(BaseNodeState):
     historyText: Optional[int] = 3
     model: Optional[str] = "doubao-deepseek-v3"
     quotePrompt: Optional[str] = ""
-    stream: Optional[bool] = True
-    temperature: Optional[float] = 0.0
+    isvisible: Optional[bool] = True
+    temperature: Optional[float] = 0.1
     maxToken: Optional[int] = 5000
     isResponseAnswerText: Optional[bool] = False
     answerText: Optional[str] = ""
@@ -78,7 +78,7 @@ class AiChatState(BaseNodeState):
 
 class ConfirmReplyState(BaseNodeState):
     """确定回复模块状态"""
-    stream: Optional[bool] = True
+    isvisible: Optional[bool] = True
     text: Optional[str] = ""
 
 

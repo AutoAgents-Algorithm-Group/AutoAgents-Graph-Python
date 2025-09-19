@@ -2,8 +2,8 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from src.autoagents_graph.agentify import FlowGraph, START
-from src.autoagents_graph.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
 
 
 def main():   
@@ -34,7 +34,7 @@ def main():
         id="confirmreply1",
         state=ConfirmReplyState(
             text=r"文件内容：{{@pdf2md1_pdf2mdResult}}",
-            stream=True
+            isvisible=True
         )
     )
 
@@ -53,9 +53,7 @@ def main():
 <用户问题>
 {{@question1_userChatInput}}
 </用户问题>
-            """,
-            knSearch="",
-            temperature=0.1
+            """
         )
     )
 

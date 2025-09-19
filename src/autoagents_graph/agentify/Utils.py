@@ -181,7 +181,7 @@ class StateConverter:
             })
             
         elif module_type == "aiChat":
-            # 智能对话模块
+            # 智能对话模块 - 将isvisible映射为stream
             inputs.update({
                 "text": state_dict.get("text", ""),
                 "images": state_dict.get("images", []),
@@ -190,15 +190,15 @@ class StateConverter:
                 "historyText": state_dict.get("historyText", 3),
                 "model": state_dict.get("model", "doubao-deepseek-v3"),
                 "quotePrompt": state_dict.get("quotePrompt", ""),
-                "stream": state_dict.get("stream", True),
-                "temperature": state_dict.get("temperature", 0.0),
+                "stream": state_dict.get("isvisible", True),  # 用户使用isvisible，内部映射为stream
+                "temperature": state_dict.get("temperature", 0.1),
                 "maxToken": state_dict.get("maxToken", 5000)
             })
             
         elif module_type == "confirmreply":
-            # 确定回复模块
+            # 确定回复模块 - 将isvisible映射为stream
             inputs.update({
-                "stream": state_dict.get("stream", True),
+                "stream": state_dict.get("isvisible", True),  # 用户使用isvisible，内部映射为stream
                 "text": state_dict.get("text", "")
             })
             

@@ -25,8 +25,8 @@
 ## 基础用法
 
 ```python
-from src.agentify import FlowGraph, START
-from src.agentify.types import (
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import (
     QuestionInputState, AiChatState, ConfirmReplyState, 
     KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
     InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState
@@ -202,8 +202,8 @@ class AiChatState(BaseNodeState):
     historyText: Optional[int] = 3
     model: Optional[str] = "doubao-deepseek-v3"
     quotePrompt: Optional[str] = ""
-    stream: Optional[bool] = True
-    temperature: Optional[float] = 0.0
+    isvisible: Optional[bool] = True
+    temperature: Optional[float] = 0.1
     maxToken: Optional[int] = 5000
     isResponseAnswerText: Optional[bool] = False
     answerText: Optional[str] = ""
@@ -218,15 +218,6 @@ graph.add_node(
         # 模型基础配置
         model="doubao-deepseek-v3",              # 选择LLM模型（必填，默认doubao-deepseek-v3）
         quotePrompt="你是一个智能助手...",         # 提示词（可选）
-        
-        # 模型参数配置
-        temperature=0.1,                         # 创意性控制 (0-1)
-        maxToken=3000,                          # 回复字数上限
-        stream=True,                            # 是否对用户可见
-        historyText=3,                          # 上下文轮数 (0-6)
-        
-        # 高级配置
-        knConfig="使用检索到的内容回答问题"       # 知识库高级配置（可选）
     )
 )
 
@@ -251,7 +242,7 @@ graph.add_node(
 - **模型配置要求**：
   - `model`：必须配置，决定使用哪种 LLM
   - `quotePrompt`：可配置为模型固定输入前缀，引导语气、身份、限制范围等
-  - `stream`：若开启，表示回复内容将展示给用户（对话类场景应开启）
+  - `isvisible`：若开启，表示回复内容将展示给用户（对话类场景应开启）
 - **输出连接建议**：
   - 必须连接 `finish` 输出至下游模块的 `switchAny`，用于触发后续流程执行
   - `answerText` 输出为模型生成的回复内容，可按需传递到后续模块
@@ -263,9 +254,7 @@ graph.add_node(
 graph.add_node(
     id="basic_chat",
     state=AiChatState(
-        model="doubao-deepseek-v3",
-        temperature=0.1,
-        stream=True
+        model="doubao-deepseek-v3"
     )
 )
 # 通过边连接用户输入：graph.add_edge(START, "basic_chat", "userChatInput", "text")
@@ -275,9 +264,7 @@ graph.add_node(
     id="kb_chat",
     state=AiChatState(
         model="doubao-deepseek-v3",
-        quotePrompt="基于提供的知识库内容回答问题",
-        knConfig="使用检索到的内容回答问题",
-        stream=True
+        quotePrompt="基于提供的知识库内容回答问题"
     )
 )
 # 通过边连接：
@@ -289,8 +276,7 @@ graph.add_node(
     id="image_chat",
     state=AiChatState(
         model="glm-4v-plus",
-        temperature=0.3,
-        stream=True
+        temperature=0.3
     )
 )
 # 通过边连接：
@@ -404,7 +390,7 @@ Accept application/json"""
 ```python
 class ConfirmReplyState(BaseNodeState):
     """确定回复模块状态"""
-    stream: Optional[bool] = True
+    isvisible: Optional[bool] = True
     text: Optional[str] = ""
 ```
 
@@ -418,7 +404,7 @@ graph.add_node(
         text="操作已完成！您的请求已成功处理。",  # 静态文本
         
         # 可见性控制
-        stream=True  # 是否对用户可见（默认True）
+        isvisible=True  # 是否对用户可见（默认True）
     )
 )
 
@@ -437,11 +423,11 @@ graph.add_node(
 
 - **内容灵活**：支持静态文本或变量引用动态内容
 - **格式支持**：支持 `\n` 换行符和变量占位符
-- **可见性控制**：通过 `stream` 控制是否对用户可见
+- **可见性控制**：通过 `isvisible` 控制是否对用户可见
 - **变量覆盖**：外部输入会覆盖静态配置的内容
 - **参数配置**：
   - `text`：回复内容（支持变量引用），可选参数
-  - `stream`：是否对用户可见，默认True
+  - `isvisible`：是否对用户可见，默认True
 
 ### 常用配置示例
 
@@ -451,7 +437,7 @@ graph.add_node(
     id="success_confirm",
     state=ConfirmReplyState(
         text="操作成功完成！\n您的请求已处理。",
-        stream=True
+        isvisible=True
     )
 )
 
@@ -459,7 +445,7 @@ graph.add_node(
 graph.add_node(
     id="dynamic_reply",
     state=ConfirmReplyState(
-        stream=True
+        isvisible=True
     )
 )
 # 通过边连接动态内容：
@@ -470,7 +456,7 @@ graph.add_node(
     id="internal_log",
     state=ConfirmReplyState(
         text="内部处理完成",
-        stream=False  # 仅内部使用，不显示给用户
+        isvisible=False  # 仅内部使用，不显示给用户
     )
 )
 ```
@@ -655,19 +641,18 @@ graph.add_node(
     id="process_success",
     state=AiChatState(
         model="doubao-deepseek-v3",
-        quotePrompt="请分析以下文档内容",
-        stream=True
+        quotePrompt="请分析以下文档内容"
     )
 )
 
 # 失败分支  
-graph.add_node(
-    id="handle_failure",
-    state=ConfirmReplyState(
-        text="文档解析失败，请检查文档格式或重新上传",
-        stream=True
+    graph.add_node(
+        id="handle_failure",
+        state=ConfirmReplyState(
+            text="文档解析失败，请检查文档格式或重新上传",
+            isvisible=True
+        )
     )
-)
 
 # 添加连接边
 graph.add_edge("parse_doc", "process_success", "success", "switchAny")
@@ -756,7 +741,7 @@ graph.add_node(
     id="use_summary",
     state=ConfirmReplyState(
         text="根据之前的分析，处理已完成。",
-        stream=True
+        isvisible=True
     )
 )
 
@@ -823,10 +808,7 @@ graph.add_node(
         labels=labels,                           # 分类标签字典（必填）
         
         # 模型参数配置
-        historyText=2,                           # 上下文轮数 (0-6)
-        
-        # 高级配置
-        knConfig="使用检索到的内容辅助分类"       # 知识库高级配置（可选）
+        historyText=2                            # 上下文轮数 (0-6)
     )
 )
 
@@ -1214,7 +1196,7 @@ graph.add_node(
     id="process_item",
     state=ConfirmReplyState(
         text="处理第{{index}}项：{{item}}",
-        stream=True
+        isvisible=True
     )
 )
 
@@ -1234,8 +1216,7 @@ graph.add_node(
     id="analyze_document",
     state=AiChatState(
         model="doubao-deepseek-v3",
-        quotePrompt="你是文档分析专家，请对以下文档进行分析和总结。",
-        stream=True
+        quotePrompt="你是文档分析专家，请对以下文档进行分析和总结。"
     )
 )
 
@@ -1244,7 +1225,7 @@ graph.add_node(
     id="save_analysis",
     state=ConfirmReplyState(
         text="文档{{index}}分析完成",
-        stream=False  # 内部保存，不显示给用户
+        isvisible=False  # 内部保存，不显示给用户
     )
 )
 
@@ -1280,7 +1261,7 @@ graph.add_node(
     id="handle_urgent",
     state=ConfirmReplyState(
         text="紧急处理任务{{index}}：{{item}}",
-        stream=True
+        isvisible=True
     )
 )
 
@@ -1289,7 +1270,7 @@ graph.add_node(
     id="handle_normal", 
     state=ConfirmReplyState(
         text="常规处理任务{{index}}：{{item}}",
-        stream=True
+        isvisible=True
     )
 )
 
@@ -1307,8 +1288,8 @@ graph.add_edge("handle_normal", "conditional_loop", "finish", "loopEnd")
 ## 完整工作流示例
 ### Example 1: 文档提问助手
 ```python
-from src.agentify import FlowGraph, START
-from src.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState
 
 def main():
     graph = FlowGraph(
@@ -1340,7 +1321,7 @@ def main():
         id="confirmreply1",
         state=ConfirmReplyState(
             text="文件解析完成，正在分析内容...",
-            stream=True
+            isvisible=True
         )
     )
 
@@ -1354,9 +1335,7 @@ def main():
 </角色>
 
 请根据上传的文档内容和用户问题，给出准确的回答。
-            """,
-            temperature=0.1,
-            stream=True
+            """
         )
     )
 
@@ -1390,8 +1369,8 @@ if __name__ == "__main__":
 
 ### Example 2: 知识库问答助手
 ```python
-from src.agentify import FlowGraph, START
-from src.agentify.types import QuestionInputState, KnowledgeSearchState, AiChatState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, KnowledgeSearchState, AiChatState
 
 def main():
     graph = FlowGraph(
@@ -1423,9 +1402,7 @@ def main():
         id="ai1",
         state=AiChatState(
             model="doubao-deepseek-v3",
-            quotePrompt="请模拟成AI智能助手，以温柔的口吻，回答用户的各种问题，帮助他解决问题。",
-            temperature=0.1,
-            stream=True
+            quotePrompt="请模拟成AI智能助手，以温柔的口吻，回答用户的各种问题，帮助他解决问题。"
         )
     )
 
@@ -1454,8 +1431,8 @@ if __name__ == "__main__":
 
 ### Example 3: 智能客服分类助手
 ```python
-from src.agentify import FlowGraph, START
-from src.agentify.types import QuestionInputState, InfoClassState, AiChatState, ConfirmReplyState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, InfoClassState, AiChatState, ConfirmReplyState
 import uuid
 
 def main():
@@ -1505,8 +1482,7 @@ def main():
         id="techSupport",
         state=AiChatState(
             model="doubao-deepseek-v3",
-            quotePrompt="你是技术支持专家，请针对用户的技术问题提供专业的解决方案。",
-            stream=True
+            quotePrompt="你是技术支持专家，请针对用户的技术问题提供专业的解决方案。"
         )
     )
     
@@ -1515,7 +1491,7 @@ def main():
         id="businessReply",
         state=ConfirmReplyState(
             text="感谢您的咨询！我们的商务代表将在1个工作日内与您联系，为您提供详细的产品信息和报价。",
-            stream=True
+            isvisible=True
         )
     )
     
@@ -1524,7 +1500,7 @@ def main():
         id="complaintReply",
         state=ConfirmReplyState(
             text="非常感谢您的反馈！我们重视每一位用户的意见，您的建议将帮助我们改进产品和服务。我们会认真处理您的反馈。",
-            stream=True
+            isvisible=True
         )
     )
 
@@ -1554,8 +1530,8 @@ if __name__ == "__main__":
 
 ### Example 4: 数据处理代码块助手
 ```python
-from src.agentify import FlowGraph, START
-from src.agentify.types import QuestionInputState, CodeFragmentState, ConfirmReplyState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, CodeFragmentState, ConfirmReplyState
 import uuid
 
 def main():
@@ -1643,7 +1619,7 @@ def main():
     graph.add_node(
         id="showResult",
         state=ConfirmReplyState(
-            stream=True  # 结果通过边连接传递
+            isvisible=True  # 结果通过边连接传递
         )
     )
     
@@ -1652,7 +1628,7 @@ def main():
         id="errorHandler",
         state=ConfirmReplyState(
             text="数据处理失败，请检查输入格式。请提供用逗号分隔的数据列表。",
-            stream=True
+            isvisible=True
         )
     )
 
@@ -1679,8 +1655,8 @@ if __name__ == "__main__":
 
 ### Example 5: 循环批量处理助手
 ```python
-from src.agentify import FlowGraph, START
-from src.agentify.types import QuestionInputState, ForEachState, AiChatState, ConfirmReplyState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, ForEachState, AiChatState, ConfirmReplyState
 
 def main():
     graph = FlowGraph(
@@ -1713,7 +1689,6 @@ def main():
         state=AiChatState(
             model="doubao-deepseek-v3",
             quotePrompt="你是数据分析专家，请对以下内容进行简要分析和总结。",
-            stream=True,
             temperature=0.3
         )
     )
@@ -1723,7 +1698,7 @@ def main():
         id="finalSummary",
         state=ConfirmReplyState(
             text="批量分析完成！已成功处理所有项目。",
-            stream=True
+            isvisible=True
         )
     )
 
