@@ -1,10 +1,14 @@
-from src.autoagents_graph import Text2Workflow
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+from src.autoagents_graph import Text2Agent
 from src.autoagents_graph.dify import DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState, START, END
 
 
 def main():
     # 创建智能问答助手
-    workflow = Text2Workflow(
+    workflow = Text2Agent(
         platform="dify",
         app_name="智能问答助手",
         app_description="基于知识库的智能问答系统"

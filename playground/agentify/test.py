@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 from src.autoagents_graph.agentify import FlowGraph, START
 from src.autoagents_graph.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
 
@@ -78,6 +82,8 @@ def main():
 
     graph.add_edge("ai1", "addMemoryVariable1", "answerText", "ai1_answerText")
     
+    # json = graph.to_json()
+    # print(json)
 
     # 编译工作流
     graph.compile(
