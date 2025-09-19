@@ -159,24 +159,3 @@ NODE_STATE_FACTORY = {
     "codeFragment": CodeFragmentState,
     "forEach": ForEachState,
 }
-
-
-def create_node_state(module_type: str, **kwargs) -> BaseNodeState:
-    """
-    根据module_type创建对应的State实例
-    
-    Args:
-        module_type: 模块类型
-        **kwargs: 初始化参数
-        
-    Returns:
-        对应的State实例
-        
-    Raises:
-        ValueError: 当module_type不支持时
-    """
-    state_class = NODE_STATE_FACTORY.get(module_type)
-    if not state_class:
-        raise ValueError(f"Unsupported module_type: {module_type}")
-    
-    return state_class(**kwargs)
