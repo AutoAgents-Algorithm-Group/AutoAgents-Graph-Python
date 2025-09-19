@@ -1,10 +1,7 @@
-import os
-import sys
 import uuid
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from src.agentify import FlowGraph, START
-from src.agentify.types import QuestionInputState, ForEachState, ConfirmReplyState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, ForEachState, ConfirmReplyState
 
 
 def main():

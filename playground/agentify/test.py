@@ -1,9 +1,5 @@
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from src.agentify import FlowGraph, START
-from src.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
 
 
 def main():   

@@ -1,6 +1,6 @@
 [project]
-name = "autoagents_graph"
-version = "0.1.1"
+name = "autoagents-graph"
+version = "0.1.2"
 description = "The AI Workflow Cross-Platform Engine"
 readme = "README.md"
 authors = [
@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-autoagents_graph-python-sdk = "autoagents_graph:main"
+autoagents-graph-python-sdk = "autoagents-graph:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/autoagents_graph"]

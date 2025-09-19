@@ -1,10 +1,6 @@
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from src.Text2Workflow import Text2Workflow
+from autoagents_graph import Text2Workflow
 # 只使用DifyTypes，不再混用agentify.types
-from src.dify import DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState, START, END
+from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState, START, END
 
 
 def main():

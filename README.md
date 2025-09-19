@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/-AutoAgents%20Graph-FFD700?style=for-the-badge&labelColor=FF6B35&color=FFD700&logoColor=white" alt="AutoAgents Graph" width="280"/>
+<img src="https://img.shields.io/badge/-autoagents_graph-000000?style=for-the-badge&labelColor=faf9f6&color=faf9f6&logoColor=000000" alt="AutoAgents Graph Python SDK" width="380"/>
 
 <h4>The AI Workflow Cross-Platform Engine</h4>
 
@@ -45,16 +45,21 @@ AutoAgents Graph is a revolutionary AI workflow cross-platform engine that allow
 ### Installation & Setup
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/forhheart/autoagents-graph.git
-cd autoagents-graph
+# Install from PyPI
+pip install autoagents-graph
 
-# 2. Install dependencies
-pip install -e .
+# Quick experience
+python -c "
+from autoagents_graph import Text2Workflow
+from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
-# 3. Quick experience
-cd playground/text2workflow
-python test_text2workflow.py
+# Create a simple Dify workflow
+workflow = Text2Workflow(platform='dify', app_name='Test Workflow')
+workflow.add_node(START, state=DifyStartState(title='Start'))
+workflow.add_node(END, state=DifyEndState(title='End'))
+workflow.add_edge(START, END)
+print(workflow.compile())
+"
 ```
 
 ### Basic Usage
@@ -63,8 +68,8 @@ AutoAgents Graph provides three main usage patterns:
 
 #### Text2Workflow - Cross-Platform Converter
 ```python
-from src.Text2Workflow import Text2Workflow
-from src.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
+from autoagents_graph import Text2Workflow
+from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
 # Create Dify platform workflow
 workflow = Text2Workflow(
@@ -83,7 +88,8 @@ workflow.compile()
 
 #### FlowGraph - Agentify Native Builder
 ```python
-from src.agentify import FlowGraph, QuestionInputState, AiChatState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, AiChatState
 
 # Create Agentify workflow
 flow = FlowGraph(
@@ -92,29 +98,14 @@ flow = FlowGraph(
 )
 
 # Build intelligent conversation flow
-flow.add_node("input", QuestionInputState(inputText=True))
-flow.add_node("ai", AiChatState(model="doubao-deepseek-v3"))
-flow.add_edge("input", "ai")
+flow.add_node(START, state=QuestionInputState(inputText=True))
+flow.add_node("ai", state=AiChatState(model="doubao-deepseek-v3"))
+flow.add_edge(START, "ai")
 
 # Publish to platform
-flow.compile("Smart Chat Assistant")
+flow.compile(name="Smart Chat Assistant")
 ```
 
-### Running Examples
-
-```bash
-# Test Agentify platform functionality
-cd playground/agentify
-python test.py
-
-# Test Dify platform integration
-cd playground/dify
-python test_dify.py
-
-# Test cross-platform conversion
-cd playground/text2workflow
-python test_text2workflow.py
-```
 
 ## Architecture
 

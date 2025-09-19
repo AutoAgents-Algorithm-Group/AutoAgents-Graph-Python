@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/-AutoAgents%20Graph-FFD700?style=for-the-badge&labelColor=FF6B35&color=FFD700&logoColor=white" alt="AutoAgents Graph" width="280"/>
+<img src="https://img.shields.io/badge/-autoagents_graph-000000?style=for-the-badge&labelColor=faf9f6&color=faf9f6&logoColor=000000" alt="AutoAgents Graph Python SDK" width="380"/>
 
 <h4>AI工作流跨平台转换引擎</h4>
 
@@ -45,16 +45,21 @@ AutoAgents Graph 是一个革命性的AI工作流跨平台转换引擎，让你�
 ### 安装与设置
 
 ```bash
-# 1. 克隆项目
-git clone https://github.com/forhheart/autoagents-graph.git
-cd autoagents-graph
+# 从PyPI安装
+pip install autoagents-graph
 
-# 2. 安装依赖
-pip install -e .
+# 快速体验
+python -c "
+from autoagents_graph import Text2Workflow
+from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
-# 3. 快速体验
-cd playground/text2workflow
-python test_text2workflow.py
+# 创建一个简单的Dify工作流
+workflow = Text2Workflow(platform='dify', app_name='测试工作流')
+workflow.add_node(START, state=DifyStartState(title='开始'))
+workflow.add_node(END, state=DifyEndState(title='结束'))
+workflow.add_edge(START, END)
+print(workflow.compile())
+"
 ```
 
 ### 基本使用
@@ -63,8 +68,8 @@ AutoAgents Graph 提供三种主要使用方式：
 
 #### Text2Workflow - 跨平台转换器
 ```python
-from src.Text2Workflow import Text2Workflow
-from src.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
+from autoagents_graph import Text2Workflow
+from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
 # 创建Dify平台工作流
 workflow = Text2Workflow(
@@ -83,7 +88,8 @@ workflow.compile()
 
 #### FlowGraph - Agentify原生构建器
 ```python
-from src.agentify import FlowGraph, QuestionInputState, AiChatState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.types import QuestionInputState, AiChatState
 
 # 创建Agentify工作流
 flow = FlowGraph(
@@ -92,29 +98,14 @@ flow = FlowGraph(
 )
 
 # 构建智能对话流程
-flow.add_node("input", QuestionInputState(inputText=True))
-flow.add_node("ai", AiChatState(model="doubao-deepseek-v3"))
-flow.add_edge("input", "ai")
+flow.add_node(START, state=QuestionInputState(inputText=True))
+flow.add_node("ai", state=AiChatState(model="doubao-deepseek-v3"))
+flow.add_edge(START, "ai")
 
 # 发布到平台
-flow.compile("智能对话助手")
+flow.compile(name="智能对话助手")
 ```
 
-### 运行示例
-
-```bash
-# 测试Agentify平台功能
-cd playground/agentify
-python test.py
-
-# 测试Dify平台集成
-cd playground/dify
-python test_dify.py
-
-# 测试跨平台转换
-cd playground/text2workflow
-python test_text2workflow.py
-```
 
 ## 架构设计
 

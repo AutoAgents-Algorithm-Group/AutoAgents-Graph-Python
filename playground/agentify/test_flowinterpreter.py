@@ -1,9 +1,6 @@
-import os
-import sys
 import json
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from src.agentify import FlowInterpreter, START
+from autoagents_graph.agentify import FlowInterpreter, START
 
 
 def main():    
