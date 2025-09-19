@@ -1,0 +1,24 @@
+[project]
+name = "autoagents_graph"
+version = "0.1.1"
+description = "The AI Workflow Cross-Platform Engine"
+readme = "README.md"
+authors = [
+    { name = "Hehua Fan", email = "forhheart5532@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "PyYAML>=6.0",
+    "pydantic>=2.11.7",
+    "requests>=2.32.4"
+]
+
+[project.scripts]
+autoagents_graph-python-sdk = "autoagents_graph:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/autoagents_graph"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
