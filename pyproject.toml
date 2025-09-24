@@ -1,20 +1,29 @@
 [project]
 name = "autoagents-graph"
-version = "0.1.2"
+version = "0.1.4"
 description = "The AI Workflow Cross-Platform Engine"
 readme = "README.md"
+license = {text = "MIT"}
 authors = [
     { name = "Hehua Fan", email = "forhheart5532@gmail.com" }
 ]
 requires-python = ">=3.11"
+keywords = ["ai", "workflow", "automation", "llm", "graph"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
 dependencies = [
     "PyYAML>=6.0",
     "pydantic>=2.11.7",
     "requests>=2.32.4"
 ]
-
-[project.scripts]
-autoagents-graph-python-sdk = "autoagents_graph:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/autoagents_graph"]
