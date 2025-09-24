@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-autoagents-graph-python-sdk = "autoagents-graph:main"
+autoagents-graph-python-sdk = "autoagents_graph:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/autoagents_graph"]

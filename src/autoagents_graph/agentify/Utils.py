@@ -1,6 +1,6 @@
 from copy import deepcopy
 from typing import Dict, List, Any, Optional, Union
-from .types.GraphTypes import (
+from .models.GraphTypes import (
     BaseNodeState, HttpInvokeState, QuestionInputState, AiChatState,
     ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
     InfoClassState, CodeFragmentState, ForEachState

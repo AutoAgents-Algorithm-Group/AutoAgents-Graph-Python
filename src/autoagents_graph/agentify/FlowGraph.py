@@ -6,7 +6,7 @@ from .Utils import (
     NodeValidator, NodeBuilder, EdgeValidator, GraphProcessor
 )
 from .api.GraphAPI import create_app_api
-from .types.GraphTypes import CreateAppParams
+from .models.GraphTypes import CreateAppParams
 
 
 START = "simpleInputId"

@@ -2,8 +2,8 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
+from src.autoagents_graph.agentify import FlowGraph, START
+from src.autoagents_graph.agentify.models import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
 
 
 def main():   
@@ -94,3 +94,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

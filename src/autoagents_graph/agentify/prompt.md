@@ -26,7 +26,7 @@
 
 ```python
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import (
+from autoagents_graph.agentify.models import (
     QuestionInputState, AiChatState, ConfirmReplyState, 
     KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
     InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState
@@ -1289,7 +1289,7 @@ graph.add_edge("handle_normal", "conditional_loop", "finish", "loopEnd")
 ### Example 1: 文档提问助手
 ```python
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState
+from autoagents_graph.agentify.models import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState
 
 def main():
     graph = FlowGraph(
@@ -1370,7 +1370,7 @@ if __name__ == "__main__":
 ### Example 2: 知识库问答助手
 ```python
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, KnowledgeSearchState, AiChatState
+from autoagents_graph.agentify.models import QuestionInputState, KnowledgeSearchState, AiChatState
 
 def main():
     graph = FlowGraph(
@@ -1432,7 +1432,7 @@ if __name__ == "__main__":
 ### Example 3: 智能客服分类助手
 ```python
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, InfoClassState, AiChatState, ConfirmReplyState
+from autoagents_graph.agentify.models import QuestionInputState, InfoClassState, AiChatState, ConfirmReplyState
 import uuid
 
 def main():
@@ -1531,7 +1531,7 @@ if __name__ == "__main__":
 ### Example 4: 数据处理代码块助手
 ```python
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, CodeFragmentState, ConfirmReplyState
+from autoagents_graph.agentify.models import QuestionInputState, CodeFragmentState, ConfirmReplyState
 import uuid
 
 def main():
@@ -1656,7 +1656,7 @@ if __name__ == "__main__":
 ### Example 5: 循环批量处理助手
 ```python
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, ForEachState, AiChatState, ConfirmReplyState
+from autoagents_graph.agentify.models import QuestionInputState, ForEachState, AiChatState, ConfirmReplyState
 
 def main():
     graph = FlowGraph(
@@ -1720,6 +1720,105 @@ def main():
         category="批量处理",
         prologue="请输入需要分析的数据列表（JSON数组格式），例如：[\"项目1\", \"项目2\", \"项目3\"]"
     )
+
+if __name__ == "__main__":
+    main()
+```
+
+### Example 6: 小说生成助手
+```python
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.models.GraphTypes import (
+    QuestionInputState, AiChatState, ConfirmReplyState,
+    KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
+    InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState
+)
+
+def main():
+    graph = FlowGraph(
+            personal_auth_key="1558352c152b484ead33187a3a0ab035",
+            personal_auth_secret="ZBlCbwYjcoBYmJTPGKiUgXM2XRUvf3s1",
+            base_url="https://test.agentspro.cn"
+        )
+
+    # 添加节点
+    # 创建questionInput状态对象
+    simpleInputId_state = QuestionInputState(
+        inputText=True,
+        uploadFile=False,
+        uploadPicture=False,
+        fileUpload=False,
+        fileContrast=False,
+        fileInfo=[],
+        initialInput=True,
+    )
+
+    graph.add_node(
+        id="simpleInputId",
+        position={'x': -443.54089012517386, 'y': 512.8525730180806},
+        state=simpleInputId_state
+    )
+
+    # 创建aiChat状态对象
+    simpleAichatId_state = AiChatState(
+        text="",
+        images=[],
+        knSearch="",
+        historyText=3,
+        model="gpt-4",
+        quotePrompt="你是微短剧小说家，根据用户的输入作为主题进行创作，做2集剧本",
+        temperature=0,
+        maxToken=3000,
+        isvisible=True,
+    )
+
+    graph.add_node(
+        id="simpleAichatId",
+        position={'x': 685, 'y': 364},
+        state=simpleAichatId_state
+    )
+
+    # 创建confirmreply状态对象
+    confirm_reply_state = ConfirmReplyState(
+        text="现在为您生成小说...",
+        isvisible=True,
+    )
+
+    graph.add_node(
+        id="confirm_reply",
+        position={'x': 176.76119610570254, 'y': 550.6982614742699},
+        state=confirm_reply_state
+    )
+
+    # 创建confirmreply状态对象
+    confirm_reply_1_state = ConfirmReplyState(
+        text="您可以输入希望用户看到的内容，当触发条件判定成立，将显示您输入的内容。",
+        isvisible=True,
+    )
+
+    graph.add_node(
+        id="confirm_reply_1",
+        position={'x': 1303.5857213907286, 'y': 915.5886004018828},
+        state=confirm_reply_1_state
+    )
+
+    # 添加连接边
+    graph.add_edge("confirm_reply", "simpleAichatId", "finish", "switch")
+    graph.add_edge("simpleInputId", "confirm_reply", "finish", "switch")
+    graph.add_edge("simpleInputId", "simpleAichatId", "userChatInput", "text")
+    graph.add_edge("simpleAichatId", "confirm_reply_1", "answerText", "text")
+    graph.add_edge("simpleAichatId", "confirm_reply_1", "finish", "switch")
+
+    # 编译, 导入配置，点击确定
+    graph.compile(
+            name="从JSON生成的工作流",
+            intro="这是从JSON数据反向生成的工作流",
+            category="自动生成",
+            prologue="你好！这是自动生成的工作流。",
+            shareAble=True,
+            allowVoiceInput=False,
+            autoSendVoice=False
+        )
 
 if __name__ == "__main__":
     main()

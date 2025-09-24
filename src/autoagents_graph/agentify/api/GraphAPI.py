@@ -2,7 +2,7 @@ from copy import deepcopy
 from typing import Dict, List, Any, Tuple, Optional, Union
 
 import requests
-from ..types import CreateAppParams
+from ..models import CreateAppParams
 
 def create_app_api(data: CreateAppParams, personal_auth_key: str, personal_auth_secret: str, base_url: str) -> requests.Response:
     jwt_token = get_jwt_token_api(personal_auth_key, personal_auth_secret, base_url)
