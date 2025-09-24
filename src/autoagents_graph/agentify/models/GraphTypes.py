@@ -34,6 +34,13 @@ class BaseNodeState(BaseModel):
     switch: Optional[bool] = False # 联动激活
     switchAny: Optional[bool] = False # 任一激活
     finish: Optional[bool] = False # 运行结束
+    
+    @classmethod
+    def get_valid_fields(cls) -> set:
+        """获取该状态类的所有有效字段名（排除基础字段）"""
+        base_fields = {"switch", "switchAny", "finish"}
+        all_fields = set(cls.model_fields.keys())
+        return all_fields - base_fields
 
 
 class HttpInvokeState(BaseNodeState):
@@ -146,6 +153,23 @@ class ForEachState(BaseNodeState):
     loopStart: Optional[bool] = False
 
 
+class DocumentQuestionState(BaseNodeState):
+    """文档批量提问模块状态"""
+    files: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
+    batchQuestion: Optional[List[str]] = Field(default_factory=list)
+    model: Optional[str] = "glm-4"
+    quotePrompt: Optional[str] = ""
+    isResponseAnswerText: Optional[bool] = False
+    answerText: Optional[str] = ""
+
+
+class KeywordIdentifyState(BaseNodeState):
+    """关键词识别模块状态"""
+    files: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
+    identifyRule: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
+    identifyResult: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
+
+
 # 状态工厂字典，根据module_type获取对应的State类
 NODE_STATE_FACTORY = {
     "httpInvoke": HttpInvokeState,
@@ -158,4 +182,6 @@ NODE_STATE_FACTORY = {
     "infoClass": InfoClassState,
     "codeFragment": CodeFragmentState,
     "forEach": ForEachState,
+    "documentQuestion": DocumentQuestionState,
+    "keywordIdentify": KeywordIdentifyState,
 }

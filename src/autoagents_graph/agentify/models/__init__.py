@@ -5,7 +5,8 @@ from .GraphTypes import (
     AgentGuide, CreateAppParams,
     BaseNodeState, HttpInvokeState, QuestionInputState, AiChatState,
     ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
-    InfoClassState, CodeFragmentState, ForEachState, NODE_STATE_FACTORY, create_node_state
+    InfoClassState, CodeFragmentState, ForEachState, DocumentQuestionState, KeywordIdentifyState,
+    NODE_STATE_FACTORY
 )
 
 __all__ = [
@@ -14,7 +15,8 @@ __all__ = [
     "AgentGuide", "CreateAppParams",
     "BaseNodeState", "HttpInvokeState", "QuestionInputState", "AiChatState",
     "ConfirmReplyState", "KnowledgeSearchState", "Pdf2MdState", "AddMemoryVariableState",
-    "InfoClassState", "CodeFragmentState", "ForEachState", "NODE_STATE_FACTORY", "create_node_state"
+    "InfoClassState", "CodeFragmentState", "ForEachState", "DocumentQuestionState", "KeywordIdentifyState",
+    "NODE_STATE_FACTORY"
 ]
 
 

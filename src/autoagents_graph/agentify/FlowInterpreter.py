@@ -1,5 +1,10 @@
-from typing import Dict, Any, List
+from typing import List
 from .NodeRegistry import NODE_TEMPLATES
+from .models.GraphTypes import (
+    QuestionInputState, AiChatState, ConfirmReplyState, 
+    KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
+    InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState
+)
 
 
 class FlowInterpreter:
@@ -93,71 +98,123 @@ class FlowInterpreter:
             return f'"{str(value)}"'
     
     @staticmethod
-    def _generate_node_code(node: dict) -> str:
+    def _sanitize_variable_name(node_id: str, module_type: str, node_counter: dict) -> str:
+        """将节点ID转换为有效的Python变量名"""
+        # 如果是有意义的ID（不包含连字符或UUID格式），直接使用
+        if node_id and not any(char in node_id for char in ['-', ' ']) and node_id.replace('_', '').isalnum():
+            return node_id
+        
+        # 根据模块类型生成有意义的变量名
+        type_mapping = {
+            "questionInput": "user_input",
+            "aiChat": "ai_chat", 
+            "confirmreply": "confirm_reply",
+            "knowledgesSearch": "kb_search",
+            "databaseQuery": "kb_search",  # 添加对databaseQuery的支持
+            "pdf2md": "doc_parser",
+            "addMemoryVariable": "memory_var",
+            "infoClass": "info_class",
+            "codeFragment": "code_fragment",
+            "forEach": "for_each",
+            "httpInvoke": "http_invoke"
+        }
+        
+        base_name = type_mapping.get(module_type, "node")
+        
+        # 处理重复的变量名
+        if base_name not in node_counter:
+            node_counter[base_name] = 0
+            return base_name
+        else:
+            node_counter[base_name] += 1
+            return f"{base_name}_{node_counter[base_name]}"
+
+    @staticmethod
+    def _generate_node_code(node: dict, node_counter: dict) -> str:
         """生成单个节点的代码"""
         node_id = node.get("id")
         module_type = node["data"].get("moduleType")
         position = node.get("position", {"x": 0, "y": 0})
         
-        custom_inputs = FlowInterpreter._extract_custom_inputs(node["data"])
+        # 生成有效的Python变量名
+        var_name = FlowInterpreter._sanitize_variable_name(node_id, module_type, node_counter)
         
-        if module_type == "addMemoryVariable":
-            # 特殊处理addMemoryVariable
-            code_lines = []
-            code_lines.append(f"    memory_variable_inputs = []")
-            
-            for var in custom_inputs:
-                var_name = var["key"]
-                var_type = var["value_type"]
-                code_lines.append(f"    {var_name} = {{")
-                code_lines.append(f'        "key": "{var_name}",')
-                code_lines.append(f'        "value_type": "{var_type}"')
-                code_lines.append(f"    }}")
-                code_lines.append(f"    memory_variable_inputs.append({var_name})")
-            
-            code_lines.append("")
-            code_lines.append(f"    graph.add_node(")
-            code_lines.append(f'        node_id="{node_id}",')
-            code_lines.append(f'        module_type="{module_type}",')
-            code_lines.append(f"        position={position},")
-            code_lines.append(f"        inputs=memory_variable_inputs")
-            code_lines.append(f"    )")
-            
-            return "\n".join(code_lines)
-        else:
-            # 普通节点处理
-            code_lines = []
-            code_lines.append(f"    graph.add_node(")
-            code_lines.append(f'        node_id="{node_id}",')
-            code_lines.append(f'        module_type="{module_type}",')
-            code_lines.append(f"        position={position},")
-            
-            if custom_inputs:
-                code_lines.append(f"        inputs={{")
-                for key, value in custom_inputs.items():
-                    formatted_value = FlowInterpreter._format_value(value)
-                    code_lines.append(f'            "{key}": {formatted_value},')
-                code_lines.append(f"        }}")
-            
-            code_lines.append(f"    )")
-            
-            return "\n".join(code_lines)
+        # 根据module_type获取对应的State类名
+        state_class_name = FlowInterpreter._get_state_class_name(module_type)
+        if not state_class_name:
+            raise ValueError(f"Unsupported module type: {module_type}")
+        
+        # 生成添加节点的代码，直接传递State类
+        code_lines = []
+        code_lines.append(f"    # 添加{module_type}节点")
+        code_lines.append("    graph.add_node(")
+        code_lines.append(f'        id="{var_name}",')
+        code_lines.append(f"        position={position},")
+        code_lines.append(f"        state={state_class_name}")
+        code_lines.append("    )")
+        
+        return "\n".join(code_lines)
     
     @staticmethod
-    def _generate_edge_code(edge: dict) -> str:
+    def _get_state_class_name(module_type: str) -> str:
+        """根据module_type获取对应的State类名称字符串"""
+        state_name_mapping = {
+            "questionInput": "QuestionInputState",
+            "aiChat": "AiChatState",
+            "confirmreply": "ConfirmReplyState",
+            "knowledgesSearch": "KnowledgeSearchState",
+            "databaseQuery": "KnowledgeSearchState",  # 添加对databaseQuery的支持
+            "pdf2md": "Pdf2MdState",
+            "addMemoryVariable": "AddMemoryVariableState",
+            "infoClass": "InfoClassState",
+            "codeFragment": "CodeFragmentState",
+            "forEach": "ForEachState",
+            "httpInvoke": "HttpInvokeState",
+        }
+        return state_name_mapping.get(module_type)
+
+    @staticmethod
+    def _get_state_class(module_type: str):
+        """根据module_type获取对应的State类"""
+        state_mapping = {
+            "questionInput": QuestionInputState,
+            "aiChat": AiChatState,
+            "confirmreply": ConfirmReplyState,
+            "knowledgesSearch": KnowledgeSearchState,
+            "databaseQuery": KnowledgeSearchState,  # 添加对databaseQuery的支持(假装有)
+            "pdf2md": Pdf2MdState,
+            "addMemoryVariable": AddMemoryVariableState,
+            "infoClass": InfoClassState,
+            "codeFragment": CodeFragmentState,
+            "forEach": ForEachState,
+            "httpInvoke": HttpInvokeState,
+        }
+        return state_mapping.get(module_type)
+    
+    @staticmethod
+    def _generate_edge_code(edge: dict, id_mapping: dict = None) -> str:
         """生成单个边的代码"""
         source = edge.get("source")
         target = edge.get("target")
         source_handle = edge.get("sourceHandle", "")
         target_handle = edge.get("targetHandle", "")
         
+        # 如果提供了ID映射，则使用新的节点ID
+        if id_mapping:
+            source = id_mapping.get(source, source)
+            target = id_mapping.get(target, target)
+        
         return f'    graph.add_edge("{source}", "{target}", "{source_handle}", "{target_handle}")'
     
     def _generate_header_code(self) -> List[str]:
         """生成代码头部（导入和初始化部分）"""
         code_lines = []
-        code_lines.append("from autoagentsai.graph import FlowGraph")
-        code_lines.append("")
+        code_lines.append("from autoagents_graph.agentify import FlowGraph, START")
+        code_lines.append("from autoagents_graph.agentify.models.GraphTypes import (")
+        code_lines.append("    QuestionInputState, AiChatState, ConfirmReplyState,")
+        code_lines.append("    KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,")
+        code_lines.append("    InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState")
+        code_lines.append(")")
         code_lines.append("")
         code_lines.append("def main():")
         code_lines.append("    graph = FlowGraph(")
@@ -199,24 +256,36 @@ class FlowInterpreter:
             生成的Python SDK代码字符串
         """
         code_lines = []
+        node_counter = {}  # 用于跟踪节点类型计数
+        id_mapping = {}    # 原始ID到新ID的映射
         
         # 1. 生成头部代码
         code_lines.extend(self._generate_header_code())
         
-        # 2. 生成节点代码
-        code_lines.append("    # 添加节点")
+        # 2. 先建立ID映射
         nodes = json_data.get("nodes", [])
         for node in nodes:
-            code_lines.append(FlowInterpreter._generate_node_code(node))
+            node_id = node.get("id")
+            module_type = node["data"].get("moduleType")
+            var_name = FlowInterpreter._sanitize_variable_name(node_id, module_type, node_counter)
+            id_mapping[node_id] = var_name
+        
+        # 重置计数器用于生成代码
+        node_counter.clear()
+        
+        # 3. 生成节点代码
+        code_lines.append("    # 添加节点")
+        for node in nodes:
+            code_lines.append(FlowInterpreter._generate_node_code(node, node_counter))
             code_lines.append("")
         
-        # 3. 生成边代码
+        # 4. 生成边代码
         code_lines.append("    # 添加连接边")
         edges = json_data.get("edges", [])
         for edge in edges:
-            code_lines.append(FlowInterpreter._generate_edge_code(edge))
+            code_lines.append(FlowInterpreter._generate_edge_code(edge, id_mapping))
         
-        # 4. 生成尾部代码
+        # 5. 生成尾部代码
         code_lines.extend(self._generate_footer_code())
         
         return "\n".join(code_lines)
