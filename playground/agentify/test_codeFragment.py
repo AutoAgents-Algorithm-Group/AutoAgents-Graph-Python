@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 import uuid
 
 from src.autoagents_graph.agentify import FlowGraph, START
-from src.autoagents_graph.agentify.types import QuestionInputState, CodeFragmentState, ConfirmReplyState
+from src.autoagents_graph.agentify.models import QuestionInputState, CodeFragmentState, ConfirmReplyState
 
 
 def main():
