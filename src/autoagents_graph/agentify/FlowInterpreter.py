@@ -245,12 +245,13 @@ class FlowInterpreter:
         code_lines.append("    main()")
         return code_lines
     
-    def from_json_to_code(self, json_data: dict) -> str:
+    def from_json_to_code(self, json_data: dict, output_path: str = None) -> str:
         """
         将JSON格式的流程图数据转换为SDK代码
         
         Args:
             json_data: 包含nodes和edges的JSON数据
+            output_path: 可选的输出文件路径，如果提供则自动保存代码到文件
             
         Returns:
             生成的Python SDK代码字符串
@@ -288,4 +289,47 @@ class FlowInterpreter:
         # 5. 生成尾部代码
         code_lines.extend(self._generate_footer_code())
         
-        return "\n".join(code_lines)
+        # 6. 生成最终代码字符串
+        generated_code = "\n".join(code_lines)
+        
+        # 7. 如果提供了输出路径，保存到文件
+        if output_path:
+            import os
+            # 确保输出目录存在
+            output_dir = os.path.dirname(output_path)
+            if output_dir and not os.path.exists(output_dir):
+                os.makedirs(output_dir, exist_ok=True)
+            
+            # 保存代码到文件
+            with open(output_path, "w", encoding="utf-8") as f:
+                f.write(generated_code)
+            print(f"代码已保存到: {output_path}")
+        
+        return generated_code
+    
+    def generate_workflow_file(self, json_data: dict, output_path: str = "generated_workflow.py", overwrite: bool = False) -> bool:
+        """
+        生成工作流Python文件的便捷方法
+        
+        Args:
+            json_data: 包含nodes和edges的JSON数据
+            output_path: 输出文件路径，默认为"generated_workflow.py"
+            overwrite: 是否覆盖已存在的文件，默认False
+            
+        Returns:
+            成功返回True，失败返回False
+        """
+        import os
+        
+        # 检查文件是否已存在
+        if os.path.exists(output_path) and not overwrite:
+            print(f"文件 {output_path} 已存在，如需覆盖请设置 overwrite=True")
+            return False
+        
+        try:
+            # 生成并保存代码
+            self.from_json_to_code(json_data, output_path)
+            return True
+        except Exception as e:
+            print(f"生成工作流文件失败: {str(e)}")
+            return False
