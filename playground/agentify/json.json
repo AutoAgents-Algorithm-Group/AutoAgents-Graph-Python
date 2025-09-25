@@ -1,19 +1,9 @@
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
-
-from src.autoagents_graph.agentify import FlowInterpreter
-
-
-def main():
-    # JSON数据：包含完整的工作流信息
-    json_data = {
+{
     "nodes": [
         {
             "id": "simpleInputId",
             "type": "custom",
-            "initialized": False,
+            "initialized": false,
             "position": {
                 "x": 0,
                 "y": 300
@@ -56,7 +46,7 @@ def main():
                     },
                     {
                         "valueType": "boolean",
-                        "description": "当未点击任何按钮时值为True",
+                        "description": "当未点击任何按钮时值为true",
                         "label": "未点击按钮",
                         "type": "source",
                         "targets": [],
@@ -79,23 +69,23 @@ def main():
                 "moduleType": "questionInput",
                 "inputs": [
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
                         "label": "联动激活",
                         "type": "target",
                         "keyType": "trigger",
-                        "value": False,
+                        "value": false,
                         "key": "switch"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
                         "label": "任一激活",
                         "type": "target",
                         "keyType": "triggerAny",
-                        "value": False,
+                        "value": false,
                         "key": "switchAny"
                     },
                     {
@@ -103,7 +93,7 @@ def main():
                         "description": "输入文本开关",
                         "label": "输入文本",
                         "type": "switch",
-                        "value": True,
+                        "value": true,
                         "key": "inputText"
                     },
                     {
@@ -111,7 +101,7 @@ def main():
                         "description": "上传文档开关",
                         "label": "上传文档",
                         "type": "switch",
-                        "value": True,
+                        "value": true,
                         "key": "uploadFile"
                     },
                     {
@@ -119,7 +109,7 @@ def main():
                         "description": "上传图片开关",
                         "label": "上传图片",
                         "type": "switch",
-                        "value": False,
+                        "value": false,
                         "key": "uploadPicture"
                     },
                     {
@@ -127,7 +117,7 @@ def main():
                         "description": "文档审查开关",
                         "label": "文档审查",
                         "type": "switch",
-                        "value": False,
+                        "value": false,
                         "key": "fileUpload"
                     },
                     {
@@ -135,7 +125,7 @@ def main():
                         "description": "是否开启文档比对功能",
                         "label": "是否文档对比",
                         "type": "checkBox",
-                        "value": False,
+                        "value": false,
                         "key": "fileContrast"
                     },
                     {
@@ -151,20 +141,20 @@ def main():
                         "description": "是否作为初始全局input",
                         "label": "是否作为初始全局input",
                         "type": "hidden",
-                        "value": True,
+                        "value": true,
                         "key": "initialInput"
                     }
                 ],
                 "intro": "用户输入入口,对话中用户的输入信息,与其他模块连接,一般作为起始模块",
                 "name": "用户提问",
-                "disabled": False,
+                "disabled": false,
                 "category": "用户提问"
             }
         },
         {
             "id": "doc_parser",
             "type": "custom",
-            "initialized": False,
+            "initialized": false,
             "position": {
                 "x": 497.2741652021091,
                 "y": 340.8875219683656
@@ -210,27 +200,27 @@ def main():
                 "moduleType": "pdf2md",
                 "inputs": [
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
                         "label": "联动激活",
                         "type": "target",
                         "keyType": "trigger",
-                        "value": False,
+                        "value": false,
                         "key": "switch"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
                         "label": "任一激活",
                         "type": "target",
                         "keyType": "triggerAny",
-                        "value": False,
+                        "value": false,
                         "key": "switchAny"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "file",
                         "description": "",
                         "label": "文档信息",
@@ -245,18 +235,18 @@ def main():
                         "type": "selectPdf2mdModel",
                         "value": "general",
                         "key": "pdf2mdType",
-                        "required": True
+                        "required": true
                     }
                 ],
                 "intro": "通用文档解析，将pdf/doc等转成markdown格式",
                 "name": "通用文档解析",
-                "disabled": False
+                "disabled": false
             }
         },
         {
             "id": "kb_search",
             "type": "custom",
-            "initialized": False,
+            "initialized": false,
             "position": {
                 "x": 1000,
                 "y": 300
@@ -304,27 +294,27 @@ def main():
                 "moduleType": "knowledgesSearch",
                 "inputs": [
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
                         "label": "联动激活",
                         "type": "target",
                         "keyType": "trigger",
-                        "value": False,
+                        "value": false,
                         "key": "switch"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
                         "label": "任一激活",
                         "type": "target",
                         "keyType": "triggerAny",
-                        "value": False,
+                        "value": false,
                         "key": "switchAny"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "string",
                         "description": "引用变量：{{text}}",
                         "label": "信息输入",
@@ -339,7 +329,7 @@ def main():
                         "type": "selectDataset",
                         "value": [],
                         "key": "datasets",
-                        "required": True
+                        "required": true
                     },
                     {
                         "min": 0,
@@ -391,7 +381,7 @@ def main():
                         "description": "开启后将命中分段上下各1个分段内容同时召回，提高内容完整度。",
                         "label": "扩展上下文",
                         "type": "switch",
-                        "value": False,
+                        "value": false,
                         "key": "expandChunks"
                     },
                     {
@@ -399,7 +389,7 @@ def main():
                         "description": "开启时，仅检索当前用户有权限的知识库；关闭后，跳过权限校验查询所有关联知识库内容。",
                         "label": "权限访问控制",
                         "type": "switch",
-                        "value": False,
+                        "value": false,
                         "key": "enablePermission"
                     },
                     {
@@ -407,7 +397,7 @@ def main():
                         "description": "重排序模型是用于根据用户问题的相关性对已召回的切片进行重新排序的模型。其主要目的是提高搜索结果的精确度和相关性，确保用户查询能够获得最有价值和最相关的信息。注意：重排序模型资源消耗较大，开启后会降低检索速度。",
                         "label": "是否开启重排序",
                         "type": "switch",
-                        "value": False,
+                        "value": false,
                         "key": "enableRerank"
                     },
                     {
@@ -417,7 +407,7 @@ def main():
                         "type": "selectRerankModel",
                         "value": "oneapi-xinference:bce-rerank",
                         "key": "rerankModelType",
-                        "required": True
+                        "required": true
                     },
                     {
                         "min": 0,
@@ -437,14 +427,14 @@ def main():
                 ],
                 "intro": "在知识库中搜索结果，智能对话模块根据搜索结果进行回答，让回答更精准。",
                 "name": "知识库搜索",
-                "disabled": False,
+                "disabled": false,
                 "category": "知识库"
             }
         },
         {
             "id": "ai_chat",
             "type": "custom",
-            "initialized": False,
+            "initialized": false,
             "position": {
                 "x": 1505.4516695957818,
                 "y": 294.54833040421795
@@ -493,27 +483,27 @@ def main():
                 "moduleType": "aiChat",
                 "inputs": [
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
                         "label": "联动激活",
                         "type": "target",
                         "keyType": "trigger",
-                        "value": False,
+                        "value": false,
                         "key": "switch"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
                         "label": "任一激活",
                         "type": "target",
                         "keyType": "triggerAny",
-                        "value": False,
+                        "value": false,
                         "key": "switchAny"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "string",
                         "description": "引用变量：{{text}}",
                         "label": "信息输入",
@@ -522,7 +512,7 @@ def main():
                         "key": "text"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "image",
                         "description": "引用变量：{{images}}",
                         "label": "图片输入",
@@ -531,7 +521,7 @@ def main():
                         "key": "images"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "search",
                         "description": "引用变量：{{knSearch}}",
                         "label": "知识库搜索结果",
@@ -540,7 +530,7 @@ def main():
                         "key": "knSearch"
                     },
                     {
-                        "connected": False,
+                        "connected": false,
                         "valueType": "text",
                         "description": "知识库高级配置",
                         "label": "知识库高级配置",
@@ -549,7 +539,7 @@ def main():
                         "key": "knConfig"
                     },
                     {
-                        "connected": False,
+                        "connected": false,
                         "min": 0,
                         "max": 6,
                         "valueType": "chatHistory",
@@ -567,7 +557,7 @@ def main():
                         "type": "selectChatModel",
                         "value": "doubao-deepseek-v3",
                         "key": "model",
-                        "required": True
+                        "required": true
                     },
                     {
                         "valueType": "string",
@@ -586,12 +576,12 @@ def main():
                         "key": "quotePrompt"
                     },
                     {
-                        "connected": False,
+                        "connected": false,
                         "valueType": "boolean",
                         "description": "控制回复内容是否输出给用户",
                         "label": "回复对用户可见",
                         "type": "switch",
-                        "value": True,
+                        "value": true,
                         "key": "stream"
                     },
                     {
@@ -641,14 +631,14 @@ def main():
                 ],
                 "intro": "AI 对话模型，根据信息输入和提示词（Prompt）加工生成所需信息，展示给用户，完成与用户互动。",
                 "name": "智能对话",
-                "disabled": False,
+                "disabled": false,
                 "category": "大模型"
             }
         },
         {
             "id": "confirm_reply",
             "type": "custom",
-            "initialized": False,
+            "initialized": false,
             "position": {
                 "x": 2002.7258347978911,
                 "y": 291.8224956063269
@@ -681,36 +671,36 @@ def main():
                 "moduleType": "confirmreply",
                 "inputs": [
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
                         "label": "联动激活",
                         "type": "target",
                         "keyType": "trigger",
-                        "value": False,
+                        "value": false,
                         "key": "switch"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "boolean",
                         "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
                         "label": "任一激活",
                         "type": "target",
                         "keyType": "triggerAny",
-                        "value": False,
+                        "value": false,
                         "key": "switchAny"
                     },
                     {
-                        "connected": False,
+                        "connected": false,
                         "valueType": "boolean",
                         "description": "控制回复内容是否输出给用户",
                         "label": "回复对用户可见",
                         "type": "switch",
-                        "value": True,
+                        "value": true,
                         "key": "stream"
                     },
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "string",
                         "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
                         "label": "回复内容",
@@ -721,14 +711,14 @@ def main():
                 ],
                 "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
                 "name": "确定回复",
-                "disabled": False,
+                "disabled": false,
                 "category": "大模型"
             }
         },
         {
             "id": "save_memory",
             "type": "custom",
-            "initialized": False,
+            "initialized": false,
             "position": {
                 "x": 2500,
                 "y": 300
@@ -738,7 +728,7 @@ def main():
                 "moduleType": "addMemoryVariable",
                 "inputs": [
                     {
-                        "connected": True,
+                        "connected": true,
                         "valueType": "string",
                         "description": "",
                         "label": "用户反馈内容",
@@ -750,7 +740,7 @@ def main():
                 ],
                 "intro": "使用该组件将变量存为记忆变量后，可以在智能体的其他组件中引用",
                 "name": "添加记忆变量",
-                "disabled": False,
+                "disabled": false,
                 "category": "高阶能力"
             }
         }
@@ -769,7 +759,7 @@ def main():
             "sourceY": 1061.0002103871154,
             "targetY": 478.387557438832,
             "targetX": 493.27408816531374,
-            "animated": False
+            "animated": false
         },
         {
             "id": "3b987728-3caf-4710-9362-55ebffd2af03",
@@ -784,7 +774,7 @@ def main():
             "sourceY": 923.000131380478,
             "targetY": 535.3875737965068,
             "targetX": 493.27408816531374,
-            "animated": False
+            "animated": false
         },
         {
             "id": "086732de-4e40-4eb8-8aa6-84f99da4f7a8",
@@ -799,7 +789,7 @@ def main():
             "sourceY": 877.0001605021969,
             "targetY": 494.5000518281412,
             "targetX": 995.9999229632047,
-            "animated": False
+            "animated": false
         },
         {
             "id": "bfa4a38f-8163-4438-9884-b1d774de4d63",
@@ -814,7 +804,7 @@ def main():
             "sourceY": 702.8876594447062,
             "targetY": 489.04838223235913,
             "targetX": 1501.4517589307802,
-            "animated": False
+            "animated": false
         },
         {
             "id": "7a5f3457-e7a5-4947-a729-907ea6f78a42",
@@ -829,7 +819,7 @@ def main():
             "sourceY": 1798.0003875930404,
             "targetY": 603.0484565406571,
             "targetX": 1501.4517589307802,
-            "animated": False
+            "animated": false
         },
         {
             "id": "cbffc581-cfb7-4cf0-b2d5-caba2d81021d",
@@ -844,7 +834,7 @@ def main():
             "sourceY": 1843.5486603926884,
             "targetY": 429.32248948384495,
             "targetX": 1998.725591389302,
-            "animated": False
+            "animated": false
         },
         {
             "id": "cabfcbc3-c580-4f59-a53a-5312ae392600",
@@ -859,7 +849,7 @@ def main():
             "sourceY": 1797.5486895144072,
             "targetY": 597.3225639651696,
             "targetX": 1998.725591389302,
-            "animated": False
+            "animated": false
         },
         {
             "id": "4a80e240-da63-4879-8dde-46d12cdfe18f",
@@ -874,7 +864,7 @@ def main():
             "sourceY": 817.8225889342483,
             "targetY": 384.50001296369015,
             "targetX": 2496.0000893349984,
-            "animated": False
+            "animated": false
         },
         {
             "id": "c76bc05b-73bc-41f7-801f-10e2493e9e22",
@@ -889,7 +879,7 @@ def main():
             "sourceY": 1797.5486895144072,
             "targetY": 384.50001296369015,
             "targetX": 2496.0000893349984,
-            "animated": False
+            "animated": false
         }
     ],
     "position": [
@@ -903,22 +893,3 @@ def main():
         "zoom": 0.2712727487969096
     }
 }
-
-    # 创建FlowInterpreter实例
-    interpreter = FlowInterpreter(
-        auth_key="7217394b7d3e4becab017447adeac239",
-        auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
-        base_url="https://uat.agentspro.cn",
-    )
-
-    # 生成SDK代码
-    generated_code = interpreter.from_json_to_code(json_data)
-
-    # 保存生成的代码
-    with open("generated_workflow.py", "w", encoding="utf-8") as f:
-        f.write(generated_code)
-        print(generated_code)
-
-
-if __name__ == "__main__":
-    main()

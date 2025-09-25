@@ -320,21 +320,25 @@ class StateConverter:
 
     @staticmethod
     def create_node_from_state(
-        state: BaseNodeState,
+        state,  # 可以是BaseNodeState实例或类
         node_id: str,
         position: Dict[str, float]
     ) -> tuple[str, str, Dict[str, float], Dict[str, Any], Dict[str, Any]]:
         """
-        从State对象创建节点所需的所有参数
+        从State对象或类创建节点所需的所有参数
         
         Args:
-            state: 节点状态对象
+            state: 节点状态对象或状态类
             node_id: 节点ID
             position: 节点位置
             
         Returns:
             tuple[node_id, module_type, position, inputs, outputs]
         """
+        # 如果state是类，创建一个默认实例
+        if isinstance(state, type) and issubclass(state, BaseNodeState):
+            state = state()
+        
         module_type = StateConverter.to_module_type(state)
         inputs, outputs = StateConverter.to_inputs_outputs(state)
         
@@ -349,8 +353,10 @@ class NodeValidator:
     @staticmethod
     def validate_node_params(id: str, state):
         """验证节点参数"""
-        if not isinstance(state, BaseNodeState):
-            raise ValueError("state parameter must be an instance of BaseNodeState")
+        # 检查state是否是BaseNodeState的实例或子类
+        if not (isinstance(state, BaseNodeState) or 
+                (isinstance(state, type) and issubclass(state, BaseNodeState))):
+            raise ValueError("state parameter must be an instance of BaseNodeState or a BaseNodeState subclass")
         
         if not id or not isinstance(id, str):
             raise ValueError("node id must be a non-empty string")

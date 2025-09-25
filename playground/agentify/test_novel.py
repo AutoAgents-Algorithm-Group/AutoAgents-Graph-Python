@@ -1,17 +1,15 @@
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.models import (
-    QuestionInputState,
-    AiChatState,
-    ForEachState,
-    ConfirmReplyState,
-    AddMemoryVariableState
-)
+from autoagents_graph.agentify.models import QuestionInputState, KnowledgeSearchState, AiChatState, ConfirmReplyState, ForEachState,AddMemoryVariableState
 
 def main():
     graph = FlowGraph(
-        personal_auth_key="your_auth_key",
-        personal_auth_secret="your_auth_secret",
-        base_url="https://test.agentspro.cn"
+        personal_auth_key="7217394b7d3e4becab017447adeac239",
+        personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
+        base_url="https://uat.agentspro.cn"
     )
 
     # 用户输入节点

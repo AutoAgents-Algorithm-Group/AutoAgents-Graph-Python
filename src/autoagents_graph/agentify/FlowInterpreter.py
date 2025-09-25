@@ -1,5 +1,4 @@
 from typing import List
-from .NodeRegistry import NODE_TEMPLATES
 from .models.GraphTypes import (
     QuestionInputState, AiChatState, ConfirmReplyState, 
     KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
@@ -21,54 +20,73 @@ class FlowInterpreter:
     def _extract_custom_inputs(node_data: dict) -> dict:
         """提取用户自定义的inputs，包含所有用户明确指定的参数"""
         module_type = node_data.get("moduleType")
-        template = NODE_TEMPLATES.get(module_type, {})
-        template_inputs = template.get("inputs", [])
         node_inputs = node_data.get("inputs", [])
         
         custom_inputs = {}
         
         if module_type == "addMemoryVariable":
-            # 特殊处理addMemoryVariable
-            memory_vars = []
-            for inp in node_inputs:
-                if inp.get("type") == "agentMemoryVar":
-                    memory_vars.append({
-                        "key": inp.get("key"),
-                        "value_type": inp.get("valueType", "String")
-                    })
-            return memory_vars
+            # 特殊处理addMemoryVariable - 返回空字典，因为它没有特殊参数
+            return custom_inputs
         
-        # 创建模板字段的映射，包含类型信息
-        template_fields = {}
-        for template_input in template_inputs:
-            key = template_input.get("key")
-            template_fields[key] = {
-                "default_value": template_input.get("value"),
-                "type": template_input.get("type"),
-                "keyType": template_input.get("keyType")
-            }
-        
-        # 提取用户明确指定的参数值
+        # 提取用户明确指定的参数值，只提取非系统字段的重要参数
         for node_input in node_inputs:
             key = node_input.get("key")
             value = node_input.get("value")
+            field_type = node_input.get("type", "")
+            key_type = node_input.get("keyType", "")
             
             # 跳过trigger相关的系统字段
-            if key in template_fields:
-                field_info = template_fields[key]
-                key_type = field_info.get("keyType")
-                field_type = field_info.get("type")
+            if key_type in ["trigger", "triggerAny"]:
+                continue
                 
-                # 跳过trigger类型的字段（这些是系统字段）
-                if key_type in ["trigger", "triggerAny"]:
-                    continue
-                    
-                # 跳过target类型但不是用户输入的字段
-                if field_type == "target" and key not in ["text", "images", "files", "knSearch"]:
-                    continue
+            # 跳过target类型的字段（这些是连接字段，不是配置参数）
+            if field_type == "target":
+                continue
             
-            # 包含用户明确指定的所有参数值
-            if "value" in node_input:
+            # 只包含有意义的配置参数
+            meaningful_keys = {
+                "inputText", "uploadFile", "uploadPicture", "fileUpload", "fileContrast",
+                "initialInput", "stream", "pdf2mdType", "datasets", "similarity", 
+                "vectorSimilarWeight", "topK", "expandChunks", "enablePermission",
+                "enableRerank", "rerankModelType", "rerankTopK", "historyText",
+                "model", "systemPrompt", "quotePrompt", "temperature", "topP", "maxToken",
+                "text"  # 对于confirmreply的预设文本
+            }
+            
+            # 包含有意义的参数，且值不为默认值的情况
+            if key in meaningful_keys and "value" in node_input:
+                # 过滤掉一些明显的默认值
+                if key == "initialInput" and value is True:
+                    continue  # 跳过默认的initialInput=True
+                if key in ["switch", "switchAny"] and value is False:
+                    continue  # 跳过默认的trigger值
+                if key == "stream" and value is True:
+                    continue  # 跳过默认的stream=True
+                if key == "historyText" and value == 3:
+                    continue  # 跳过默认的historyText=3
+                if key == "topP" and value == 1:
+                    continue  # 跳过默认的topP=1
+                if key == "maxToken" and value == 5000:
+                    continue  # 跳过默认的maxToken=5000
+                if key == "similarity" and value == 0.3:
+                    continue  # 跳过默认的similarity=0.3
+                if key == "topK" and value == 5:
+                    continue  # 跳过默认的topK=5
+                if key == "vectorSimilarWeight" and value == 1:
+                    continue  # 跳过默认的vectorSimilarWeight=1
+                if key == "temperature" and value == 0.2:
+                    continue  # 跳过默认的temperature=0.2
+                if key == "rerankTopK" and value == 10:
+                    continue  # 跳过默认的rerankTopK=10
+                if key in ["expandChunks", "enablePermission", "enableRerank"] and value is False:
+                    continue  # 跳过默认的False值
+                if key == "text" and value == "":
+                    continue  # 跳过空的text值
+                if key == "datasets" and (value == [] or not value):
+                    continue  # 跳过空的datasets
+                if key == "systemPrompt" and value == "":
+                    continue  # 跳过空的systemPrompt
+                    
                 custom_inputs[key] = value
                 
         return custom_inputs
@@ -134,7 +152,6 @@ class FlowInterpreter:
         """生成单个节点的代码"""
         node_id = node.get("id")
         module_type = node["data"].get("moduleType")
-        position = node.get("position", {"x": 0, "y": 0})
         
         # 生成有效的Python变量名
         var_name = FlowInterpreter._sanitize_variable_name(node_id, module_type, node_counter)
@@ -144,13 +161,30 @@ class FlowInterpreter:
         if not state_class_name:
             raise ValueError(f"Unsupported module type: {module_type}")
         
-        # 生成添加节点的代码，直接传递State类
+        # 提取用户自定义的参数
+        custom_inputs = FlowInterpreter._extract_custom_inputs(node["data"])
+        
+        # 生成添加节点的代码，实例化State类并传入参数
         code_lines = []
-        code_lines.append(f"    # 添加{module_type}节点")
+        code_lines.append(f"    # {node['data'].get('name', module_type)}节点")
         code_lines.append("    graph.add_node(")
-        code_lines.append(f'        id="{var_name}",')
-        code_lines.append(f"        position={position},")
-        code_lines.append(f"        state={state_class_name}")
+        
+        # 处理START节点的特殊情况
+        if module_type == "questionInput" and node_id == "simpleInputId":
+            code_lines.append("        id=START,")
+        else:
+            code_lines.append(f'        id="{var_name}",')
+        
+        # 如果有自定义参数，则生成带参数的实例化代码
+        if custom_inputs:
+            code_lines.append(f"        state={state_class_name}(")
+            for key, value in custom_inputs.items():
+                formatted_value = FlowInterpreter._format_value(value)
+                code_lines.append(f"            {key}={formatted_value},")
+            code_lines.append("        )")
+        else:
+            code_lines.append(f"        state={state_class_name}()")
+        
         code_lines.append("    )")
         
         return "\n".join(code_lines)
@@ -204,24 +238,24 @@ class FlowInterpreter:
             source = id_mapping.get(source, source)
             target = id_mapping.get(target, target)
         
-        return f'    graph.add_edge("{source}", "{target}", "{source_handle}", "{target_handle}")'
+        # 处理START节点的特殊情况
+        source_formatted = "START" if source == "START" else f'"{source}"'
+        target_formatted = "START" if target == "START" else f'"{target}"'
+            
+        return f'    graph.add_edge({source_formatted}, {target_formatted}, "{source_handle}", "{target_handle}")'
     
     def _generate_header_code(self) -> List[str]:
         """生成代码头部（导入和初始化部分）"""
         code_lines = []
         code_lines.append("from autoagents_graph.agentify import FlowGraph, START")
-        code_lines.append("from autoagents_graph.agentify.models.GraphTypes import (")
-        code_lines.append("    QuestionInputState, AiChatState, ConfirmReplyState,")
-        code_lines.append("    KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,")
-        code_lines.append("    InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState")
-        code_lines.append(")")
+        code_lines.append("from autoagents_graph.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState")
         code_lines.append("")
         code_lines.append("def main():")
         code_lines.append("    graph = FlowGraph(")
-        code_lines.append(f'            personal_auth_key="{self.auth_key}",')
-        code_lines.append(f'            personal_auth_secret="{self.auth_secret}",')
-        code_lines.append(f'            base_url="{self.base_url}"')
-        code_lines.append("        )")
+        code_lines.append(f'        personal_auth_key="{self.auth_key}",')
+        code_lines.append(f'        personal_auth_secret="{self.auth_secret}",')
+        code_lines.append(f'        base_url="{self.base_url}"')
+        code_lines.append("    )")
         code_lines.append("")
         return code_lines
     
@@ -230,16 +264,13 @@ class FlowInterpreter:
         """生成代码尾部（编译和main函数）"""
         code_lines = []
         code_lines.append("")
-        code_lines.append("    # 编译, 导入配置，点击确定")
+        code_lines.append("    # 编译")
         code_lines.append("    graph.compile(")
-        code_lines.append('            name="从JSON生成的工作流",')
-        code_lines.append('            intro="这是从JSON数据反向生成的工作流",')
-        code_lines.append('            category="自动生成",')
-        code_lines.append('            prologue="你好！这是自动生成的工作流。",')
-        code_lines.append('            shareAble=True,')
-        code_lines.append('            allowVoiceInput=False,')
-        code_lines.append('            autoSendVoice=False')
-        code_lines.append("        )")
+        code_lines.append('        name="知识库问答助手",')
+        code_lines.append('        intro="基于知识库的智能问答系统",')
+        code_lines.append('        category="问答助手",')
+        code_lines.append('        prologue="您好！我是知识库问答助手，请提出您的问题。"')
+        code_lines.append("    )")
         code_lines.append("")
         code_lines.append('if __name__ == "__main__":')
         code_lines.append("    main()")
@@ -267,8 +298,13 @@ class FlowInterpreter:
         for node in nodes:
             node_id = node.get("id")
             module_type = node["data"].get("moduleType")
-            var_name = FlowInterpreter._sanitize_variable_name(node_id, module_type, node_counter)
-            id_mapping[node_id] = var_name
+            
+            # 处理START节点的特殊情况
+            if module_type == "questionInput" and node_id == "simpleInputId":
+                id_mapping[node_id] = "START"
+            else:
+                var_name = FlowInterpreter._sanitize_variable_name(node_id, module_type, node_counter)
+                id_mapping[node_id] = var_name
         
         # 重置计数器用于生成代码
         node_counter.clear()

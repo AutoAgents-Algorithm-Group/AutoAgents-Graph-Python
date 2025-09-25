@@ -8,65 +8,69 @@ def main():
         base_url="https://uat.agentspro.cn"
     )
 
-    # 添加节点
     # 用户提问节点
     graph.add_node(
         id=START,
         state=QuestionInputState(
             inputText=True,
-            uploadFile=True,
-            uploadPicture=False,
-            fileUpload=False,
-            fileContrast=False,
+            uploadFile=True
         )
     )
 
-    # 通用文档解析节点
+    # 文档解析节点
     graph.add_node(
         id="doc_parser",
-        state=Pdf2MdState(
-            pdf2mdType="general",
-        )
+        state=Pdf2MdState()
     )
 
     # 知识库搜索节点
     graph.add_node(
         id="kb_search",
         state=KnowledgeSearchState(
-            rerankModelType="oneapi-xinference:bce-rerank",
+            datasets=["kb_001"],
+            similarity=0.3,
+            topK=5
         )
     )
 
-    # 智能对话节点
+    # AI对话节点
     graph.add_node(
         id="ai_chat",
         state=AiChatState(
             model="doubao-deepseek-v3",
             quotePrompt="你是一个专业的问答助手，请根据知识库内容回答用户问题",
+            temperature=0.2,
+            stream=True
         )
     )
 
-    # 确定回复节点
+    # 确认回复节点
     graph.add_node(
         id="confirm_reply",
-        state=ConfirmReplyState()
+        state=ConfirmReplyState(
+            stream=True
+        )
     )
 
-    # 添加记忆变量节点
+    # 记忆变量节点
     graph.add_node(
         id="save_memory",
         state=AddMemoryVariableState()
     )
 
-    # 添加连接边
+    # 连接边
     graph.add_edge(START, "doc_parser", "finish", "switchAny")
     graph.add_edge(START, "doc_parser", "files", "files")
+    
     graph.add_edge(START, "kb_search", "userChatInput", "text")
+    
     graph.add_edge("doc_parser", "ai_chat", "pdf2mdResult", "text")
     graph.add_edge("kb_search", "ai_chat", "quoteQA", "knSearch")
+    
     graph.add_edge("ai_chat", "confirm_reply", "finish", "switchAny")
     graph.add_edge("ai_chat", "confirm_reply", "answerText", "text")
-    graph.add_edge("confirm_reply", "save_memory", "finish", "")
+    
+    graph.add_edge("confirm_reply", "save_memory", "finish", "switchAny")
     graph.add_edge("ai_chat", "save_memory", "answerText", "feedback")
 
     # 编译

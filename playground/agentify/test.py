@@ -1,13 +1,11 @@
-import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-from src.autoagents_graph.agentify import FlowGraph, START
-from src.autoagents_graph.agentify.models import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
+from autoagents_graph.agentify import FlowGraph, START
+from autoagents_graph.agentify.models import QuestionInputState, KnowledgeSearchState, AiChatState, ConfirmReplyState, ForEachState
 
-
-def main():   
-    # 初始化工作流
+def main():
     graph = FlowGraph(
         personal_auth_key="7217394b7d3e4becab017447adeac239",
         personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
@@ -16,82 +14,59 @@ def main():
 
     # 添加节点
     graph.add_node(
-        id=START,
+        id=START,  # 或者使用 "simpleInputId"
         state=QuestionInputState(
-            uploadFile=True
+            inputText=True,
+            uploadFile=False,
+            uploadPicture=False,
+            fileContrast=False,
+            initialInput=True
         )
     )
 
+    # 循环处理模块
     graph.add_node(
-        id="pdf2md1",
-        state=Pdf2MdState(
-            pdf2mdType="deep_pdf2md"
-        )
+        id="batchProcessor",
+        state=ForEachState()
     )
 
-
+    # 循环内：AI分析每个项目
     graph.add_node(
-        id="confirmreply1",
+        id="analyzeItem",
+        state=AiChatState(
+            model="doubao-deepseek-v3",
+            quotePrompt="你是数据分析专家，请对以下内容进行简要分析和总结。",
+            temperature=0.3
+        )
+    )
+    
+    # 循环完成后的总结
+    graph.add_node(
+        id="finalSummary",
         state=ConfirmReplyState(
-            text=r"文件内容：{{@pdf2md1_pdf2mdResult}}",
+            text="批量分析完成！已成功处理所有项目。",
             isvisible=True
         )
     )
 
-    graph.add_node(
-        id="ai1",
-        state=AiChatState(
-            model="doubao-deepseek-v3",
-            quotePrompt="""<角色>
-你是一个文件解答助手，你可以根据文件内容，解答用户的问题
-</角色>
-
-<文件内容>
-{{@pdf2md1_pdf2mdResult}}
-</文件内容>
-
-<用户问题>
-{{@question1_userChatInput}}
-</用户问题>
-            """
-        )
-    )
-
-    graph.add_node(
-        id="addMemoryVariable1",
-        state=AddMemoryVariableState(
-            variables={
-                "question1_userChatInput": "string",
-                "pdf2md1_pdf2mdResult": "string", 
-                "ai1_answerText": "string"
-            }
-        )
-    )
-
     # 添加连接边
-    graph.add_edge(START, "pdf2md1", "finish", "switchAny")
-    graph.add_edge(START, "pdf2md1", "files", "files")
-    graph.add_edge(START, "addMemoryVariable1", "userChatInput", "question1_userChatInput")
-
-    graph.add_edge("pdf2md1", "confirmreply1", "finish", "switchAny")
-    graph.add_edge("pdf2md1", "addMemoryVariable1", "pdf2mdResult", "pdf2md1_pdf2mdResult")
-
-    graph.add_edge("confirmreply1", "ai1", "finish", "switchAny")
-
-    graph.add_edge("ai1", "addMemoryVariable1", "answerText", "ai1_answerText")
+    graph.add_edge(START, "batchProcessor", "finish", "switchAny")
+    graph.add_edge(START, "batchProcessor", "userChatInput", "items")
     
-    # json = graph.to_json()
-    # print(json)
+    # 循环结构连接
+    graph.add_edge("batchProcessor", "analyzeItem", "loopStart", "switchAny")
+    graph.add_edge("analyzeItem", "batchProcessor", "finish", "loopEnd")
+    
+    # 循环完成后触发总结
+    graph.add_edge("batchProcessor", "finalSummary", "finish", "switchAny")
 
-    # 编译工作流
+    # 编译
     graph.compile(
-        name="文档助手",
-        intro="这是一个专业的文档助手，可以帮助用户分析和理解文档内容",
-        category="文档处理",
-        prologue="你好！我是你的文档助手，请上传文档，我将帮您分析内容。"
+        name="循环批量处理助手",
+        intro="这是一个批量处理系统，可以对您的数据列表进行逐项分析",
+        category="批量处理",
+        prologue="请输入需要分析的数据列表（JSON数组格式），例如：[\"项目1\", \"项目2\", \"项目3\"]"
     )
-
 
 if __name__ == "__main__":
     main()
-

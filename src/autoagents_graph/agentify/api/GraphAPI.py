@@ -61,4 +61,12 @@ def get_jwt_token_api(
 
     url = f"{base_url}/openapi/user/auth"
     response = requests.get(url, headers=headers)
-    return response.json()["data"]["token"]
+    
+    if response.status_code != 200:
+        raise Exception(f"API请求失败，状态码: {response.status_code}, 响应: {response.text}")
+    
+    response_data = response.json()
+    if response_data.get("data") is None:
+        raise Exception(f"认证失败: {response_data.get('msg', '未知错误')}")
+    
+    return response_data["data"]["token"]
