@@ -911,13 +911,26 @@ def main():
         base_url="https://uat.agentspro.cn",
     )
 
-    # 生成SDK代码
-    generated_code = interpreter.from_json_to_code(json_data)
+    # 方法1: 生成SDK代码并自动保存（推荐）
+    success = interpreter.generate_workflow_file(
+        json_data, 
+        output_path="outputs/my_custom_workflow.py",
+        overwrite=True
+    )
+    
+    if success:
+        print("✅ 工作流文件生成成功！")
+    else:
+        print("❌ 工作流文件生成失败！")
 
-    # 保存生成的代码
-    with open("generated_workflow.py", "w", encoding="utf-8") as f:
-        f.write(generated_code)
-        print(generated_code)
+    # 方法2: 只生成代码字符串（如果需要进一步处理）
+    generated_code = interpreter.from_json_to_code(json_data)
+    print("生成的代码预览：")
+    print(generated_code[:200] + "..." if len(generated_code) > 200 else generated_code)
+    
+    # 方法3: 生成代码并保存到指定路径
+    generated_code = interpreter.from_json_to_code(json_data, "playground/agentify/generated_workflow.py")
+    print("✅ 代码已同时保存到备份路径")
 
 
 if __name__ == "__main__":
