@@ -23,13 +23,11 @@ def main():
         )
     )
 
-    # 文档解析节点
     graph.add_node(
         id="doc_parser",
         state=Pdf2MdState()
     )
 
-    # 知识库搜索节点
     graph.add_node(
         id="kb_search",
         state=KnowledgeSearchState(
