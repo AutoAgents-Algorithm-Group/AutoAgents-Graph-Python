@@ -30,11 +30,16 @@ class DataConverter:
             return None
         
         if isinstance(data, dict):
-            # 字典格式：直接包含键值对
-            # {"key1": "value1", "key2": "value2"} 转换为 [{"key": "key1", "value": "value1"}, {"key": "key2", "value": "value2"}]
+            # 字典格式：可能是简单键值对，也可能是完整的字段定义
             converted = []
             for key, value in data.items():
-                converted.append({"key": key, "value": value})
+                if isinstance(value, dict):
+                    # 如果value是字典，说明是完整的字段定义，保留所有字段
+                    field_def = {"key": key, **value}
+                    converted.append(field_def)
+                else:
+                    # 如果value是简单值，转换为基本格式
+                    converted.append({"key": key, "value": value})
             return converted
         
         # 其他类型不支持
@@ -61,8 +66,11 @@ class TemplateProcessor:
             return deepcopy(template_io)
 
         merged = []
+        template_keys = set()
+        
         # 遍历模板里的所有字段
         for t_item in template_io:
+            template_keys.add(t_item.get("key"))
             # 在用户自定义列表中找有没有和当前模板字段 key 一样的字段
             c_item = next((c for c in custom_io if c.get("key") == t_item.get("key")), None)
 
@@ -74,6 +82,11 @@ class TemplateProcessor:
             else:
                 # 用户没定义，直接用模板字段完整拷贝
                 merged.append(deepcopy(t_item))
+
+        # 添加模板中没有的自定义字段（如动态生成的labels输出）
+        for c_item in custom_io:
+            if c_item.get("key") not in template_keys:
+                merged.append(deepcopy(c_item))
 
         return merged
 
@@ -152,8 +165,6 @@ class StateConverter:
         # 获取state的所有字段值
         state_dict = state.model_dump(exclude_none=True)
         
-        # 提取基础字段（这些是inputs中的trigger相关字段）
-        base_fields = {"switch", "switchAny", "finish"}
         inputs = {}
         outputs = {}
         
@@ -219,7 +230,7 @@ class StateConverter:
             # 通用文档解析模块
             inputs.update({
                 "files": state_dict.get("files", []),
-                "pdf2mdType": state_dict.get("pdf2mdType", "general")
+                "pdf2mdType": state_dict.get("pdf2mdType", "deep_pdf2md")
             })
             
         elif module_type == "addMemoryVariable":

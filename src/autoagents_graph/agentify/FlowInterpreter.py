@@ -128,7 +128,6 @@ class FlowInterpreter:
             "aiChat": "ai_chat", 
             "confirmreply": "confirm_reply",
             "knowledgesSearch": "kb_search",
-            "databaseQuery": "kb_search",  # 添加对databaseQuery的支持
             "pdf2md": "doc_parser",
             "addMemoryVariable": "memory_var",
             "infoClass": "info_class",

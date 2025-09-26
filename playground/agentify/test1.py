@@ -1,11 +1,6 @@
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
-
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.models import QuestionInputState, KnowledgeSearchState, AiChatState, ConfirmReplyState, ForEachState,AddMemoryVariableState,InfoClassState,Pdf2MdState
-
-
+from autoagents_graph.agentify.models import QuestionInputState, InfoClassState, AiChatState, ConfirmReplyState, KnowledgeSearchState
+import uuid
 
 def main():
     graph = FlowGraph(
@@ -14,75 +9,104 @@ def main():
         base_url="https://uat.agentspro.cn"
     )
 
-    # 用户提问节点
+    # 用户输入节点
     graph.add_node(
         id=START,
         state=QuestionInputState(
             inputText=True,
-            uploadFile=True
+            uploadFile=False,
+            uploadPicture=False,
+            initialInput=True
         )
     )
 
+    # 信息分类节点
+    ad_label_id = str(uuid.uuid1())
+    other_label_id = str(uuid.uuid1())
+    
     graph.add_node(
-        id="doc_parser",
-        state=Pdf2MdState()
+        id="classifier",
+        state=InfoClassState(
+            model="doubao-deepseek-v3",
+            quotePrompt="""请判断用户输入是否与广告相关。
+
+广告相关包括：
+- 广告创意、文案、策划
+- 广告投放、渠道、效果
+- 营销推广、品牌宣传
+- 广告设计、制作
+- 广告法规、合规问题
+- 其他广告行业相关问题
+
+请严格按照JSON格式返回分类结果。""",
+            labels={
+                ad_label_id: "广告相关",
+                other_label_id: "其他问题"
+            }
+        )
     )
 
+    # 知识库搜索节点
     graph.add_node(
         id="kb_search",
         state=KnowledgeSearchState(
-            datasets=["kb_001"],
-            similarity=0.3,
-            topK=5
+            datasets=["ad_knowledge_base"],
+            similarity=0.2,
+            topK=20,
+            enableRerank=False
         )
     )
 
-    # AI对话节点
+    # 广告问题AI回答节点
     graph.add_node(
-        id="ai_chat",
+        id="ad_answer",
         state=AiChatState(
             model="doubao-deepseek-v3",
-            quotePrompt="你是一个专业的问答助手，请根据知识库内容回答用户问题",
-            temperature=0.2,
-            stream=True
+            quotePrompt="""你是一个专业的广告助手，请根据知识库内容回答用户的广告相关问题。
+
+要求：
+1. 基于知识库内容提供准确、专业的回答
+2. 如果知识库内容不足，请结合广告行业常识补充
+3. 回答要具体、实用，有助于解决用户问题
+4. 保持专业、友好的语调""",
+            temperature=0.1,
+            maxToken=3000,
+            isvisible=True,
+            historyText=3
         )
     )
 
-    # 确认回复节点
+    # 非广告问题回复节点
     graph.add_node(
-        id="confirm_reply",
+        id="other_reply",
         state=ConfirmReplyState(
-            stream=True
+            text="抱歉，我只能处理广告相关的问题。如果您有广告创意、投放策略、文案撰写等方面的需求，我很乐意为您提供帮助！",
+            isvisible=True
         )
     )
 
-    # 记忆变量节点
-    graph.add_node(
-        id="save_memory",
-        state=AddMemoryVariableState()
-    )
+    # 添加连接边
+    # 用户输入到分类器
+    graph.add_edge(START, "classifier", "finish", "switchAny")
+    graph.add_edge(START, "classifier", "userChatInput", "text")
 
-    # 连接边
-    graph.add_edge(START, "doc_parser", "finish", "switchAny")
-    graph.add_edge(START, "doc_parser", "files", "files")
-    
+    # 广告相关分支：分类器 -> 知识库搜索 -> AI回答
+    graph.add_edge("classifier", "kb_search", ad_label_id, "switchAny")
     graph.add_edge(START, "kb_search", "userChatInput", "text")
     
-    graph.add_edge("doc_parser", "ai_chat", "pdf2mdResult", "text")
-    graph.add_edge("kb_search", "ai_chat", "quoteQA", "knSearch")
-    
-    graph.add_edge("ai_chat", "confirm_reply", "finish", "switchAny")
-    graph.add_edge("ai_chat", "confirm_reply", "answerText", "text")
-    
-    graph.add_edge("confirm_reply", "save_memory", "finish", "switchAny")
-    graph.add_edge("ai_chat", "save_memory", "answerText", "feedback")
+    graph.add_edge("kb_search", "ad_answer", "finish", "switchAny")
+    graph.add_edge(START, "ad_answer", "userChatInput", "text")
+    graph.add_edge("kb_search", "ad_answer", "quoteQA", "knSearch")
 
-    # 编译
+    # 其他问题分支：分类器 -> 确定回复
+    graph.add_edge("classifier", "other_reply", other_label_id, "switchAny")
+
+    # 编译工作流
     graph.compile(
-        name="知识库问答助手",
-        intro="基于知识库的智能问答系统",
-        category="问答助手",
-        prologue="您好！我是知识库问答助手，请提出您的问题。"
+        name="智能广告处理助手",
+        intro="专业的广告助手，能够根据用户输入智能分类处理，为广告相关问题提供专业解答",
+        category="营销助手",
+        prologue="您好！我是您的专业广告助手，可以帮您解答广告创意、投放策略、文案撰写等各类广告相关问题。请告诉我您想了解什么？"
     )
 
 if __name__ == "__main__":

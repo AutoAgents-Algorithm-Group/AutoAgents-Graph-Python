@@ -87,13 +87,13 @@ graph.compile(
 ```python
 class QuestionInputState(BaseNodeState):
     """用户提问模块状态"""
-    inputText: Optional[bool] = True
-    uploadFile: Optional[bool] = False
-    uploadPicture: Optional[bool] = False
-    fileUpload: Optional[bool] = False
-    fileContrast: Optional[bool] = False
-    fileInfo: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
-    initialInput: Optional[bool] = True
+    inputText: Optional[bool] = True       # 是否启用文本输入（默认True）
+    uploadFile: Optional[bool] = False     # 是否启用文档上传（默认False）
+    uploadPicture: Optional[bool] = False  # 是否启用图片上传（默认False）
+    fileUpload: Optional[bool] = False      # 是否启用文档审查功能（默认False）
+    fileContrast: Optional[bool] = False     # 是否启用文档比对功能（默认False
+    fileInfo: Optional[List[Dict[str, Any]]] = Field(default_factory=list) # 文档分组信息（仅文档比对时使用）
+    initialInput: Optional[bool] = True      # 是否作为初始输入（默认True）
     userChatInput: Optional[str] = ""
     files: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
     images: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
@@ -107,15 +107,15 @@ graph.add_node(
     id=START,  # 第一个节点建议使用START常量，或者使用"simpleInputId"
     state=QuestionInputState(
         # 基础开关配置
-        inputText=True,          # 是否启用文本输入（默认True）
-        uploadFile=False,        # 是否启用文档上传（默认False）
-        uploadPicture=False,     # 是否启用图片上传（默认False）
+        inputText=True,         
+        uploadFile=False,       
+        uploadPicture=False,     
         
         # 高级功能开关
-        fileUpload=False,        # 是否启用文档审查功能（默认False）
-        fileContrast=False,      # 是否启用文档比对功能（默认False）
-        fileInfo=[],             # 文档分组信息（仅文档比对时使用）
-        initialInput=True        # 是否作为初始输入（默认True）
+        fileUpload=False,       
+        fileContrast=False,      
+        fileInfo=[],             
+        initialInput=True        
     )
 )
 ```
@@ -140,17 +140,7 @@ graph.add_node(
 ### 常用配置示例
 
 ```python
-# 示例1：纯文本输入
-graph.add_node(
-    id="text_input",
-    state=QuestionInputState(
-        inputText=True,
-        uploadFile=False,
-        uploadPicture=False
-    )
-)
-
-# 示例2：文档上传 + 文本输入
+# 示例：文档上传 + 文本输入
 graph.add_node(
     id="doc_input",
     state=QuestionInputState(
@@ -158,27 +148,6 @@ graph.add_node(
         uploadFile=True,      # 开启文档上传
         uploadPicture=False,  # 必须关闭图片上传
         fileUpload=False      # 不涉及文档审查，关闭文档审查
-    )
-)
-
-# 示例3：文档上传 + 文本输入 + 文档审查
-graph.add_node(
-    id="doc_input_with_review",
-    state=QuestionInputState(
-        inputText=True,
-        uploadFile=True,      # 开启文档上传
-        uploadPicture=False,  # 必须关闭图片上传
-        fileUpload=True       # 开启文档审查
-    )
-)
-
-# 示例4：图片上传 + 文本输入
-graph.add_node(
-    id="image_input",
-    state=QuestionInputState(
-        inputText=True,
-        uploadFile=False,     # 必须关闭文档上传
-        uploadPicture=True    # 开启图片上传
     )
 )
 ```
@@ -198,13 +167,13 @@ class AiChatState(BaseNodeState):
     text: Optional[str] = ""
     images: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
     knSearch: Optional[str] = ""
-    knConfig: Optional[str] = ""
-    historyText: Optional[int] = 3
-    model: Optional[str] = "doubao-deepseek-v3"
-    quotePrompt: Optional[str] = ""
-    stream: Optional[bool] = True
-    temperature: Optional[float] = 0.0
-    maxToken: Optional[int] = 5000
+    knConfig: Optional[str] = ""                   # 知识库高级配置（可选）
+    historyText: Optional[int] = 3                 # 上下文轮数 (0-6)
+    model: Optional[str] = "doubao-deepseek-v3"    # 选择LLM模型（必填，默认doubao-deepseek-v3）
+    quotePrompt: Optional[str] = ""                # 提示词（可选）
+    isvisible: Optional[bool] = True               # 是否对用户可见
+    temperature: Optional[float] = 0.0             # 创意性控制 (0-1)
+    maxToken: Optional[int] = 5000                 # 回复字数上限
     isResponseAnswerText: Optional[bool] = False
     answerText: Optional[str] = ""
 ```
@@ -216,17 +185,17 @@ graph.add_node(
     id="ai_chat",
     state=AiChatState(
         # 模型基础配置
-        model="doubao-deepseek-v3",              # 选择LLM模型（必填，默认doubao-deepseek-v3）
-        quotePrompt="你是一个智能助手...",         # 提示词（可选）
+        model="doubao-deepseek-v3",              
+        quotePrompt="你是一个智能助手...",         
         
         # 模型参数配置
-        temperature=0.1,                         # 创意性控制 (0-1)
-        maxToken=3000,                          # 回复字数上限
-        stream=True,                            # 是否对用户可见
-        historyText=3,                          # 上下文轮数 (0-6)
+        temperature=0.1,                        
+        maxToken=3000,                         
+        isvisible=True,                           
+        historyText=3,                         
         
         # 高级配置
-        knConfig="使用检索到的内容回答问题"       # 知识库高级配置（可选）
+        knConfig="使用检索到的内容回答问题"      
     )
 )
 
@@ -251,7 +220,7 @@ graph.add_node(
 - **模型配置要求**：
   - `model`：必须配置，决定使用哪种 LLM
   - `quotePrompt`：可配置为模型固定输入前缀，引导语气、身份、限制范围等
-  - `stream`：若开启，表示回复内容将展示给用户（对话类场景应开启）
+  - `isvisibl`：若开启，表示回复内容将展示给用户（对话类场景应开启）
 - **输出连接建议**：
   - 必须连接 `finish` 输出至下游模块的 `switchAny`，用于触发后续流程执行
   - `answerText` 输出为模型生成的回复内容，可按需传递到后续模块
@@ -259,43 +228,39 @@ graph.add_node(
 ### 常用配置示例
 
 ```python
-# 示例1：基础智能对话
-graph.add_node(
-    id="basic_chat",
-    state=AiChatState(
-        model="doubao-deepseek-v3",
-        temperature=0.1,
-        stream=True
-    )
-)
-# 通过边连接用户输入：graph.add_edge(START, "basic_chat", "userChatInput", "text")
+# 示例
+    graph.add_node(
+        id="ai1",
+        state=AiChatState(
+            model="doubao-deepseek-v3",
+            quotePrompt="""<角色>
+你是一个文件解答助手，你可以根据文件内容，解答用户的问题
+</角色>
 
-# 示例2：带知识库的智能对话
-graph.add_node(
-    id="kb_chat",
-    state=AiChatState(
-        model="doubao-deepseek-v3",
-        quotePrompt="基于提供的知识库内容回答问题",
-        knConfig="使用检索到的内容回答问题",
-        stream=True
-    )
-)
-# 通过边连接：
-# graph.add_edge(START, "kb_chat", "userChatInput", "text")
-# graph.add_edge("kb_search", "kb_chat", "quoteQA", "knSearch")
+<文件内容>
+{{@pdf2md1_pdf2mdResult}}
+</文件内容>
 
-# 示例3：图片分析对话
-graph.add_node(
-    id="image_chat",
-    state=AiChatState(
-        model="glm-4v-plus",
-        temperature=0.3,
-        stream=True
+<用户问题>
+{{@question1_userChatInput}}
+</用户问题>
+            """
+        )
     )
-)
-# 通过边连接：
-# graph.add_edge(START, "image_chat", "userChatInput", "text")
-# graph.add_edge(START, "image_chat", "images", "images")
+
+    graph.add_node(
+        id="addMemoryVariable1",
+        state=AddMemoryVariableState(
+            variables={
+                "question1_userChatInput": "string",
+                "pdf2md1_pdf2mdResult": "string", 
+                "ai1_answerText": "string"
+            }
+        )
+    )
+
+    # 添加边，将AI输出存为记忆变量
+    graph.add_edge("ai1", "addMemoryVariable1", "answerText", "ai1_answerText")
 ```
 
 ## 3. HTTP调用（httpInvoke）
@@ -404,26 +369,31 @@ Accept application/json"""
 ```python
 class ConfirmReplyState(BaseNodeState):
     """确定回复模块状态"""
-    stream: Optional[bool] = True
+    isvisible: Optional[bool] = True 
     text: Optional[str] = ""
 ```
 
 ### 使用方法
 
 ```python
+# 示例一：静态文本
 graph.add_node(
     id="confirm_reply",
     state=ConfirmReplyState(
-        # 回复内容配置
-        text="操作已完成！您的请求已成功处理。",  # 静态文本
-        
-        # 可见性控制
-        stream=True  # 是否对用户可见（默认True）
+        text="操作已完成！您的请求已成功处理。",  # 静态文本，可引用
     )
 )
 
-# 如果需要动态内容，通过边连接：
-# graph.add_edge("process_node", "confirm_reply", "processResult", "text")
+
+# 示例2：动态内容回复
+graph.add_node(
+    id="dynamic_reply",
+    state=ConfirmReplyState(
+         
+    )
+)
+
+
 ```
 
 ### 输出变量（可在后续模块中引用）
@@ -437,43 +407,12 @@ graph.add_node(
 
 - **内容灵活**：支持静态文本或变量引用动态内容
 - **格式支持**：支持 `\n` 换行符和变量占位符
-- **可见性控制**：通过 `stream` 控制是否对用户可见
+- **可见性控制**：通过 `isvisible` 控制是否对用户可见
 - **变量覆盖**：外部输入会覆盖静态配置的内容
 - **参数配置**：
   - `text`：回复内容（支持变量引用），可选参数
-  - `stream`：是否对用户可见，默认True
+  - `isvisible`：是否对用户可见，默认True
 
-### 常用配置示例
-
-```python
-# 示例1：静态确认回复
-graph.add_node(
-    id="success_confirm",
-    state=ConfirmReplyState(
-        text="操作成功完成！\n您的请求已处理。",
-        stream=True
-    )
-)
-
-# 示例2：动态内容回复
-graph.add_node(
-    id="dynamic_reply",
-    state=ConfirmReplyState(
-        stream=True
-    )
-)
-# 通过边连接动态内容：
-# graph.add_edge("process_node", "dynamic_reply", "processResult", "text")
-
-# 示例3：内部流转（不显示给用户）
-graph.add_node(
-    id="internal_log",
-    state=ConfirmReplyState(
-        text="内部处理完成",
-        stream=False  # 仅内部使用，不显示给用户
-    )
-)
-```
 
 ---
 
@@ -487,7 +426,7 @@ graph.add_node(
 ```python
 class KnowledgeSearchState(BaseNodeState):
     """知识库搜索模块状态"""
-    text: Optional[str] = ""
+    text: Optional[str] = "" # 
     datasets: Optional[List[str]] = Field(default_factory=list)
     similarity: Optional[float] = 0.2
     vectorSimilarWeight: Optional[float] = 1.0
@@ -521,8 +460,7 @@ graph.add_node(
     )
 )
 
-# 搜索文本通过边连接：
-# graph.add_edge(START, "knowledge_search", "userChatInput", "text")
+# 搜索文本通过边连接：graph.add_edge(START, "knowledge_search", "userChatInput", "text")
 ```
 
 ### 输出变量（可在后续模块中引用）
@@ -597,7 +535,7 @@ graph.add_node(
 class Pdf2MdState(BaseNodeState):
     """通用文档解析模块状态"""
     files: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
-    pdf2mdType: Optional[str] = "general"
+    pdf2mdType: Optional[str] = "deep_pdf2md" # 选填，默认为 "deep_pdf2md"
     pdf2mdResult: Optional[str] = ""
     success: Optional[bool] = False
     failed: Optional[bool] = False
@@ -609,13 +547,11 @@ class Pdf2MdState(BaseNodeState):
 graph.add_node(
     id="doc_parser",
     state=Pdf2MdState(
-        # 模型选择
-        pdf2mdType="general"  # 解析模型类型
+        
     )
 )
 
-# 文档文件通过边连接：
-# graph.add_edge(START, "doc_parser", "files", "files")
+# 文档文件通过边连接：graph.add_edge(START, "doc_parser", "files", "files")
 ```
 
 ### 输出变量（可在后续模块中引用）
@@ -644,10 +580,11 @@ graph.add_node(
 graph.add_node(
     id="parse_doc",
     state=Pdf2MdState(
-        pdf2mdType="general"
+        pdf2mdType="deep_pdf2md"
     )
 )
-# 通过边连接文档：graph.add_edge(START, "parse_doc", "files", "files")
+# 通过边连接文档：
+graph.add_edge(START, "parse_doc", "files", "files")
 
 # 示例2：解析结果分支处理
 # 成功分支
@@ -685,24 +622,36 @@ graph.add_edge("parse_doc", "handle_failure", "failed", "switchAny")
 ```python
 class AddMemoryVariableState(BaseNodeState):
     """添加记忆变量模块状态"""
-    feedback: Optional[str] = ""
-    variables: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    feedback: Optional[str] = "" 
+    variables: Optional[Dict[str, Any]] = Field(default_factory=dict) # 必填
 ```
 
 ### 使用方法
 
 ```python
-# 注意：此模块的配置方式已更新，采用State类方式
-
+# 
 graph.add_node(
-    id="save_memory_variable",
-    state=AddMemoryVariableState()
-)
+        id="addMemoryVariable1",
+        state=AddMemoryVariableState(
+            variables={
+                "question1_userChatInput": "string",
+                "pdf2md1_pdf2mdResult": "string", 
+                "ai1_answerText": "string"
+            }
+        )
+    )
 
-# 通过边连接数据到记忆变量
-graph.add_edge("ai_chat", "save_memory_variable", "answerText", "feedback")
+# 添加连接边
+graph.add_edge(START, "pdf2md1", "finish", "switchAny")
+graph.add_edge(START, "pdf2md1", "files", "files")
+graph.add_edge(START, "addMemoryVariable1", "userChatInput", "question1_userChatInput")
 
-# 注意：实际的记忆变量配置方式请参考具体的测试文件或API文档
+graph.add_edge("pdf2md1", "confirmreply1", "finish", "switchAny")
+graph.add_edge("pdf2md1", "addMemoryVariable1", "pdf2mdResult", "pdf2md1_pdf2mdResult")
+
+graph.add_edge("confirmreply1", "ai1", "finish", "switchAny")
+
+graph.add_edge("ai1", "addMemoryVariable1", "answerText", "ai1_answerText")
 ```
 
 ### 支持的ValueType类型
@@ -748,8 +697,7 @@ graph.add_node(
     state=AddMemoryVariableState()
 )
 
-# 连接AI回答到记忆变量
-graph.add_edge("ai_chat", "save_ai_response", "answerText", "feedback")
+# 连接AI回答到记忆变量 graph.add_edge("ai_chat", "save_ai_response", "answerText", "feedback")
 
 # 后续模块可引用（具体引用方式请参考最新API文档）
 graph.add_node(
@@ -831,8 +779,8 @@ graph.add_node(
 )
 
 # 输入数据通过边连接：
-# graph.add_edge(START, "info_classifier", "userChatInput", "text")
-# graph.add_edge("kb_search", "info_classifier", "quoteQA", "knSearch")
+graph.add_edge(START, "info_classifier", "userChatInput", "text")
+graph.add_edge("kb_search", "info_classifier", "quoteQA", "knSearch")
 ```
 
 ### 输出变量（可在后续模块中引用）
@@ -885,7 +833,8 @@ graph.add_node(
 请以JSON格式返回分类结果。"""
     )
 )
-# 通过边连接用户输入：graph.add_edge(START, "customer_classifier", "userChatInput", "text")
+# 通过边连接用户输入：
+graph.add_edge(START, "customer_classifier", "userChatInput", "text")
 
 # 示例2：内容审核分类
 content_labels = {
@@ -908,7 +857,8 @@ graph.add_node(
 请严格按照JSON格式返回分类结果。"""
     )
 )
-# 通过边连接消息内容：graph.add_edge("message_source", "content_moderator", "userMessage", "text")
+# 通过边连接消息内容：
+graph.add_edge("message_source", "content_moderator", "userMessage", "text")
 ```
 
 ---
@@ -1164,7 +1114,7 @@ graph.add_node(
 )
 
 # 循环数据通过边连接：
-# graph.add_edge(START, "data_loop", "userChatInput", "items")  # 或其他数据源
+graph.add_edge(START, "data_loop", "userChatInput", "items")  # 或其他数据源
 
 # 循环变量（index、item、length）会自动在循环内可用，无需额外配置
 ```
@@ -1214,7 +1164,7 @@ graph.add_node(
     id="process_item",
     state=ConfirmReplyState(
         text="处理第{{index}}项：{{item}}",
-        stream=True
+        isvisible=True
     )
 )
 
@@ -1223,36 +1173,7 @@ graph.add_edge(START, "simple_loop", "userChatInput", "items")  # 连接数组�
 graph.add_edge("simple_loop", "process_item", "loopStart", "switchAny")
 graph.add_edge("process_item", "simple_loop", "finish", "loopEnd")
 
-# 示例2：复杂循环处理（包含AI分析）
-graph.add_node(
-    id="data_analyzer_loop",
-    state=ForEachState()
-)
 
-# 循环内：AI分析每个文档
-graph.add_node(
-    id="analyze_document",
-    state=AiChatState(
-        model="doubao-deepseek-v3",
-        quotePrompt="你是文档分析专家，请对以下文档进行分析和总结。",
-        stream=True
-    )
-)
-
-# 循环内：保存分析结果
-graph.add_node(
-    id="save_analysis",
-    state=ConfirmReplyState(
-        text="文档{{index}}分析完成",
-        stream=False  # 内部保存，不显示给用户
-    )
-)
-
-# 连接循环结构
-graph.add_edge("data_source", "data_analyzer_loop", "documentList", "items")  # 连接文档列表
-graph.add_edge("data_analyzer_loop", "analyze_document", "loopStart", "switchAny")
-graph.add_edge("analyze_document", "save_analysis", "finish", "switchAny")
-graph.add_edge("save_analysis", "data_analyzer_loop", "finish", "loopEnd")
 
 # 示例3：带条件的循环处理
 graph.add_node(
@@ -1423,7 +1344,7 @@ def main():
     graph.add_node(
         id="pdf_parser",
         state=Pdf2MdState(
-            pdf2mdType="general"
+            pdf2mdType="deep_pdf2md"
         )
     )
 
