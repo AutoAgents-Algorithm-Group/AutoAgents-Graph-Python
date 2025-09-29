@@ -9,3050 +9,1750 @@ from src.autoagents_graph.agentify import FlowInterpreter
 def main():
     # JSON数据：包含完整的工作流信息
     json_data = {
-        
-            "nodes": [
-                {
-                    "id": "simpleInputId",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -2050.0187299418194, "y": 168.1277274588137},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "引用变量：{{userChatInput}}",
-                                "label": "文本信息",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "text",
-                                        "target": "0b4ba2f5-e3de-4e2c-9696-fff1feebd77f",
-                                    },
-                                    {
-                                        "targetHandle": "text",
-                                        "target": "9624acc1-d534-4f17-be61-97b55b3e0f63",
-                                    },
-                                ],
-                                "key": "userChatInput",
-                            },
-                            {
-                                "valueType": "file",
-                                "description": "以JSON数组格式输出用户上传文档列表，若为文档比对，包含分组信息",
-                                "label": "文档信息",
-                                "type": "source",
-                                "targets": [],
-                                "key": "files",
-                            },
-                            {
-                                "valueType": "image",
-                                "description": "以JSON数组格式输出用户上传的图片列表",
-                                "label": "图片信息",
-                                "type": "source",
-                                "targets": [],
-                                "key": "images",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "当未点击任何按钮时值为True",
-                                "label": "未点击按钮",
-                                "type": "source",
-                                "targets": [],
-                                "key": "unclickedButton",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "0b4ba2f5-e3de-4e2c-9696-fff1feebd77f",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "questionInput",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "输入文本开关",
-                                "label": "输入文本",
-                                "type": "switch",
-                                "value": True,
-                                "key": "inputText",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "上传文档开关",
-                                "label": "上传文档",
-                                "type": "switch",
-                                "value": False,
-                                "key": "uploadFile",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "上传图片开关",
-                                "label": "上传图片",
-                                "type": "switch",
-                                "value": False,
-                                "key": "uploadPicture",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "文档审查开关",
-                                "label": "文档审查",
-                                "type": "switch",
-                                "value": False,
-                                "key": "fileUpload",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "是否开启文档比对功能",
-                                "label": "是否文档对比",
-                                "type": "checkBox",
-                                "value": False,
-                                "key": "fileContrast",
-                            },
-                            {
-                                "valueType": "any",
-                                "description": "上传的文件列表,如果开启了文档对比,每个分组只能上传一个文件",
-                                "label": "文档分组",
-                                "type": "table",
-                                "value": [],
-                                "key": "fileInfo",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "是否作为初始全局input",
-                                "label": "是否作为初始全局input",
-                                "type": "hidden",
-                                "value": True,
-                                "key": "initialInput",
-                            },
-                        ],
-                        "intro": "用户输入入口,对话中用户的输入信息,与其他模块连接,一般作为起始模块",
-                        "name": "用户提问",
-                        "disabled": False,
-                        "category": "用户提问",
-                    },
-                },
-                {
-                    "id": "017b5998-f927-489d-897d-39dfb8848481",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 2272.5417895502255, "y": -1689.7306025344403},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "SQL查询的全部结果",
-                                "label": "查询结果",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "text",
-                                        "target": "f9fc54b1-86fe-4cf3-857f-247fbf98bc44",
-                                    }
-                                ],
-                                "key": "queryResult",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "SQL查询执行成功",
-                                "label": "调用成功",
-                                "type": "source",
-                                "targets": [],
-                                "key": "success",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "SQL查询执行异常",
-                                "label": "调用失败",
-                                "type": "source",
-                                "targets": [],
-                                "key": "failed",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "f9fc54b1-86fe-4cf3-857f-247fbf98bc44",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "databaseQuery",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "数据查询sql",
-                                "label": "SQL",
-                                "type": "target",
-                                "value": "",
-                                "key": "sql",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "string",
-                                "description": "查询的数据库",
-                                "label": "查询的数据库",
-                                "type": "selectDatabase",
-                                "value": {
-                                    "databaseUuid": "793a32627a094b41a7d52e5443b7857b"
-                                },
-                                "key": "database",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "显示查询结果",
-                                "label": "显示查询结果",
-                                "type": "switch",
-                                "value": True,
-                                "key": "showTable",
-                            },
-                        ],
-                        "intro": "数据库查询",
-                        "name": "数据库查询",
-                        "disabled": False,
-                        "category": "数据库",
-                    },
-                },
-                {
-                    "id": "5a81da8a-3292-4bba-8133-ed40746bf63d",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -465.81689900126946, "y": -1668.2275989292857},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [
-                                    {
-                                        "targetHandle": "sql_structure",
-                                        "target": "2fd21079-adda-4294-9e9a-877617d86b33",
-                                    }
-                                ],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "a2a6513b-5bae-4e7a-b726-3bbd2b2115e0",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": False,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": '# 值班日志数据库表详细描述\n\n## 表基本信息\n\n- **表名**: `duty_log`\n- **中文名称**: 生产指挥中心值班日志记录表\n- **用途**: 记录电力系统的缺陷、跳闸、问题、隐患等事件信息，用于运维管理和数据分析\n- **总记录数**: 1,245条\n- **字段数量**: 24个\n- **数据质量**: 完整性99.5%，准确性高，一致性良好，实时更新\n\n## 字段详细说明\n\n### 1. 主键字段\n\n#### `id`\n- **类型**: INT\n- **约束**: PRIMARY KEY, AUTO_INCREMENT\n- **描述**: 主键ID，自增\n- **用途**: 用于唯一标识每条记录，查询时常用作条件\n- **示例值**: 1, 2, 3, 4, 5\n\n### 2. 核心分类字段\n\n#### `事件类型`\n- **类型**: TEXT\n- **描述**: 事件的主要分类\n- **枚举值**:\n  - `缺陷`: 设备或系统存在的缺陷问题 (874条, 70.2%)\n  - `跳闸`: 设备跳闸事件 (144条, 11.6%)\n  - `问题`: 一般性问题 (129条, 10.4%)\n  - `隐患`: 潜在的安全隐患 (97条, 7.8%)\n- **用途**: 用于按事件类型分类查询和统计\n- **示例查询**:\n  - 查询所有缺陷类型的记录\n  - 统计各事件类型的数量\n  - 查找跳闸事件\n\n#### `缺陷等级`\n- **类型**: TEXT\n- **描述**: 缺陷的严重程度等级\n- **枚举值**:\n  - `紧急`: 需要立即处理的严重缺陷\n  - `严重`: 需要尽快处理的重要缺陷\n  - `一般`: 可以稍后处理的普通缺陷\n- **用途**: 用于按严重程度分类查询和统计\n- **示例查询**:\n  - 查询所有紧急缺陷\n  - 统计各缺陷等级的数量\n  - 优先处理严重缺陷\n\n### 3. 时间相关字段\n\n#### `日期`\n- **类型**: TEXT\n- **格式**: YYYY年MM月DD日\n- **用途**: 用于时间范围查询、按日期统计\n- **示例查询**:\n  - 查询2024年的所有记录\n  - 统计各月份的事件数量\n  - 查找最近一周的记录\n\n#### `时间`\n- **类型**: TEXT\n- **格式**: HH:MM\n- **时间段分布**:\n  - 0-11点: 上午时段\n  - 12-15点: 下午时段\n  - 16-19点: 傍晚时段\n  - 20-23点: 夜间时段\n- **用途**: 用于精确时间查询、时间段分析\n- **示例查询**:\n  - 查询上午发生的事件\n  - 统计各时间段的事件分布\n  - 查找夜间发生的问题\n\n### 4. 地理位置字段\n\n#### `变电站`\n- **类型**: TEXT\n- **描述**: 变电站名称\n- **主要变电站** (前15名):\n  - 天一变: 40条\n  - 春晓变: 32条\n  - 明州变: 31条\n  - 宁海变: 30条\n  - 河姆变: 25条\n  - 长石变: 21条\n  - 洛迦变: 19条\n  - 武胜变: 19条\n  - 沙湾变: 18条\n  - 殿跟变: 18条\n  - 沿海变: 17条\n  - 淞浦变: 17条\n  - 衣亭变: 16条\n  - 句章变: 16条\n  - 洪塘变: 15条\n- **用途**: 用于按变电站查询、地理位置分析\n- **示例查询**:\n  - 查询天一变的所有记录\n  - 统计各变电站的事件数量\n  - 查找特定区域的变电站问题\n\n### 5. 技术参数字段\n\n#### `设备电压等级`\n- **类型**: TEXT\n- **描述**: 设备的电压等级\n- **枚举值**:\n  - `500kV`: 超高压\n  - `220kV`: 高压\n  - `110kV`: 中压\n  - `35kV`: 中低压\n  - `10kV`: 低压\n- **用途**: 用于按电压等级分类查询\n- **示例查询**:\n  - 查询500kV设备的问题\n  - 统计各电压等级的事件分布\n  - 分析高压设备故障率\n\n#### `设备间隔名称`\n- **类型**: TEXT\n- **描述**: 设备在变电站中的间隔标识\n- **示例值**: #1主变, #2主变, 1号主变, 2号主变\n- **用途**: 用于精确定位具体设备\n- **示例查询**:\n  - 查询#1主变的所有问题\n  - 查找特定间隔的设备故障\n\n### 6. 跳闸相关字段\n\n#### `跳闸设备分类`\n- **类型**: TEXT\n- **描述**: 跳闸设备的分类\n- **示例值**: 主变, 线路, 开关, 保护装置\n- **用途**: 用于分析跳闸事件\n- **示例查询**:\n  - 查询主变跳闸事件\n  - 统计各设备类型的跳闸次数\n\n#### `跳闸原因分类`\n- **类型**: TEXT\n- **描述**: 跳闸的原因分类\n- **示例值**: 过载, 短路, 保护动作, 设备故障\n- **用途**: 用于分析跳闸原因\n- **示例查询**:\n  - 查询因过载导致的跳闸\n  - 分析跳闸原因分布\n\n#### `重合情况`\n- **类型**: TEXT\n- **描述**: 跳闸后的重合闸情况\n- **示例值**: 重合成功, 重合失败, 未重合\n- **用途**: 用于分析重合闸效果\n- **示例查询**:\n  - 查询重合成功的跳闸事件\n  - 统计重合闸成功率\n\n### 7. 故障信息字段\n\n#### `故障简报`\n- **类型**: TEXT\n- **描述**: 故障的简要描述\n- **用途**: 用于故障信息查询\n- **示例查询**:\n  - 搜索包含特定关键词的故障\n  - 查询故障描述\n\n#### `故障录波`\n- **类型**: TEXT\n- **描述**: 故障录波相关信息\n- **用途**: 用于故障分析\n- **示例查询**:\n  - 查询有故障录波的记录\n  - 分析故障录波数据\n\n### 8. 缺陷分析字段\n\n#### `缺陷设备分类`\n- **类型**: TEXT\n- **描述**: 存在缺陷的设备分类\n- **示例值**: 主变, 开关, 保护装置, 直流系统\n- **用途**: 用于按设备类型分析缺陷\n- **示例查询**:\n  - 查询主变设备的缺陷\n  - 统计各设备类型的缺陷数量\n\n#### `问题类型`\n- **类型**: TEXT\n- **描述**: 问题的具体类型\n- **示例值**: 告警, 异常, 故障, 维护\n- **用途**: 用于问题分类查询\n- **示例查询**:\n  - 查询告警类型的问题\n  - 统计各问题类型的分布\n\n### 9. 厂商信息字段\n\n#### `厂家`\n- **类型**: TEXT\n- **描述**: 设备制造厂家\n- **示例值**: 南瑞继保, 许继电气, 国电南自, ABB\n- **用途**: 用于按厂家分析设备质量\n- **示例查询**:\n  - 查询特定厂家的设备问题\n  - 分析各厂家的设备故障率\n\n### 10. 内容描述字段\n\n#### `内容`\n- **类型**: TEXT\n- **描述**: 事件的详细描述内容\n- **用途**: 用于详细内容查询和关键词搜索\n- **示例查询**:\n  - 搜索包含特定关键词的记录\n  - 查询详细的事件描述\n  - 分析事件内容模式\n\n### 11. 处理状态字段\n\n#### `是否遗留`\n- **类型**: TEXT\n- **描述**: 问题是否遗留未解决\n- **枚举值**:\n  - `是`: 问题尚未解决\n  - `否`: 问题已解决\n- **用途**: 用于查询遗留问题\n- **示例查询**:\n  - 查询所有遗留问题\n  - 统计问题解决率\n\n#### `是否移交综合室`\n- **类型**: TEXT\n- **描述**: 是否移交到综合室处理\n- **枚举值**:\n  - `是`: 已移交综合室\n  - `否`: 未移交综合室\n- **用途**: 用于查询移交情况\n- **示例查询**:\n  - 查询移交到综合室的记录\n  - 统计移交比例\n\n### 12. 处理信息字段\n\n#### `消缺单位`\n- **类型**: TEXT\n- **描述**: 负责消除缺陷的单位\n- **主要消缺单位** (前10名):\n  - 检修中心: 427条\n  - 超高压中心: 83条\n  - 输电中心: 73条\n  - 运维中心: 48条\n  - 江北运检站: 33条\n  - 北仑公司: 30条\n  - 鄞州公司: 26条\n  - 余姚公司: 25条\n  - 海曙运检站: 23条\n  - 慈溪运检站: 22条\n- **用途**: 用于按处理单位查询和统计\n- **示例查询**:\n  - 查询检修中心处理的缺陷\n  - 统计各消缺单位的工作量\n  - 分析消缺效率\n\n#### `后续措施`\n- **类型**: TEXT\n- **描述**: 采取的后续处理措施\n- **用途**: 用于查询处理措施\n- **示例查询**:\n  - 查询特定缺陷的处理措施\n  - 分析处理措施的有效性\n\n### 13. 其他信息字段\n\n#### `备注`\n- **类型**: TEXT\n- **描述**: 额外的备注信息\n- **用途**: 用于查询备注信息\n- **示例查询**:\n  - 查询有备注的记录\n  - 搜索备注中的特定信息\n\n#### `值班人`\n- **类型**: TEXT\n- **描述**: 值班人员姓名\n- **用途**: 用于查询值班人员\n- **示例查询**:\n  - 查询特定值班人的记录\n  - 统计值班人员的工作量\n\n#### `创建时间`\n- **类型**: TIMESTAMP\n- **描述**: 记录创建的时间戳\n- **格式**: YYYY-MM-DD HH:MM:SS\n- **用途**: 用于记录创建时间查询\n- **示例查询**:\n  - 查询最近创建的记录\n  - 按创建时间排序\n\n## 常用查询模式\n\n### 1. 时间范围查询\n- **描述**: 查询特定时间段内的记录\n- **示例**: "查询2024年1月的所有缺陷"\n- **适用字段**: 日期, 时间, 创建时间\n\n### 2. 分类统计查询\n- **描述**: 按某个字段分类统计数量\n- **示例**: "统计各变电站的缺陷数量"\n- **适用字段**: 事件类型, 缺陷等级, 变电站, 消缺单位\n\n### 3. 关键词搜索\n- **描述**: 在内容字段中搜索特定关键词\n- **示例**: "搜索包含跳闸的记录"\n- **适用字段**: 内容, 故障简报, 备注\n\n### 4. 多条件组合查询\n- **描述**: 组合多个条件进行查询\n- **示例**: "查询天一变2024年的严重缺陷"\n- **适用字段**: 任意多个字段组合\n\n### 5. 趋势分析查询\n- **描述**: 分析数据变化趋势\n- **示例**: "分析各月份缺陷数量的变化趋势"\n- **适用字段**: 日期, 时间, 数量统计\n\n### 6. 关联分析查询\n- **描述**: 分析不同字段之间的关联关系\n- **示例**: "分析缺陷等级与消缺单位的关系"\n- **适用字段**: 任意两个或多个字段\n\n## 业务上下文\n\n### 电力系统运维\n- **用途**: 用于电力系统的日常运维管理，记录设备运行状态和问题\n- **关键指标**: 设备缺陷率, 故障处理时间, 消缺效率\n\n### 故障分析\n- **用途**: 分析设备故障原因和处理过程，提高系统可靠性\n- **关键指标**: 故障类型分布, 故障原因分析, 处理措施效果\n\n### 预防性维护\n- **用途**: 通过分析历史数据，制定预防性维护计划\n- **关键指标**: 设备故障趋势, 维护周期优化, 成本效益分析\n\n### 质量评估\n- **用途**: 评估设备质量和厂家服务水平\n- **关键指标**: 厂家故障率, 设备寿命分析, 质量改进建议\n\n### 效率分析\n- **用途**: 分析消缺效率和处理时间，优化工作流程\n- **关键指标**: 响应时间, 处理时长, 人员效率\n\n## 数据特点\n\n### 数据完整性\n- **总记录数**: 1,245条\n- **完整率**: 99.5%\n- **主要数据类型**: 缺陷、跳闸、问题、隐患\n\n### 时间分布特点\n- **覆盖时间**: 2024年1月 - 2025年5月\n- **数据密度**: 1月、2月数据量较大，可能与季节性维护相关\n- **实时性**: 数据实时更新，反映当前运维状态\n\n### 地理分布特点\n- **变电站覆盖**: 覆盖多个变电站，天一变、春晓变、明州变等为主要站点\n- **区域分布**: 分布在不同区域，便于区域性问题分析\n\n### 技术特点\n- **电压等级**: 覆盖从10kV到500kV的多个电压等级\n- **设备类型**: 涵盖主变、开关、保护装置等多种设备类型\n- **故障模式**: 记录多种故障模式和原因，便于故障分析',
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "a2a6513b-5bae-4e7a-b726-3bbd2b2115e0",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 296.06369942212564, "y": -1700.1919105251395},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "boolean",
-                                "description": "当模型运行结束，生成所有内容后，则回复结束下游组件开启。",
-                                "label": "回复结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "isResponseAnswerText",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "大模型处理完的信息，将作为回复内容进行输出。引用变量：",
-                                "label": "回复内容",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "input_key",
-                                        "target": "c5851223-5d57-490b-89cc-5e71e61f905a",
-                                    }
-                                ],
-                                "key": "answerText",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "c5851223-5d57-490b-89cc-5e71e61f905a",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "aiChat",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "引用变量：{{text}}",
-                                "label": "信息输入",
-                                "type": "target",
-                                "value": "",
-                                "key": "text",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "image",
-                                "description": "引用变量：{{images}}",
-                                "label": "图片输入",
-                                "type": "target",
-                                "value": "",
-                                "key": "images",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "search",
-                                "description": "引用变量：{{knSearch}}",
-                                "label": "知识库搜索结果",
-                                "type": "target",
-                                "value": "",
-                                "key": "knSearch",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "text",
-                                "description": "知识库高级配置",
-                                "label": "知识库高级配置",
-                                "type": "target",
-                                "value": '## Role:知识问答专家\n        ## Goals:\n        - 根据知识库检索到的知识，结合聊天上下文信息，回答用户提问\n        ## Constrains：\n        - 严格根据知识库内容回答问题\n        - 知识库检索知识无法满足问题回答时，需严谨的回答问题\n        ## Rules\n        - 知识库检索知识中， instruction 是相关知识内容或问答对的问题,answer是预期回答。\n        ## 参考内容：\n        ### 知识库检索知识：\n        """\n        {{quote}}\n        """\n        ## 用户提问：\n        "{{question}}"\n',
-                                "key": "knConfig",
-                            },
-                            {
-                                "connected": False,
-                                "min": 0,
-                                "max": 100,
-                                "valueType": "chatHistory",
-                                "description": "",
-                                "step": 1,
-                                "label": "聊天上下文",
-                                "type": "inputNumber",
-                                "value": 0,
-                                "key": "historyText",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "",
-                                "label": "选择模型",
-                                "type": "selectChatModel",
-                                "value": "doubao-pro-256k",
-                                "key": "model",
-                                "required": True,
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "设定模型的角色和行为模式，如设定人设和回复逻辑。",
-                                "label": "系统提示词",
-                                "type": "textarea",
-                                "value": "当前时间：{{cTime}}\n\n### 任务说明：\n\n您是一个专业的电力行业数据库工程师，需要将用户提出的自然语言问题（可能包含口语化表达）转化为准确且可执行的SQL查询。\n\n### 详细步骤：\n\n请严格遵循以下步骤进行思考并生成SQL查询：\n\n1. **理解问题**：用自己的话复述用户的问题，明确用户需要查询哪些信息（例如：哪些字段？满足什么条件？如何排序？有无聚合操作？）。\n\n2. **提取关键元素**：\n\n- 识别问题中提到的实体（如表名、字段名的描述词）和操作（如筛选、排序、分组、聚合）。\n\n- 特别注意口语化表达（如“去年的数据”应转化为“年份是去年”）。\n\n3. **数据库结构映射**：\n\n- 仔细检查提供的数据库结构，将步骤2提取的元素与数据库中的表名和字段名进行匹配。\n\n- 注意：一个概念可能有多种表达方式，需找到最匹配的字段（如“销售额”可能对应字段`sales_amount`或`revenue`）。\n\n- 如果问题涉及多个表，确定这些表之间的关联关系（通常通过外键连接）。\n\n4. **构建SQL查询**：\n\n- 使用表别名（如`t1`, `t2`）来避免歧义，并在JOIN时使用别名。\n\n- 确保SELECT、WHERE、GROUP BY、HAVING、ORDER BY等子句中使用的字段都明确指定了表别名（例如：`t1.name`）。\n\n- 如果有多个表，必须使用JOIN并明确指定连接条件（如`ON t1.id = t2.t1_id`）。\n\n- 如果问题要求聚合（如“每个部门的平均工资”），使用GROUP BY并选择合适的聚合函数（如AVG、SUM、COUNT等）。\n\n- 如果问题要求排序，使用ORDER BY并指定排序方向（ASC或DESC）。\n- 尽可能返回多一点相关的字段\n\n5. **验证**：\n\n- 检查生成的SQL中引用的每个字段和表名是否都存在于数据库结构中。\n\n- 确保SQL逻辑与用户问题一致。\n\n### 规则：\n\n- **必须使用表别名**：任何字段引用都必须带表别名（例如：`employee.name`而不是`name`）。\n\n- **禁止使用`*`**：必须明确列出所需字段。\n\n- **处理无法回答的情况**：如果数据库结构中没有包含回答问题所需的信息（例如：缺少关键表或字段），则输出：“数据库无法回答该问题。”。\n\n- **日期处理**：如果问题涉及日期（如“最近三个月”），请根据当前日期{{cTime}}计算具体日期范围，并在SQL中使用该范围。\n\n- **避免使用数据库不支持的函数**：请使用标准SQL函数，或{{$db_type}}数据库支持的函数。\n\n## 示例问题\n\n【问题1:查询近三个月（2025年3月、2025年1月至2025年4月、……）以来110kv设备（xxx设备）的跳闸（/缺陷/问题/隐患）事件，进行统计分析并总结原因，给出相关的处置建议。\n查询条件涵盖值班日志中的事件类型、日期时间、变电站、设备电压等级、设备间隔、设备分类等条件，对任意条件的检索。\n回复：\n通过你写的 sql 最后链接数据库的结果表头包含\n「「序号\n事件类型\n事件日期\n事件时间\n变电站\n设备电压等级\n设备间隔名称\n跳闸设备分类\n跳闸原因分类\n重合情况\n故障简报\n故障录波\n缺陷设备分类\n缺陷等级\n问题类型\n生产厂家\n内容\n是否遗留\n消缺单位\n后续措施\n备注\n值班人员\n」」\n\n】\n\n\n### 输出格式：\n\n请按照以下格式输出：\n\n【复述问题】\n\n... （这里用一句话复述问题）\n\n【提取的关键元素】\n\n- 涉及的表：...\n\n- 涉及的字段：...\n\n- 条件：...\n\n- 排序要求：...\n\n- 聚合要求：...\n\n【生成的SQL】\n\n```sql",
-                                "key": "systemPrompt",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "用户输入的具体问题或请求，向模型提供用户指令。",
-                                "label": "用户提示词",
-                                "type": "textarea",
-                                "value": "### 输入：\n\n- 用户问题：{{ori_question}}\n\n- 数据库结构：{{sql_structure}}",
-                                "key": "quotePrompt",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": True,
-                                "key": "stream",
-                            },
-                            {
-                                "min": 0,
-                                "max": 1,
-                                "markList": {"0": "严谨", "1": "创意"},
-                                "valueType": "number",
-                                "description": "控制回复创意性，如果想要和输入信息一致的答案，数值越小越好；如果想要模型发挥创意性，数值越大越好。",
-                                "step": 0.1,
-                                "label": "回复创意性",
-                                "type": "slider",
-                                "value": 0,
-                                "key": "temperature",
-                            },
-                            {
-                                "min": 0,
-                                "max": 1,
-                                "markList": {"0": "0", "1": "1"},
-                                "valueType": "number",
-                                "description": "控制输出的多样性,值越大输出包括更多单词选项；值越小，输出内容更集中在高概率单词上，即输出更确定但缺少多样性。一般【回复创意性】和【核采样TOP_P】只设置一个。",
-                                "step": 0.1,
-                                "label": "核采样TOP_P",
-                                "type": "slider",
-                                "value": 1,
-                                "key": "topP",
-                            },
-                            {
-                                "min": 100,
-                                "max": 4000,
-                                "markList": {
-                                    "100": "100",
-                                    "4000": 4000,
-                                    "5000": "5000",
-                                    "8192": 8192,
-                                },
-                                "valueType": "number",
-                                "step": 50,
-                                "label": "回复字数上限",
-                                "type": "slider",
-                                "value": 4000,
-                                "key": "maxToken",
-                            },
-                        ],
-                        "intro": "AI 对话模型，根据信息输入和提示词（Prompt）加工生成所需信息，展示给用户，完成与用户互动。",
-                        "name": "智能对话",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "fdcf756f-7455-4d18-9fb5-3d5dacc1f755",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 1858.77379621562, "y": -1739.8422932626484},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [
-                                    {
-                                        "targetHandle": "sql",
-                                        "target": "017b5998-f927-489d-897d-39dfb8848481",
-                                    }
-                                ],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "017b5998-f927-489d-897d-39dfb8848481",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": False,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": "您可以输入希望用户看到的内容，当触发条件判定成立，将显示您输入的内容。",
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "c5851223-5d57-490b-89cc-5e71e61f905a",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 966.1452273108512, "y": -1660.84372712498},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "boolean",
-                                "description": "代码执行成功",
-                                "label": "执行成功",
-                                "type": "source",
-                                "targets": [],
-                                "key": "_runSuccess_",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "",
-                                "label": "output_key",
-                                "type": "parameter",
-                                "targets": [
-                                    {
-                                        "targetHandle": "markdown",
-                                        "target": "851eb3a6-09a2-41d4-9f91-81847b96d748",
-                                    }
-                                ],
-                                "key": "output_key",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "代码执行异常",
-                                "label": "执行异常",
-                                "type": "source",
-                                "targets": [],
-                                "key": "_runFailed_",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "代码执行的全部结果",
-                                "label": "执行结果",
-                                "type": "source",
-                                "targets": [],
-                                "key": "_runResult_",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "851eb3a6-09a2-41d4-9f91-81847b96d748",
-                                    }
-                                ],
-                                "key": "finish",
-                                "required": False,
-                            },
-                        ],
-                        "moduleType": "codeFragment",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "",
-                                "label": "input_key",
-                                "type": "parameter",
-                                "key": "input_key",
-                            },
-                            {
-                                "valueType": "string",
-                                "options": [
-                                    {"label": "javascript", "value": "js"},
-                                    {"label": "python", "value": "python"},
-                                ],
-                                "description": "选择编程语言",
-                                "label": "语言",
-                                "type": "radio",
-                                "value": "python",
-                                "key": "_language_",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "string",
-                                "description": "代码描述，非必填",
-                                "label": "代码描述",
-                                "type": "textarea",
-                                "key": "_description_",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "string",
-                                "description": "用户编写的函数，Python函数名需指定为userFunction，输入输出为Key-Value数据类型，Key为String类型，Key和入参和岀参的设置对应",
-                                "label": "代码内容",
-                                "type": "textarea",
-                                "value": "import re\n\ndef userFunction(params):\n    def extract_after_think(info):\n        # 使用正则表达式匹配第一个</think>之后的所有内容\n        match = re.search(r'</think>(.*)', info, re.DOTALL)\n        if match:\n            return match.group(1).strip()  # 返回匹配到的内容并去除首尾空白\n        else:\n            return info\n            \n    result = {}\n    try:\n        # 提取内容并保存到result中\n        result['output_key'] = extract_after_think(params['input_key'])\n    except Exception as e:\n        # 捕获可能的异常并记录错误信息\n        result['error'] = str(e)\n\n    return result",
-                                "key": "_code_",
-                            },
-                        ],
-                        "intro": "通过编写代码对输入数据进行精确的处理与加工",
-                        "name": "代码块",
-                        "disabled": False,
-                        "category": "高阶能力",
-                    },
-                },
-                {
-                    "id": "851eb3a6-09a2-41d4-9f91-81847b96d748",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 1445.2535010870245, "y": -1679.5923735987617},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "代码提取结果",
-                                "label": "代码",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "text",
-                                        "target": "fdcf756f-7455-4d18-9fb5-3d5dacc1f755",
-                                    }
-                                ],
-                                "key": "code",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "提取成功",
-                                "label": "提取成功",
-                                "type": "source",
-                                "targets": [],
-                                "key": "success",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "提取失败",
-                                "label": "提取失败",
-                                "type": "source",
-                                "targets": [],
-                                "key": "failed",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "fdcf756f-7455-4d18-9fb5-3d5dacc1f755",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "codeExtract",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "Markdown",
-                                "label": "Markdown",
-                                "type": "target",
-                                "value": "",
-                                "key": "markdown",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "string",
-                                "description": "代码类型",
-                                "label": "代码类型",
-                                "type": "selectCodeType",
-                                "value": "SQL",
-                                "key": "codeType",
-                            },
-                        ],
-                        "intro": "代码提取器",
-                        "name": "代码提取器",
-                        "disabled": False,
-                        "category": "数据库",
-                    },
-                },
-                {
-                    "id": "2fd21079-adda-4294-9e9a-877617d86b33",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -189.60795910297736, "y": -1378.3030203132323},
-                    "data": {
-                        "outputs": [],
-                        "moduleType": "addMemoryVariable",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "",
-                                "label": "sql_structure",
-                                "type": "agentMemoryVar",
-                                "targets": [],
-                                "key": "sql_structure",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "",
-                                "label": "ori_question",
-                                "type": "agentMemoryVar",
-                                "targets": [],
-                                "key": "ori_question",
-                            },
-                        ],
-                        "intro": "使用该组件将变量存为记忆变量后，可以在智能体的其他组件中引用",
-                        "name": "添加记忆变量",
-                        "category": "高阶能力",
-                    },
-                },
-                {
-                    "id": "f9fc54b1-86fe-4cf3-857f-247fbf98bc44",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 2744.7449259121063, "y": -2014.5515520911588},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "boolean",
-                                "description": "当模型运行结束，生成所有内容后，则回复结束下游组件开启。",
-                                "label": "回复结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "isResponseAnswerText",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "大模型处理完的信息，将作为回复内容进行输出。引用变量：",
-                                "label": "回复内容",
-                                "type": "source",
-                                "targets": [],
-                                "key": "answerText",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "aiChat",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "引用变量：{{text}}",
-                                "label": "信息输入",
-                                "type": "target",
-                                "value": "",
-                                "key": "text",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "image",
-                                "description": "引用变量：{{images}}",
-                                "label": "图片输入",
-                                "type": "target",
-                                "value": "",
-                                "key": "images",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "search",
-                                "description": "引用变量：{{knSearch}}",
-                                "label": "知识库搜索结果",
-                                "type": "target",
-                                "value": "",
-                                "key": "knSearch",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "text",
-                                "description": "知识库高级配置",
-                                "label": "知识库高级配置",
-                                "type": "target",
-                                "value": '## Role:知识问答专家\n        ## Goals:\n        - 根据知识库检索到的知识，结合聊天上下文信息，回答用户提问\n        ## Constrains：\n        - 严格根据知识库内容回答问题\n        - 知识库检索知识无法满足问题回答时，需严谨的回答问题\n        ## Rules\n        - 知识库检索知识中， instruction 是相关知识内容或问答对的问题,answer是预期回答。\n        ## 参考内容：\n        ### 知识库检索知识：\n        """\n        {{quote}}\n        """\n        ## 用户提问：\n        "{{question}}"\n',
-                                "key": "knConfig",
-                            },
-                            {
-                                "connected": False,
-                                "min": 0,
-                                "max": 100,
-                                "valueType": "chatHistory",
-                                "description": "",
-                                "step": 1,
-                                "label": "聊天上下文",
-                                "type": "inputNumber",
-                                "value": 0,
-                                "key": "historyText",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "",
-                                "label": "选择模型",
-                                "type": "selectChatModel",
-                                "value": "doubao-1.5-pro-256k",
-                                "key": "model",
-                                "required": True,
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "设定模型的角色和行为模式，如设定人设和回复逻辑。",
-                                "label": "系统提示词",
-                                "type": "textarea",
-                                "value": "## 角色\n电网 数据总结专家\n\n## 任务\n从用户问题和查询数据结果总结\n尽可能按照如下维度进行分析\n【\n统计分析（暂时固定为三个纬度的统计，特点、典型表现、影响范围，需要结合值班日志的“内容“，知识库的资料，进行整合总结）\n】\n",
-                                "key": "systemPrompt",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "用户输入的具体问题或请求，向模型提供用户指令。",
-                                "label": "用户提示词",
-                                "type": "textarea",
-                                "value": "用户问题: {{ori_question}}\n\n查询数据结果: {{text}}",
-                                "key": "quotePrompt",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": True,
-                                "key": "stream",
-                            },
-                            {
-                                "min": 0,
-                                "max": 1,
-                                "markList": {"0": "严谨", "1": "创意"},
-                                "valueType": "number",
-                                "description": "控制回复创意性，如果想要和输入信息一致的答案，数值越小越好；如果想要模型发挥创意性，数值越大越好。",
-                                "step": 0.1,
-                                "label": "回复创意性",
-                                "type": "slider",
-                                "value": 0,
-                                "key": "temperature",
-                            },
-                            {
-                                "min": 0,
-                                "max": 1,
-                                "markList": {"0": "0", "1": "1"},
-                                "valueType": "number",
-                                "description": "控制输出的多样性,值越大输出包括更多单词选项；值越小，输出内容更集中在高概率单词上，即输出更确定但缺少多样性。一般【回复创意性】和【核采样TOP_P】只设置一个。",
-                                "step": 0.1,
-                                "label": "核采样TOP_P",
-                                "type": "slider",
-                                "value": 1,
-                                "key": "topP",
-                            },
-                            {
-                                "min": 100,
-                                "max": 12000,
-                                "markList": {
-                                    "100": "100",
-                                    "5000": "5000",
-                                    "8192": 8192,
-                                    "12000": 12000,
-                                },
-                                "valueType": "number",
-                                "step": 50,
-                                "label": "回复字数上限",
-                                "type": "slider",
-                                "value": 12000,
-                                "key": "maxToken",
-                            },
-                        ],
-                        "intro": "AI 对话模型，根据信息输入和提示词（Prompt）加工生成所需信息，展示给用户，完成与用户互动。",
-                        "name": "智能对话",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "1ade567a-861d-40bb-a5ed-bee9b9397735",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -464.4246615314331, "y": 2504.3336260932606},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": True,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": "## 数据库中包含的表及其说明\n故障跳闸数据表：\n表名\t说明\nT_EVENT_ZNJS_DWXXJS\t电网事件信息表\nT_OPERATIONAL_EVENT_NINGBO\t监控大数据故障表\t\nT_ACCIDENT_SECOND_ANALYSIS\t故障二次分析结果表\nT_TH_LOGBOOK\t生产指挥中心值班日志记录表\nREAL_JXDATA\t检修记录单表（实时）\nT_YJ_ZM_WEATHER\t管控平台天气信息\nPMS_BD_EQUIP_INFO\t管控平台-变电设备信息表\nPMS_SD_EQUIP_INFO\t管控平台-输电设备信息\nPMS_FAC_INFO\t管控平台-变电站信息\nNUSP_FAC_EQUIPMENT\t变电设备清单表\nT_YJ_PMS_DEVICE\tPMS设备信息\nT_YJ_PMS_TREE_SUBSTATION\tPMS变电站信息\n\n\n## 不同表中字段的值\n\n1.电网事件信息表\nT_EVENT_ZNJS_DWXXJS\n字段名\t含义\nID\t主键\nBUSI_TYPE_CODE\t业务类型编码（故障1000，异常1100，变位1200，越限1300，越限恢复1301，越限超时1302，缺陷1400，验收(包含重过载数据)1500）\nBUSI_TYPE_NAME\t业务类型名称\nOCCUR_TIME\t发生时间\nYX_ID\t关联遥信ID\nCONTENT\t事件内容\nSTATION_ID\t厂站ID\nSTATION_NAME\t厂站名称\nBAY_ID\t间隔名称\nBAY_VLTY_ID\t间隔电压等级ID\nEQUIP_ID\t设备ID\nEQUIP_NAME\t设备名称\nEQUIP_VLTY_ID\t设备电压等级\nSTATUS\t流程状态\nSTATUS_NAME\t流程状态名称\nYW_CONTACT_USER\t现场运维联系人 环节10\nYW_CONTACT_TIME\t现场运维联系时间  环节10\nYW_CONTACT_CONTENT\t现场运维联系内容 环节10\nJKY_CONFIRM_USER\t监控员确认人 环节20\nJKY_CONFIRM_TIME\t监控员确认时间 环节20\nJKY_CONFIRM_CONTENT\t监控员确认意见 环节20\nIF_JKY_CONFIRM\t是否监控员人工再确认，0否1是\nYW_CONTACT2_USER\t监控员人工确认时现场运维联系人\nYW_CONTACT2_TIME\t监控员人工确认时现场运维联系时间\nYW_CONTACT2_CONTENT\t监控员人工确认时现场运维联系内容\nIF_NOTIFY_DDT\t是否通知调度台\nDDT_CONTACT_USER\t调度台联系人\nDDT_CONTACT_TIME\t调度台联系时间\nDDT_CONTACT_CONTENT\t调度台联系内容\nIF_CREATE_DEFECT\t是否创建缺陷\nLINK_DEFECT_ID\t关联的缺陷ID\nLAST_UPDATE_TIME\t记录的最新更新时间\nCREATETIME\t创建时间\nISDEL\t是否逻辑删除，0否，1是\nAREANO\t区域编码\nCALL_STATUS\t通话状态，0：默认值（待通话），1：通话中，2：通话异常，5：通话完成\nBUSI_TYPE_SUBCLASS\t业务子类名称，如：电网异常事件子类包括：未复归、频发等\nRESP_AREA\t责任分区ID\nUPCALL_MAN\t监控员确认（电话待呼出） 环节5\nUPCALL_TIME\t监控员确认时间（电话呼出） 环节5\nSESSIONID\t通话ID（保证和后续通话建立联系）\nCZCL_ID\t处置策略规则id\nDISPOSAL_TACTI\t处置策略文本内容\nDISPOSAL_RESULT\t处置结果\nREF_QXFL_ID\t缺陷等级分类关联th_robot.t_th_st_alarminfo_qxfl表主键\nSTATION_AREA_NAME\t变电站所属区域的名称\nIS_REAL_EVENT\t是否为真实事件(0否1是)\nREMARK\t备注\nSENDMEMS_NUM\t消息推送次数\nSENDMEMS_LASTTIME\t最后一次消息推送时间\nRESP_AREA_EXP\t扩展责任分区编码\nTYPE\t判断是哪个类型0每日简报 1辅控\nSECONDMEMS_NUM\t二次短信提醒\nCOM_RESULT\t研判结果(0:研判正确/1：研判错误)\nREMARK_TIME\t填写时间\nCZMX_IDS\t操作明细id集合\nSTATUS_IDS\t用于存储中间状态的id\n\n\n2.监控大数据故障表\nT_OPERATIONAL_EVENT_NINGBO \n字段名\t含义\nID\t主键\nCREATE_TIME\t创建时间\nSTATION_ID\t电站id\nSTATION_NAME\t电站名称\nBAY_NAME\t间隔名称\nEQUIP_ID\t设备id\nEQUIP_NAME\t设备名称\nVLTY_ID\t电压等级id\nVLTY_ID_ST\t\nEVENT_CONTENT\t事件内容\nCHZ_TYPE\t重合闸类型\nOCCUR_TIME\t发生时间\nAREANO\t区域编码\nRESP_AREA\t责任区\nEND_TIME\t结束时间\nEQUIP_TYPE\t设备类型\nLAST_TIME\t最后发生时间\nFAC_ID\t变电站ID(EMS)\nBAY_ID\t间隔ID(EMS)\nDATA_JSON\t原始数据字符串\n\n\n3.故障二次分析结果表\nT_ACCIDENT_SECOND_ANALYSIS\n字段名\t含义\nID\t主键\nACCIDENT_ID\t序号\nWEATHER_INFO\t气候信息\nPROTECT_INFO\t保护信息\nFAULT_WAVE_INFO\t故障录波信息\nEQUIP_DESC\t设备台账信息及线路故障定位\nLIGHTNING_INFO\t雷电信息\nLOADRATE_INFO\t负荷信息\nOTHER_INFO\t其他信息\nANALYSIS_STATUS\t分析结果(0:分析后未发送，1：分析完毕（内容存在缺失），2.分析完毕（内容完整），3.分析完毕（超时不在分析）)\nAREANO\t区域编码\nCREATE_USER_ID\t创建人ID\nCREATE_USER_NAME\t创建人\nCREATE_TIME\t创建时间;默认系统时间\nLAST_UPDATE_TIME\t最后更新时间;默认系统时间\nIS_DEL\t是否删除;默认值0\nREMARK\t备注\n\n\n4.生产指挥中心值班日志记录表\nT_TH_LOGBOOK\n字段名\t含义\nID\t主键\nEVENT_TYPE\t事件类型\nEVENT_DATE\t日期\nEVENT_TIME\t时间\nSTATION_NAME\t变电站\nSTATION_ID\t变电站ID\nVOLTAGE\t设备电压等级\nBAY_NAME\t设备间隔（名称）\nBAY_ID\t设备ID\nTRIP_DEVICE_CLASS\t跳闸设备分类\nTRIP_CAUSE_CLASS\t跳闸原因分类\nCOINCIDENCE\t重合情况\nFAULT_BRIE\t故障简报\nOSCILLOGRAPH\t故障录波\nFAULT_DEVICE\t缺陷设备分类\nFAULT_LEVEL\t缺陷等级\nISSUE_TYPE\t问题类型\nVENDER\t厂家\nCONTENT\t内容\nISLEGACY\t是否遗留\nFOLLOW_UP\t后续措施\nREMARKS\t备注\nDUTYMAN_NAME\t值班人\nCREATETIME\t创建时间\nCREATEMAN\t创建人\nAREANO\t区域编码\nISDEL\t是否删除\nSTAUTS\t流程状态\nSBDL\t设备大类\nSBFL\t设备分类\nHISQX\t以前的缺陷处理情况\nXQDW\t消缺单位\nLAST_UPDATE_TIME\t最后更新时间\nISYJZHS\t是否移交综合室\nIFUPDATE\t是否更新\n\n\n5.检修记录单表（实时）\nREAL_JXDATA\n字段名\t含义\nwork_ticket_no\t工作票号\nworking_person\t工作人员\njob_description\t工作内容\nwork_team\t工作班组\nwork_date\t工作时间\nequip\t设备\ncompletion_status\t完成情况\nregistration_person\t登记人\nregistration_time\t登记时间\nregistration_team\t登记班组\nacceptor\t验收人\nacceptence_opinion\t验收意见\ndate_of_acceptance\t验收日期\nwork_leader\t工作负责人名称\nwork_type_code\t工作类型\ndt\t分区字段\ncreate_time\t创建时间\nupdate_time\t更新时间\nid\t自增主键\ninsert_time\t插入时间\n\n\n6.管控平台天气信息\nT_YJ_ZM_WEATHER\n字段名\t含义\nID\t主键id\nXJMC\t县级名称\nXJDM\t县级代码\nWEATHER_RESULT\t天气结果\nCREATE_TIME\t创建时间\nAREANO\t区域编码\nLAST_UPDATE_TIME\t最新修改时间\n\n\n7.管控平台-变电设备信息表\nPMS_BD_EQUIP_INFO\n字段名\t含义\nEQUIP_ID\t设备ID\nEQUIP_NAME\t设备名称\nYWDW_ID\t运维单位ID\nYWDW_NAME\t运维单位\nFAC_ID\t变电站ID\nFAC_NAME\t变电站\nIS_GIS\t是否是GIS站\nEQUIP_TYPE_ID\t设备类型id\nEQUIP_TYPE\t设备类型\nVLTY_ID\t电压等级ID\nVLTY_NAME\t电压等级\nBAY_ID\t间隔类型\nBAY_NAME\t间隔单元\nSCCJ_ID\t生产厂家id\nSCCJ_NAME\t生产厂家\nMODEL\t型号\nTYRQ\t投运日期\nCCRQ\t出厂日期\nQX_START\t发生缺陷总数\nQX_NOW\t现存缺陷总数\nZXJCGJS\t在线监控告警数\nPJYCS\t评价异常数\nEQUIP_ADD_TYPE\t设备增加方式\nCREATEUSER\t创建人\nCREATETIME\t创建时间\nLAST_UPDATE_TIME\t最新修改时间\nAREANO\t区域编码\nISDEL\t逻辑删除0否1是\n\n\n8.管控平台-输电设备信息\nPMS_SD_EQUIP_INFO\n字段名\t含义\nLINE_ID\t线路ID\nLINE_NAME\t线路名称\nYWDW_ID\t运维单位ID\nYWDW_NAME\t运维单位\nYWBZ_ID\t运维班组ID\nYWBZ_NAME\t运维班组\nVLTY_ID\t电压等级ID\nVLTY_NAME\t电压等级\nTYRQ\t投运日期\nLENGTH\t长度\nASSET_UNIT\t资产单位\nMETHOD\t架设方式\nPOS_START\t起始位置\nPOS_END\t终点位置\nNAT_ASSET\t资产性质\nFAC_START_ID\t起始变电站id\nFAC_START\t起始变电站\nFAC_END_ID\t终点变电站id\nFAC_END\t终点变电站\nCREATEUSER\t创建人\nCREATETIME\t创建时间\nLAST_UPDATE_TIME\t最新修改时间\nAREANO\t区域编码\nISDEL\t逻辑删除0否1是\n\n\n9.管控平台-变电站信息\nPMS_FAC_INFO\n字段名\t含义\nFAC_ID\t变电站ID\nFAC_NAME\t变电站名称\nSSDW_ID\t所属单位ID\nSSDW_NAME\t所属单位\nYWDW_ID\t运维单位ID\nYWDW_NAME\t运维单位\nYWZ_ID\t运维站ID\nYWZ_NAME\t运维站\nVLTY_ID\t电压等级ID\nVLTY_NAME\t电压等级\nFAC_TYPE\t变电站类型\nWHDJ\t污秽等级\nIS_ZNZ\t是否是智能站\nIS_GIS\t是否是GIS站\nTYRQ\t投运日期\nIS_HNZ\t是否是户内站\nCREATEUSER\t创建人\nCREATETIME\t创建时间\nLAST_UPDATE_TIME\t最新修改时间\nAREANO\t区域编码\nISDEL\t逻辑删除0否1是\n\n\n10.变电设备清单表\nNUSP_FAC_EQUIPMENT\n字段名\t含义\nXUHAO\t序号\nYWDW\t运维单位\nFAC_ID\t变电站ID\nFAC_NAME\t变电站名称\nSFGIS\t是否GIS站\nSBLX\t设备类型\nDYDJ\t电压等级\nBAY_ID\t间隔ID\nBAY_NAME\t间隔名称\nEQUIP_ID\t设备ID\nEQUIP_NAME\t设备名称\nTYRQ\t投运日期\nCZRQ\t出厂日期\nSCCJ\t生产厂家\nXH\t型号\nSBZJFS\t设备增加方式\nYXBH\t运行编号\nSSDS\t所属地市\nXJDW\t县局单位\nWHBZ\t维护班组\nSBZT\t设备状态\nXB\t相别\nXS\t相数\nZJTYRQ\t最近投运日期\nSYHJ\t使用环境\nSFDW\t是否代维\nXINGH\t型号\nSHCCJ\t生产厂家\nCCBH\t出厂编号\nCPDH\t产品代号\nEDDY\t额定电压\nEDDL\t额定电流\nEDPL\t额定频率\nJGXS\t结构型式\nCZJGXS\t操作机构型式\nMHJZ\t灭弧介质\nEDJYSP\t额定绝缘水平\nEDDLDLDKCS\t额定短路电流开断次数\nEDDLGHDL\t额定短路关合电流（KA）\nDWDDL\t动稳定电流\nRWDDL\t热稳定电流\nEDDLCXSJ\t额定短路持续时间\nDKSL\t断口数量\nTGBDJL\t套管爬电距离（MM）\nTGGFJL\t套管干弧距离（MM）\nDLLBJL\t对地泄漏比距（CM/KV）\nJXSM\t机械寿命（次）\nHZDZ\t合闸电阻（Ω）\nHZSJ\t合闸时间\nFZSJ\t分闸时间\nFJSDJSJ\t分（金属短接）时间（MS）\nSF6\tSF6气体额定压力（MPA）\nZCDW\t资产单位\nZCXZ\t资产性质\nZCBH\t资产编码\nGCBH\t工程编号\nGCMC\t工程名称\nSWID\t实物ID\nPMBM\tPM编码\nWBSBM\tWBS编码\n\n\n11.PMS设备信息\nT_YJ_PMS_DEVICE\n字段名\t含义\nID\t主键\nNAME\t设备名称\nEQUIP_TYPE\t设备类型\nCORRECTED_NAME\t修改过的名称\nSUBSTATION\t所属变电站\nWORK_DATE\t投运日期\nPRODUCER\t生产厂家\nMODEL\t设备型号\nTYPE\t设备类型\nSTATUS\t运行状态  投运/退役\nCREATE_TIME\t创建时间\nAREANO\t区域编码\nLAST_UPDATE_TIME\t最新修改时间\n\n\n12.PMS变电站信息\nT_YJ_PMS_TREE_SUBSTATION\n字段名\t含义\nCOMPANY\t所属供电公司\nCOMPANY_ID\t所属供电公司ID\nCOMPANY_ITEM_TYPE\t\nVOLTAGE\t电压等级\nVOLTAGE_ID\t电压等级ID\nVOLTAGE_ITEM_TYPE\t\nSUBSTATION\t变电站名称\nSUBSTATION_ID\t变电站ID\nSUBSTATION_ITEM_TYPE\t\nAREANO\t区域编码\nLAST_UPDATE_TIME\t最新修改时间\n",
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "0b8f44c4-d251-4f5a-bbf8-0953ad4c913d",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -1996.3315661618683, "y": 2499.2672070496687},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": True,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": "不同设备类型正在开发中，敬请期待！",
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "84e1229c-a623-4fdd-b1d2-8f471c1059ce",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -1052.8584732500724, "y": 2462.5328826638624},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": True,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": "断路器",
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "62cccd8f-6d7e-4b4d-b5ee-8fdd6df7c62f",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -1538.2659872819645, "y": 2527.411173098657},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "引用变量：{{userChatInput}}",
-                                "label": "文本信息",
-                                "type": "source",
-                                "targets": [],
-                                "key": "userChatInput",
-                            },
-                            {
-                                "valueType": "file",
-                                "description": "以JSON数组格式输出用户上传文档列表，若为文档比对，包含分组信息",
-                                "label": "文档信息",
-                                "type": "source",
-                                "targets": [],
-                                "key": "files",
-                            },
-                            {
-                                "valueType": "image",
-                                "description": "以JSON数组格式输出用户上传的图片列表",
-                                "label": "图片信息",
-                                "type": "source",
-                                "targets": [],
-                                "key": "images",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "当未点击任何按钮时值为True",
-                                "label": "未点击按钮",
-                                "type": "source",
-                                "targets": [],
-                                "key": "unclickedButton",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "questionInput",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "输入文本开关",
-                                "label": "输入文本",
-                                "type": "switch",
-                                "value": True,
-                                "key": "inputText",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "上传文档开关",
-                                "label": "上传文档",
-                                "type": "switch",
-                                "value": False,
-                                "key": "uploadFile",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "上传图片开关",
-                                "label": "上传图片",
-                                "type": "switch",
-                                "value": False,
-                                "key": "uploadPicture",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "文档审查开关",
-                                "label": "文档审查",
-                                "type": "switch",
-                                "value": False,
-                                "key": "fileUpload",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "是否开启文档比对功能",
-                                "label": "是否文档对比",
-                                "type": "checkBox",
-                                "value": False,
-                                "key": "fileContrast",
-                            },
-                            {
-                                "valueType": "any",
-                                "description": "上传的文件列表,如果开启了文档对比,每个分组只能上传一个文件",
-                                "label": "文档分组",
-                                "type": "table",
-                                "value": [],
-                                "key": "fileInfo",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "是否作为初始全局input",
-                                "label": "是否作为初始全局input",
-                                "type": "hidden",
-                                "value": False,
-                                "key": "initialInput",
-                            },
-                        ],
-                        "intro": "用户输入入口,对话中用户的输入信息,与其他模块连接,一般作为起始模块",
-                        "name": "用户提问",
-                        "disabled": False,
-                        "category": "用户提问",
-                    },
-                },
-                {
-                    "id": "9624acc1-d534-4f17-be61-97b55b3e0f63",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -861.8967916173706, "y": 187.8637781812438},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "boolean",
-                                "description": "当模型运行结束，生成所有内容后，则回复结束下游组件开启。",
-                                "label": "回复结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "isResponseAnswerText",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "大模型处理完的信息，将作为回复内容进行输出。引用变量：",
-                                "label": "回复内容",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "input_key",
-                                        "target": "0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3",
-                                    }
-                                ],
-                                "key": "answerText",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "aiChat",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "引用变量：{{text}}",
-                                "label": "信息输入",
-                                "type": "target",
-                                "value": "",
-                                "key": "text",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "image",
-                                "description": "引用变量：{{images}}",
-                                "label": "图片输入",
-                                "type": "target",
-                                "value": "",
-                                "key": "images",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "search",
-                                "description": "引用变量：{{knSearch}}",
-                                "label": "知识库搜索结果",
-                                "type": "target",
-                                "value": "",
-                                "key": "knSearch",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "text",
-                                "description": "知识库高级配置",
-                                "label": "知识库高级配置",
-                                "type": "target",
-                                "value": '## Role:知识问答专家\n        ## Goals:\n        - 根据知识库检索到的知识，结合聊天上下文信息，回答用户提问\n        ## Constrains：\n        - 严格根据知识库内容回答问题\n        - 知识库检索知识无法满足问题回答时，需严谨的回答问题\n        ## Rules\n        - 知识库检索知识中， instruction 是相关知识内容或问答对的问题,answer是预期回答。\n        ## 参考内容：\n        ### 知识库检索知识：\n        """\n        {{quote}}\n        """\n        ## 用户提问：\n        "{{question}}"\n',
-                                "key": "knConfig",
-                            },
-                            {
-                                "connected": False,
-                                "min": 0,
-                                "max": 100,
-                                "valueType": "chatHistory",
-                                "description": "",
-                                "step": 1,
-                                "label": "聊天上下文",
-                                "type": "inputNumber",
-                                "value": 3,
-                                "key": "historyText",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "",
-                                "label": "选择模型",
-                                "type": "selectChatModel",
-                                "value": "oneapi-siliconflow:deepseek-ai/DeepSeek-R1",
-                                "key": "model",
-                                "required": True,
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "设定模型的角色和行为模式，如设定人设和回复逻辑。",
-                                "label": "系统提示词",
-                                "type": "textarea",
-                                "value": "你是一个地名匹配助手。\n任务：从预设列表中匹配最合适的地名。\n预设列表：【本部, 鄞州, 余姚, 慈溪, 宁海, 象山, 宁波】\n要求：\n1. 严格从预设列表中选择。\n2. 只输出匹配到的地名，不多任何一个字。\n3. 如果没有完全匹配的选项，请输出“无匹配”。\n\n\n用户输入: {{text}}\n\n输出：匹配好的地名\n\n示例：\n输入： 慈溪市 输出：慈溪",
-                                "key": "systemPrompt",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "用户输入的具体问题或请求，向模型提供用户指令。",
-                                "label": "用户提示词",
-                                "type": "textarea",
-                                "value": "",
-                                "key": "quotePrompt",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": False,
-                                "key": "stream",
-                            },
-                            {
-                                "min": 0,
-                                "max": 1,
-                                "markList": {"0": "严谨", "1": "创意"},
-                                "valueType": "number",
-                                "description": "控制回复创意性，如果想要和输入信息一致的答案，数值越小越好；如果想要模型发挥创意性，数值越大越好。",
-                                "step": 0.1,
-                                "label": "回复创意性",
-                                "type": "slider",
-                                "value": 0,
-                                "key": "temperature",
-                            },
-                            {
-                                "min": 0,
-                                "max": 1,
-                                "markList": {"0": "0", "1": "1"},
-                                "valueType": "number",
-                                "description": "控制输出的多样性,值越大输出包括更多单词选项；值越小，输出内容更集中在高概率单词上，即输出更确定但缺少多样性。一般【回复创意性】和【核采样TOP_P】只设置一个。",
-                                "step": 0.1,
-                                "label": "核采样TOP_P",
-                                "type": "slider",
-                                "value": 1,
-                                "key": "topP",
-                            },
-                            {
-                                "min": 100,
-                                "max": 4096,
-                                "markList": {
-                                    "100": "100",
-                                    "4096": 4096,
-                                    "5000": "5000",
-                                    "8192": 8192,
-                                },
-                                "valueType": "number",
-                                "step": 50,
-                                "label": "回复字数上限",
-                                "type": "slider",
-                                "value": 4096,
-                                "key": "maxToken",
-                            },
-                        ],
-                        "intro": "AI 对话模型，根据信息输入和提示词（Prompt）加工生成所需信息，展示给用户，完成与用户互动。",
-                        "name": "智能对话",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "f0e7da38-faf6-49fe-b11e-d2c398ab0f16",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 1050.058092873814, "y": 114.82823978954264},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [
-                                    {
-                                        "targetHandle": "sql",
-                                        "target": "a7f55714-53d2-48fb-8e17-7425b5b66cb4",
-                                    }
-                                ],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "88ec1c82-3e22-4285-9c60-66f45adf14e1",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": False,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": 'SELECT\n  SBLX AS "设备类型",\n  EQUIP_NAME AS "设备名称",\n  SCCJ AS "生产厂家",\n  TYRQ AS "投运日期"\nFROM nusp_fac_equipment\nWHERE xjdw LIKE {{geo}};',
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
-                    },
-                },
-                {
-                    "id": "0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -319.49586685447025, "y": 155.25565264027563},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "boolean",
-                                "description": "代码执行成功",
-                                "label": "执行成功",
-                                "type": "source",
-                                "targets": [],
-                                "key": "_runSuccess_",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "",
-                                "label": "output_key",
-                                "type": "parameter",
-                                "targets": [
-                                    {
-                                        "targetHandle": "geo",
-                                        "target": "c43107a6-d4ff-44ff-a44b-00d31697defe",
-                                    },
-                                    {
-                                        "targetHandle": "text",
-                                        "target": "96b27700-fc4f-47ae-ab1d-56c6742ea937",
-                                    },
-                                ],
-                                "key": "output_key",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "代码执行异常",
-                                "label": "执行异常",
-                                "type": "source",
-                                "targets": [],
-                                "key": "_runFailed_",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "代码执行的全部结果",
-                                "label": "执行结果",
-                                "type": "source",
-                                "targets": [],
-                                "key": "_runResult_",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "96b27700-fc4f-47ae-ab1d-56c6742ea937",
-                                    }
-                                ],
-                                "key": "finish",
-                                "required": False,
-                            },
-                        ],
-                        "moduleType": "codeFragment",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "",
-                                "label": "input_key",
-                                "type": "parameter",
-                                "key": "input_key",
-                            },
-                            {
-                                "valueType": "string",
-                                "options": [
-                                    {"label": "javascript", "value": "js"},
-                                    {"label": "python", "value": "python"},
-                                ],
-                                "description": "选择编程语言",
-                                "label": "语言",
-                                "type": "radio",
-                                "value": "python",
-                                "key": "_language_",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "string",
-                                "description": "代码描述，非必填",
-                                "label": "代码描述",
-                                "type": "textarea",
-                                "key": "_description_",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "string",
-                                "description": "用户编写的函数，Python函数名需指定为userFunction，输入输出为Key-Value数据类型，Key为String类型，Key和入参和岀参的设置对应",
-                                "label": "代码内容",
-                                "type": "textarea",
-                                "value": "import re\n\ndef userFunction(params):\n    def extract_after_think(info):\n        # 使用正则表达式匹配第一个</think>之后的所有内容\n        match = re.search(r'</think>(.*)', info, re.DOTALL)\n        if match:\n            return match.group(1).strip()  # 返回匹配到的内容并去除首尾空白\n        else:\n            return info\n\n    result = {}\n    try:\n        # 提取内容并保存到result中\n         temp = extract_after_think(params['input_key'])\n         temprp = temp.replace('\\n', '')\n         result['output_key'] = \"'%\" + temprp +\"%'\"\n    except Exception as e:\n        # 捕获可能的异常并记录错误信息\n        result['error'] = str(e)\n\n    return result",
-                                "key": "_code_",
-                            },
-                        ],
-                        "intro": "通过编写代码对输入数据进行精确的处理与加工",
-                        "name": "代码块",
-                        "disabled": False,
-                        "category": "高阶能力",
-                    },
-                },
-                {
-                    "id": "c43107a6-d4ff-44ff-a44b-00d31697defe",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 187.41334017570892, "y": 131.6960333509331},
-                    "data": {
-                        "outputs": [],
-                        "moduleType": "addMemoryVariable",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "",
-                                "label": "geo",
-                                "type": "agentMemoryVar",
-                                "targets": [],
-                                "key": "geo",
+    "nodes": [
+        {
+            "id": "simpleInputId",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": -2050.0187299418194,
+                "y": 168.1277274588137
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "引用变量：{{userChatInput}}",
+                        "label": "文本信息",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "text",
+                                "target": "info_class"
+                            },
+                            {
+                                "targetHandle": "text",
+                                "target": "ai_chat_2"
                             }
                         ],
-                        "intro": "使用该组件将变量存为记忆变量后，可以在智能体的其他组件中引用",
-                        "name": "添加记忆变量",
-                        "category": "高阶能力",
+                        "key": "userChatInput"
                     },
-                },
-                {
-                    "id": "96b27700-fc4f-47ae-ab1d-56c6742ea937",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 591.6882106464707, "y": 135.4006165467965},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "f0e7da38-faf6-49fe-b11e-d2c398ab0f16",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": False,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": "您可以输入希望用户看到的内容，当触发条件判定成立，将显示您输入的内容。",
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
+                    {
+                        "valueType": "file",
+                        "description": "以JSON数组格式输出用户上传文档列表，若为文档比对，包含分组信息",
+                        "label": "文档信息",
+                        "type": "source",
+                        "targets": [],
+                        "key": "files"
                     },
-                },
-                {
-                    "id": "a7f55714-53d2-48fb-8e17-7425b5b66cb4",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 2402.86927334456, "y": 110.86520200031254},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "SQL查询的全部结果",
-                                "label": "查询结果",
-                                "type": "source",
-                                "targets": [],
-                                "key": "queryResult",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "SQL查询执行成功",
-                                "label": "调用成功",
-                                "type": "source",
-                                "targets": [],
-                                "key": "success",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "SQL查询执行异常",
-                                "label": "调用失败",
-                                "type": "source",
-                                "targets": [],
-                                "key": "failed",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "19f31ec7-c24e-4d22-859c-44d45d9dadba",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "databaseQuery",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "数据查询sql",
-                                "label": "SQL",
-                                "type": "target",
-                                "value": "",
-                                "key": "sql",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "string",
-                                "description": "查询的数据库",
-                                "label": "查询的数据库",
-                                "type": "selectDatabase",
-                                "value": {
-                                    "databaseUuid": "793a32627a094b41a7d52e5443b7857b"
-                                },
-                                "key": "database",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "显示查询结果",
-                                "label": "显示查询结果",
-                                "type": "switch",
-                                "value": True,
-                                "key": "showTable",
-                            },
-                        ],
-                        "intro": "数据库查询",
-                        "name": "数据库查询",
-                        "disabled": False,
-                        "category": "数据库",
+                    {
+                        "valueType": "image",
+                        "description": "以JSON数组格式输出用户上传的图片列表",
+                        "label": "图片信息",
+                        "type": "source",
+                        "targets": [],
+                        "key": "images"
                     },
-                },
-                {
-                    "id": "88ec1c82-3e22-4285-9c60-66f45adf14e1",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 1543.7577279314946, "y": 156.21737446259584},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "bceabb37-bd90-4c77-872d-15e1e8db02fb",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": True,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": "基本信息如下",
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
+                    {
+                        "valueType": "boolean",
+                        "description": "当未点击任何按钮时值为True",
+                        "label": "未点击按钮",
+                        "type": "source",
+                        "targets": [],
+                        "key": "unclickedButton"
                     },
-                },
-                {
-                    "id": "19f31ec7-c24e-4d22-859c-44d45d9dadba",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 1067.1535700820075, "y": 890.5267338164495},
-                    "data": {
-                        "outputs": [
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
                             {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [
-                                    {
-                                        "targetHandle": "sql",
-                                        "target": "b3460024-f344-4f06-bc01-d5bcf0892be5",
-                                    }
-                                ],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "d9334eb8-613e-43a7-9e78-c9b6072535a0",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
+                                "targetHandle": "switchAny",
+                                "target": "info_class"
+                            }
                         ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": False,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": "SELECT\nCONTENT as '故障事件内容',\nOCCUR_TIME as '故障发生时间',\nBUSI_TYPE_NAME as '故障业务类型名称',\nBUSI_TYPE_SUBCLASS as '故障业务子类名称'\nFROM\n    T_EVENT_ZNJS_DWXXJS t1\nWHERE\n    t1.EQUIP_ID in (select `EQUIP_ID` from nusp_fac_equipment \nwhere xjdw like {{geo}});",
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "questionInput",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
                     },
-                },
-                {
-                    "id": "d9334eb8-613e-43a7-9e78-c9b6072535a0",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 1574.6426907565042, "y": 892.7600770675024},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "b3460024-f344-4f06-bc01-d5bcf0892be5",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": True,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": "发生的历史故障如下",
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
                     },
-                },
-                {
-                    "id": "b3460024-f344-4f06-bc01-d5bcf0892be5",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 2080.157377078698, "y": 864.3978662788228},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "SQL查询的全部结果",
-                                "label": "查询结果",
-                                "type": "source",
-                                "targets": [],
-                                "key": "queryResult",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "SQL查询执行成功",
-                                "label": "调用成功",
-                                "type": "source",
-                                "targets": [],
-                                "key": "success",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "SQL查询执行异常",
-                                "label": "调用失败",
-                                "type": "source",
-                                "targets": [],
-                                "key": "failed",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "databaseQuery",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "数据查询sql",
-                                "label": "SQL",
-                                "type": "target",
-                                "value": "",
-                                "key": "sql",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "string",
-                                "description": "查询的数据库",
-                                "label": "查询的数据库",
-                                "type": "selectDatabase",
-                                "value": {
-                                    "databaseUuid": "793a32627a094b41a7d52e5443b7857b"
-                                },
-                                "key": "database",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "显示查询结果",
-                                "label": "显示查询结果",
-                                "type": "switch",
-                                "value": True,
-                                "key": "showTable",
-                            },
-                        ],
-                        "intro": "数据库查询",
-                        "name": "数据库查询",
-                        "disabled": False,
-                        "category": "数据库",
+                    {
+                        "valueType": "boolean",
+                        "description": "输入文本开关",
+                        "label": "输入文本",
+                        "type": "switch",
+                        "value": True,
+                        "key": "inputText"
                     },
-                },
-                {
-                    "id": "0b4ba2f5-e3de-4e2c-9696-fff1feebd77f",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": -1479.7489037112273, "y": 151.55533226592678},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "以JSON格式输出信息分类结果",
-                                "label": "分类结果",
-                                "type": "source",
-                                "targets": [],
-                                "key": "matchResult",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [],
-                                "key": "finish",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "label": "查询地区设备清单",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "9624acc1-d534-4f17-be61-97b55b3e0f63",
-                                    }
-                                ],
-                                "key": "9f4da034-1f5c-44d4-9345-1cb53dfcbd61",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "label": "不同设备",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "0b8f44c4-d251-4f5a-bbf8-0953ad4c913d",
-                                    }
-                                ],
-                                "key": "1c8384d9-2910-4ae5-bb36-7b2853be955a",
-                            },
-                        ],
-                        "moduleType": "infoClass",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "引用变量：{{text}}",
-                                "label": "信息输入",
-                                "type": "target",
-                                "value": "",
-                                "key": "text",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "search",
-                                "description": "引用变量：{{knSearch}}",
-                                "label": "知识库搜索结果",
-                                "type": "target",
-                                "value": "",
-                                "key": "knSearch",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "text",
-                                "description": "知识库高级配置",
-                                "label": "知识库高级配置",
-                                "type": "target",
-                                "value": '## Role:知识问答专家\n        ## Goals:\n        - 根据知识库检索到的知识，结合聊天上下文信息，回答用户提问\n        ## Constrains：\n        - 严格根据知识库内容回答问题\n        - 知识库检索知识无法满足问题回答时，需严谨的回答问题\n        ## Rules\n        - 知识库检索知识中， instruction 是相关知识内容或问答对的问题,answer是预期回答。\n        ## 参考内容：\n        ### 知识库检索知识：\n        """\n        {{quote}}\n        """\n        ## 用户提问：\n        "{{question}}"\n',
-                                "key": "knConfig",
-                            },
-                            {
-                                "connected": False,
-                                "min": 0,
-                                "max": 100,
-                                "valueType": "chatHistory",
-                                "description": "",
-                                "step": 1,
-                                "label": "聊天上下文",
-                                "type": "inputNumber",
-                                "value": 0,
-                                "key": "historyText",
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "",
-                                "label": "选择模型",
-                                "type": "selectChatModel",
-                                "value": "qwen2.5-72b-instruct",
-                                "key": "model",
-                                "required": True,
-                            },
-                            {
-                                "valueType": "string",
-                                "description": "简单分类无需调整提示词，可补充逻辑判断描述。",
-                                "label": "提示词 (Prompt)",
-                                "type": "textarea",
-                                "value": "你是电网行业问数智能体的二分类路由器。你的唯一任务：根据用户输入判定应走哪一个流程，并且只输出对应代号。\n\n输出代号（严格二选一，且必须输出其一）：\n查询地区设备清单\n不同设备：指设备事件/缺陷/跳闸等记录或统计\n决策优先级（从高到低，命中即停）：\n事件/统计关键词命中 → 不同设备。 事件/统计关键词示例（包含但不限于）：跳闸、缺陷、故障、检修、告警、录波、重合、统计、次数、对比、比较、趋势、最近、近一周/上月/季度、原因、厂家、是否遗留、是否移交综合室、值班人、记录、日志、处理、事故。\n清单/罗列关键词命中 → 查询地区设备清单。 清单关键词示例：清单、名单、有哪些、列出、罗列、一览、台账、盘点、汇总、分布、名录、列表。\n地名/站名/区域线索命中（即使是冷门或不在词典中）→ 查询地区设备清单。 判定启发式（任一满足即可视为区域线索）：\n后缀/词形：片区、区、市、县、旗、州、盟、镇、乡、村、园、园区、街、道、路、巷、岭、山、岛、湾、洲、滩、港、口、桥、湖、河、江、水库、矿、厂 等；\n设施/站点：变电站、开闭所、运维站、开关站、枢纽、站、所、#×主变（如“#1主变”常与站点/设备清单相关）；\n编码/别称：看似地名或站/所代号的短词/缩写/拼音/字母数字组合（如“GZ-01”“DF变”“临江新城”“洪泽洲”），即使很冷门也按区域线索处理；\n含“kV + 站/所”（如“110kV××站”）。\n模糊/极短输入的兜底：当未命中1)与2)，且输入很短或语义不明（如仅16个汉字或13个词），一律 → 查询地区设备清单。\n若仍无法判断（几乎不可能出现），绝不空输出，强制 → 查询地区设备清单。\n特殊歧义处理：\n仅出现设备类别或设备名（如“主变”“断路器”“XX线路”）但无事件/统计词且无清单词：默认 → 查询地区设备清单（视为想看该类设备分布/清单）。\n同时出现清单词与事件词时：以事件词优先 → 不同设备。\n输出规范（务必遵守）：\n严格只选择 查询地区设备清单 或 不同设备 之一。\n不输出任何其他字符、标点、空格、换行、前后缀或解释。",
-                                "key": "quotePrompt",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "引用变量：{{labels}}",
-                                "label": "标签",
-                                "type": "addLabel",
-                                "value": [
-                                    {
-                                        "value": "查询地区设备清单",
-                                        "key": "9f4da034-1f5c-44d4-9345-1cb53dfcbd61",
-                                    },
-                                    {
-                                        "value": "不同设备",
-                                        "key": "1c8384d9-2910-4ae5-bb36-7b2853be955a",
-                                    },
-                                ],
-                                "key": "labels",
-                            },
-                        ],
-                        "intro": "根据提示词完成信息分类，且不同的信息类型配置不同的回复方式和内容。",
-                        "name": "信息分类",
-                        "disabled": False,
-                        "category": "大模型",
+                    {
+                        "valueType": "boolean",
+                        "description": "上传文档开关",
+                        "label": "上传文档",
+                        "type": "switch",
+                        "value": False,
+                        "key": "uploadFile"
                     },
-                },
-                {
-                    "id": "bceabb37-bd90-4c77-872d-15e1e8db02fb",
-                    "type": "custom",
-                    "initialized": False,
-                    "position": {"x": 1954.5790409016909, "y": 156.83070120629836},
-                    "data": {
-                        "outputs": [
-                            {
-                                "valueType": "string",
-                                "description": "回复内容原样输出。",
-                                "label": "回复内容",
-                                "type": "source",
-                                "value": "",
-                                "targets": [],
-                                "key": "text",
-                            },
-                            {
-                                "valueType": "boolean",
-                                "description": "运行完成后开关打开，下游链接组件开始运行。",
-                                "label": "模块运行结束",
-                                "type": "source",
-                                "targets": [
-                                    {
-                                        "targetHandle": "switchAny",
-                                        "target": "a7f55714-53d2-48fb-8e17-7425b5b66cb4",
-                                    }
-                                ],
-                                "key": "finish",
-                            },
-                        ],
-                        "moduleType": "confirmreply",
-                        "inputs": [
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
-                                "label": "联动激活",
-                                "type": "target",
-                                "keyType": "trigger",
-                                "value": False,
-                                "key": "switch",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "boolean",
-                                "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
-                                "label": "任一激活",
-                                "type": "target",
-                                "keyType": "triggerAny",
-                                "value": False,
-                                "key": "switchAny",
-                            },
-                            {
-                                "connected": False,
-                                "valueType": "boolean",
-                                "description": "控制回复内容是否输出给用户",
-                                "label": "回复对用户可见",
-                                "type": "switch",
-                                "value": False,
-                                "key": "stream",
-                            },
-                            {
-                                "connected": True,
-                                "valueType": "string",
-                                "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
-                                "label": "回复内容",
-                                "type": "textarea",
-                                "value": 'SELECT\n  SBLX AS "设备类型",\n  EQUIP_NAME AS "设备名称",\n  SCCJ AS "生产厂家",\n  TYRQ AS "投运日期"\nFROM nusp_fac_equipment\nWHERE xjdw LIKE \'%慈溪%\';',
-                                "key": "text",
-                            },
-                        ],
-                        "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
-                        "name": "确定回复",
-                        "disabled": False,
-                        "category": "大模型",
+                    {
+                        "valueType": "boolean",
+                        "description": "上传图片开关",
+                        "label": "上传图片",
+                        "type": "switch",
+                        "value": False,
+                        "key": "uploadPicture"
                     },
-                },
-            ],
-            "edges": [
-                {
-                    "id": "vueflow__edge-5a81da8a-3292-4bba-8133-ed40746bf63dfinish-a2a6513b-5bae-4e7a-b726-3bbd2b2115e0switchAny",
-                    "type": "custom",
-                    "source": "5a81da8a-3292-4bba-8133-ed40746bf63d",
-                    "target": "a2a6513b-5bae-4e7a-b726-3bbd2b2115e0",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -141.81689900126946,
-                    "sourceY": -1139.0400989292857,
-                    "targetY": -1561.4965980251395,
-                    "targetX": 292.06369942212564,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-a2a6513b-5bae-4e7a-b726-3bbd2b2115e0finish-c5851223-5d57-490b-89cc-5e71e61f905aswitchAny",
-                    "type": "custom",
-                    "source": "a2a6513b-5bae-4e7a-b726-3bbd2b2115e0",
-                    "target": "c5851223-5d57-490b-89cc-5e71e61f905a",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 620.0636994221256,
-                    "sourceY": -140.83253552513952,
-                    "targetY": -1532.14841462498,
-                    "targetX": 964.1452273108512,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-a2a6513b-5bae-4e7a-b726-3bbd2b2115e0answerText-c5851223-5d57-490b-89cc-5e71e61f905ainput_key",
-                    "type": "custom",
-                    "source": "a2a6513b-5bae-4e7a-b726-3bbd2b2115e0",
-                    "target": "c5851223-5d57-490b-89cc-5e71e61f905a",
-                    "sourceHandle": "answerText",
-                    "targetHandle": "input_key",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 620.0636994221256,
-                    "sourceY": -186.83253552513952,
-                    "targetY": -1438.35153962498,
-                    "targetX": 964.1452273108512,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-c5851223-5d57-490b-89cc-5e71e61f905aoutput_key-851eb3a6-09a2-41d4-9f91-81847b96d748markdown",
-                    "type": "custom",
-                    "source": "c5851223-5d57-490b-89cc-5e71e61f905a",
-                    "target": "851eb3a6-09a2-41d4-9f91-81847b96d748",
-                    "sourceHandle": "output_key",
-                    "targetHandle": "markdown",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1322.1452273108512,
-                    "sourceY": -968.25778962498,
-                    "targetY": -1483.1001860987617,
-                    "targetX": 1441.2535010870245,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-c5851223-5d57-490b-89cc-5e71e61f905afinish-851eb3a6-09a2-41d4-9f91-81847b96d748switchAny",
-                    "type": "custom",
-                    "source": "c5851223-5d57-490b-89cc-5e71e61f905a",
-                    "target": "851eb3a6-09a2-41d4-9f91-81847b96d748",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1322.1452273108512,
-                    "sourceY": -830.25778962498,
-                    "targetY": -1540.8970610987617,
-                    "targetX": 1441.2535010870245,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-851eb3a6-09a2-41d4-9f91-81847b96d748code-fdcf756f-7455-4d18-9fb5-3d5dacc1f755text",
-                    "type": "custom",
-                    "source": "851eb3a6-09a2-41d4-9f91-81847b96d748",
-                    "target": "fdcf756f-7455-4d18-9fb5-3d5dacc1f755",
-                    "sourceHandle": "code",
-                    "targetHandle": "text",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1809.253379016712,
-                    "sourceY": -1314.4048735987617,
-                    "targetY": -1431.5532307626484,
-                    "targetX": 1854.77379621562,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-851eb3a6-09a2-41d4-9f91-81847b96d748finish-fdcf756f-7455-4d18-9fb5-3d5dacc1f755switchAny",
-                    "type": "custom",
-                    "source": "851eb3a6-09a2-41d4-9f91-81847b96d748",
-                    "target": "fdcf756f-7455-4d18-9fb5-3d5dacc1f755",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1809.253379016712,
-                    "sourceY": -1176.4048735987617,
-                    "targetY": -1601.1469807626484,
-                    "targetX": 1854.77379621562,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-fdcf756f-7455-4d18-9fb5-3d5dacc1f755text-017b5998-f927-489d-897d-39dfb8848481sql",
-                    "type": "custom",
-                    "source": "fdcf756f-7455-4d18-9fb5-3d5dacc1f755",
-                    "target": "017b5998-f927-489d-897d-39dfb8848481",
-                    "sourceHandle": "text",
-                    "targetHandle": "sql",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 2182.7737962156198,
-                    "sourceY": -1256.6547932626484,
-                    "targetY": -1493.2384150344403,
-                    "targetX": 2268.5417895502255,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-fdcf756f-7455-4d18-9fb5-3d5dacc1f755finish-017b5998-f927-489d-897d-39dfb8848481switchAny",
-                    "type": "custom",
-                    "source": "fdcf756f-7455-4d18-9fb5-3d5dacc1f755",
-                    "target": "017b5998-f927-489d-897d-39dfb8848481",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 2182.7737962156198,
-                    "sourceY": -1210.6547932626484,
-                    "targetY": -1551.0352900344403,
-                    "targetX": 2268.5417895502255,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-5a81da8a-3292-4bba-8133-ed40746bf63dtext-2fd21079-adda-4294-9e9a-877617d86b33sql_structure",
-                    "type": "custom",
-                    "source": "5a81da8a-3292-4bba-8133-ed40746bf63d",
-                    "target": "2fd21079-adda-4294-9e9a-877617d86b33",
-                    "sourceHandle": "text",
-                    "targetHandle": "sql_structure",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -141.81689900126946,
-                    "sourceY": -1185.0400989292857,
-                    "targetY": -1293.4045828132323,
-                    "targetX": -193.60795910297736,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-017b5998-f927-489d-897d-39dfb8848481queryResult-f9fc54b1-86fe-4cf3-857f-247fbf98bc44text",
-                    "type": "custom",
-                    "source": "017b5998-f927-489d-897d-39dfb8848481",
-                    "target": "f9fc54b1-86fe-4cf3-857f-247fbf98bc44",
-                    "sourceHandle": "queryResult",
-                    "targetHandle": "text",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 2636.5417895502255,
-                    "sourceY": -1200.7462275344403,
-                    "targetY": -1818.0593645911588,
-                    "targetX": 2740.7449259121063,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-017b5998-f927-489d-897d-39dfb8848481finish-f9fc54b1-86fe-4cf3-857f-247fbf98bc44switchAny",
-                    "type": "custom",
-                    "source": "017b5998-f927-489d-897d-39dfb8848481",
-                    "target": "f9fc54b1-86fe-4cf3-857f-247fbf98bc44",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 2636.5417895502255,
-                    "sourceY": -1062.7462275344403,
-                    "targetY": -1875.8562395911588,
-                    "targetX": 2740.7449259121063,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-9624acc1-d534-4f17-be61-97b55b3e0f63finish-0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3switchAny",
-                    "type": "custom",
-                    "source": "9624acc1-d534-4f17-be61-97b55b3e0f63",
-                    "target": "0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -537.8967916173706,
-                    "sourceY": 1747.2231379224547,
-                    "targetY": 283.9509651402756,
-                    "targetX": -321.49586685447025,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-9624acc1-d534-4f17-be61-97b55b3e0f63answerText-0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3input_key",
-                    "type": "custom",
-                    "source": "9624acc1-d534-4f17-be61-97b55b3e0f63",
-                    "target": "0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3",
-                    "sourceHandle": "answerText",
-                    "targetHandle": "input_key",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -537.8967916173706,
-                    "sourceY": 1701.2231379224547,
-                    "targetY": 377.7478401402756,
-                    "targetX": -321.49586685447025,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3output_key-c43107a6-d4ff-44ff-a44b-00d31697defegeo",
-                    "type": "custom",
-                    "source": "0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3",
-                    "target": "c43107a6-d4ff-44ff-a44b-00d31697defe",
-                    "sourceHandle": "output_key",
-                    "targetHandle": "geo",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 36.50413314552975,
-                    "sourceY": 847.8415596226976,
-                    "targetY": 216.59448610972217,
-                    "targetX": 183.41334017570892,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3finish-96b27700-fc4f-47ae-ab1d-56c6742ea937switchAny",
-                    "type": "custom",
-                    "source": "0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3",
-                    "target": "96b27700-fc4f-47ae-ab1d-56c6742ea937",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 36.50413314552975,
-                    "sourceY": 985.8415596226976,
-                    "targetY": 274.0959443055856,
-                    "targetX": 587.6882106464707,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3output_key-96b27700-fc4f-47ae-ab1d-56c6742ea937text",
-                    "type": "custom",
-                    "source": "0b0fd8dd-4bc1-4fb9-a1bb-018462007aa3",
-                    "target": "96b27700-fc4f-47ae-ab1d-56c6742ea937",
-                    "sourceHandle": "output_key",
-                    "targetHandle": "text",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 36.50413314552975,
-                    "sourceY": 847.8415596226976,
-                    "targetY": 443.6896943055856,
-                    "targetX": 587.6882106464707,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-96b27700-fc4f-47ae-ab1d-56c6742ea937finish-f0e7da38-faf6-49fe-b11e-d2c398ab0f16switchAny",
-                    "type": "custom",
-                    "source": "96b27700-fc4f-47ae-ab1d-56c6742ea937",
-                    "target": "f0e7da38-faf6-49fe-b11e-d2c398ab0f16",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 915.6882106464707,
-                    "sourceY": 664.5881318055856,
-                    "targetY": 253.52355228954264,
-                    "targetX": 1046.058092873814,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-f0e7da38-faf6-49fe-b11e-d2c398ab0f16finish-88ec1c82-3e22-4285-9c60-66f45adf14e1switchAny",
-                    "type": "custom",
-                    "source": "f0e7da38-faf6-49fe-b11e-d2c398ab0f16",
-                    "target": "88ec1c82-3e22-4285-9c60-66f45adf14e1",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1374.058092873814,
-                    "sourceY": 644.0157397895426,
-                    "targetY": 294.91268696259584,
-                    "targetX": 1539.7577279314946,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-a7f55714-53d2-48fb-8e17-7425b5b66cb4finish-19f31ec7-c24e-4d22-859c-44d45d9dadbaswitchAny",
-                    "type": "custom",
-                    "source": "a7f55714-53d2-48fb-8e17-7425b5b66cb4",
-                    "target": "19f31ec7-c24e-4d22-859c-44d45d9dadba",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 2766.86927334456,
-                    "sourceY": 737.8496075178907,
-                    "targetY": 1029.2220463164495,
-                    "targetX": 1063.1535700820075,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-19f31ec7-c24e-4d22-859c-44d45d9dadbafinish-d9334eb8-613e-43a7-9e78-c9b6072535a0switchAny",
-                    "type": "custom",
-                    "source": "19f31ec7-c24e-4d22-859c-44d45d9dadba",
-                    "target": "d9334eb8-613e-43a7-9e78-c9b6072535a0",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1391.1535700820075,
-                    "sourceY": 1419.7142338164495,
-                    "targetY": 1031.4553285323461,
-                    "targetX": 1570.6426907565042,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-d9334eb8-613e-43a7-9e78-c9b6072535a0finish-b3460024-f344-4f06-bc01-d5bcf0892be5switchAny",
-                    "type": "custom",
-                    "source": "d9334eb8-613e-43a7-9e78-c9b6072535a0",
-                    "target": "b3460024-f344-4f06-bc01-d5bcf0892be5",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1898.6425686861917,
-                    "sourceY": 1421.9475160323461,
-                    "targetY": 1003.093239813979,
-                    "targetX": 2076.157377078698,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-19f31ec7-c24e-4d22-859c-44d45d9dadbatext-b3460024-f344-4f06-bc01-d5bcf0892be5sql",
-                    "type": "custom",
-                    "source": "19f31ec7-c24e-4d22-859c-44d45d9dadba",
-                    "target": "b3460024-f344-4f06-bc01-d5bcf0892be5",
-                    "sourceHandle": "text",
-                    "targetHandle": "sql",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1391.1535700820075,
-                    "sourceY": 1373.7142338164495,
-                    "targetY": 1060.890114813979,
-                    "targetX": 2076.157377078698,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-0b4ba2f5-e3de-4e2c-9696-fff1feebd77f9f4da034-1f5c-44d4-9345-1cb53dfcbd61-9624acc1-d534-4f17-be61-97b55b3e0f63switchAny",
-                    "type": "custom",
-                    "source": "0b4ba2f5-e3de-4e2c-9696-fff1feebd77f",
-                    "target": "9624acc1-d534-4f17-be61-97b55b3e0f63",
-                    "sourceHandle": "9f4da034-1f5c-44d4-9345-1cb53dfcbd61",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -1115.7489037112273,
-                    "sourceY": 1103.9303017483487,
-                    "targetY": 326.5590754224547,
-                    "targetX": -865.8967916173706,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-simpleInputIduserChatInput-0b4ba2f5-e3de-4e2c-9696-fff1feebd77ftext",
-                    "type": "custom",
-                    "source": "simpleInputId",
-                    "target": "0b4ba2f5-e3de-4e2c-9696-fff1feebd77f",
-                    "sourceHandle": "userChatInput",
-                    "targetHandle": "text",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -1726.0187299418194,
-                    "sourceY": 749.1121177176028,
-                    "targetY": 348.0475197659268,
-                    "targetX": -1483.7489037112273,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-simpleInputIduserChatInput-9624acc1-d534-4f17-be61-97b55b3e0f63text",
-                    "type": "custom",
-                    "source": "simpleInputId",
-                    "target": "9624acc1-d534-4f17-be61-97b55b3e0f63",
-                    "sourceHandle": "userChatInput",
-                    "targetHandle": "text",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -1726.0187299418194,
-                    "sourceY": 749.1121177176028,
-                    "targetY": 384.3559504224547,
-                    "targetX": -865.8967916173706,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-0b4ba2f5-e3de-4e2c-9696-fff1feebd77f1c8384d9-2910-4ae5-bb36-7b2853be955a-0b8f44c4-d251-4f5a-bbf8-0953ad4c913dswitchAny",
-                    "type": "custom",
-                    "source": "0b4ba2f5-e3de-4e2c-9696-fff1feebd77f",
-                    "target": "0b8f44c4-d251-4f5a-bbf8-0953ad4c913d",
-                    "sourceHandle": "1c8384d9-2910-4ae5-bb36-7b2853be955a",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -1115.7489037112273,
-                    "sourceY": 1149.9303017483487,
-                    "targetY": 2637.9625195496687,
-                    "targetX": -2000.3315661618683,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-simpleInputIdfinish-0b4ba2f5-e3de-4e2c-9696-fff1feebd77fswitchAny",
-                    "type": "custom",
-                    "source": "simpleInputId",
-                    "target": "0b4ba2f5-e3de-4e2c-9696-fff1feebd77f",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": -1726.0187299418194,
-                    "sourceY": 933.1121177176028,
-                    "targetY": 290.2506447659268,
-                    "targetX": -1483.7489037112273,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-88ec1c82-3e22-4285-9c60-66f45adf14e1finish-bceabb37-bd90-4c77-872d-15e1e8db02fbswitchAny",
-                    "type": "custom",
-                    "source": "88ec1c82-3e22-4285-9c60-66f45adf14e1",
-                    "target": "bceabb37-bd90-4c77-872d-15e1e8db02fb",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1867.7578500018071,
-                    "sourceY": 685.404904980174,
-                    "targetY": 295.5259984475093,
-                    "targetX": 1950.5790409016909,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-f0e7da38-faf6-49fe-b11e-d2c398ab0f16text-a7f55714-53d2-48fb-8e17-7425b5b66cb4sql",
-                    "type": "custom",
-                    "source": "f0e7da38-faf6-49fe-b11e-d2c398ab0f16",
-                    "target": "a7f55714-53d2-48fb-8e17-7425b5b66cb4",
-                    "sourceHandle": "text",
-                    "targetHandle": "sql",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 1374.058092873814,
-                    "sourceY": 598.0157397895426,
-                    "targetY": 307.35738950031254,
-                    "targetX": 2398.86927334456,
-                    "animated": False,
-                },
-                {
-                    "id": "vueflow__edge-bceabb37-bd90-4c77-872d-15e1e8db02fbfinish-a7f55714-53d2-48fb-8e17-7425b5b66cb4switchAny",
-                    "type": "custom",
-                    "source": "bceabb37-bd90-4c77-872d-15e1e8db02fb",
-                    "target": "a7f55714-53d2-48fb-8e17-7425b5b66cb4",
-                    "sourceHandle": "finish",
-                    "targetHandle": "switchAny",
-                    "data": {},
-                    "label": "",
-                    "sourceX": 2278.579040901691,
-                    "sourceY": 686.0181859475093,
-                    "targetY": 249.56051450031254,
-                    "targetX": 2398.86927334456,
-                    "animated": False,
-                },
-            ],
-            "position": [675.3389167740838, 959.822903470967],
-            "zoom": 0.46223645304315436,
-            "viewport": {
-                "x": 675.3389167740838,
-                "y": 959.822903470967,
-                "zoom": 0.46223645304315436,
+                    {
+                        "valueType": "boolean",
+                        "description": "文档审查开关",
+                        "label": "文档审查",
+                        "type": "switch",
+                        "value": False,
+                        "key": "fileUpload"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "是否开启文档比对功能",
+                        "label": "是否文档对比",
+                        "type": "checkBox",
+                        "value": False,
+                        "key": "fileContrast"
+                    },
+                    {
+                        "valueType": "any",
+                        "description": "上传的文件列表,如果开启了文档对比,每个分组只能上传一个文件",
+                        "label": "文档分组",
+                        "type": "table",
+                        "value": [],
+                        "key": "fileInfo"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "是否作为初始全局input",
+                        "label": "是否作为初始全局input",
+                        "type": "hidden",
+                        "value": True,
+                        "key": "initialInput"
+                    }
+                ],
+                "intro": "用户输入入口,对话中用户的输入信息,与其他模块连接,一般作为起始模块",
+                "name": "用户提问",
+                "disabled": False,
+                "category": "用户提问"
+            }
+        },
+        {
+            "id": "confirm_reply_3",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": -873.0587219566071,
+                "y": 2123.791172048472
             },
-        
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "回复内容原样输出。",
+                        "label": "回复内容",
+                        "type": "source",
+                        "value": "",
+                        "targets": [],
+                        "key": "text"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "confirmreply",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "boolean",
+                        "description": "控制回复内容是否输出给用户",
+                        "label": "回复对用户可见",
+                        "type": "switch",
+                        "value": True,
+                        "key": "stream"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
+                        "label": "回复内容",
+                        "type": "textarea",
+                        "value": "不同设备类型正在开发中，敬请期待！",
+                        "key": "text"
+                    }
+                ],
+                "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
+                "name": "确定回复",
+                "disabled": False,
+                "category": "大模型"
+            }
+        },
+        {
+            "id": "ai_chat_2",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": -861.8967916173706,
+                "y": 187.8637781812438
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "boolean",
+                        "description": "当模型运行结束，生成所有内容后，则回复结束下游组件开启。",
+                        "label": "回复结束",
+                        "type": "source",
+                        "targets": [],
+                        "key": "isResponseAnswerText"
+                    },
+                    {
+                        "valueType": "string",
+                        "description": "大模型处理完的信息，将作为回复内容进行输出。引用变量：",
+                        "label": "回复内容",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "input_key",
+                                "target": "code_fragment_1"
+                            }
+                        ],
+                        "key": "answerText"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "code_fragment_1"
+                            }
+                        ],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "aiChat",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "引用变量：{{text}}",
+                        "label": "信息输入",
+                        "type": "target",
+                        "value": "",
+                        "key": "text"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "image",
+                        "description": "引用变量：{{images}}",
+                        "label": "图片输入",
+                        "type": "target",
+                        "value": [],
+                        "key": "images"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "search",
+                        "description": "引用变量：{{knSearch}}",
+                        "label": "知识库搜索结果",
+                        "type": "target",
+                        "value": "",
+                        "key": "knSearch"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "text",
+                        "description": "知识库高级配置",
+                        "label": "知识库高级配置",
+                        "type": "target",
+                        "value": "",
+                        "key": "knConfig"
+                    },
+                    {
+                        "connected": False,
+                        "min": 0,
+                        "max": 6,
+                        "valueType": "chatHistory",
+                        "description": "",
+                        "step": 1,
+                        "label": "聊天上下文",
+                        "type": "inputNumber",
+                        "value": 3,
+                        "key": "historyText"
+                    },
+                    {
+                        "valueType": "string",
+                        "description": "",
+                        "label": "选择模型",
+                        "type": "selectChatModel",
+                        "value": "oneapi-siliconflow:deepseek-ai/DeepSeek-R1",
+                        "key": "model",
+                        "required": True
+                    },
+                    {
+                        "valueType": "string",
+                        "description": "设定模型的角色和行为模式，如设定人设和回复逻辑。",
+                        "label": "系统提示词",
+                        "type": "textarea",
+                        "value": "",
+                        "key": "systemPrompt"
+                    },
+                    {
+                        "valueType": "string",
+                        "description": "用户输入的具体问题或请求，向模型提供用户指令。",
+                        "label": "用户提示词",
+                        "type": "textarea",
+                        "value": "",
+                        "key": "quotePrompt"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "boolean",
+                        "description": "控制回复内容是否输出给用户",
+                        "label": "回复对用户可见",
+                        "type": "switch",
+                        "value": False,
+                        "key": "stream"
+                    },
+                    {
+                        "min": 0,
+                        "max": 1,
+                        "markList": {
+                            "0": "严谨",
+                            "1": "创意"
+                        },
+                        "valueType": "number",
+                        "description": "控制回复创意性，如果想要和输入信息一致的答案，数值越小越好；如果想要模型发挥创意性，数值越大越好。",
+                        "step": 0.1,
+                        "label": "回复创意性",
+                        "type": "slider",
+                        "value": 0,
+                        "key": "temperature"
+                    },
+                    {
+                        "min": 0,
+                        "max": 1,
+                        "markList": {
+                            "0": "0",
+                            "1": "1"
+                        },
+                        "valueType": "number",
+                        "description": "控制输出的多样性,值越大输出包括更多单词选项；值越小，输出内容更集中在高概率单词上，即输出更确定但缺少多样性。一般【回复创意性】和【核采样TOP_P】只设置一个。",
+                        "step": 0.1,
+                        "label": "核采样TOP_P",
+                        "type": "slider",
+                        "value": 1,
+                        "key": "topP"
+                    },
+                    {
+                        "min": 100,
+                        "max": 4096,
+                        "markList": {
+                            "4096": 4096,
+                            "5000": "5000"
+                        },
+                        "valueType": "number",
+                        "step": 50,
+                        "label": "回复字数上限",
+                        "type": "slider",
+                        "value": 4096,
+                        "key": "maxToken"
+                    }
+                ],
+                "intro": "AI 对话模型，根据信息输入和提示词（Prompt）加工生成所需信息，展示给用户，完成与用户互动。",
+                "name": "智能对话",
+                "disabled": False,
+                "category": "大模型"
+            }
+        },
+        {
+            "id": "confirm_reply_5",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 1050.058092873814,
+                "y": 114.82823978954264
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "回复内容原样输出。",
+                        "label": "回复内容",
+                        "type": "source",
+                        "value": "",
+                        "targets": [
+                            {
+                                "targetHandle": "sql",
+                                "target": "database_query_1"
+                            }
+                        ],
+                        "key": "text"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "confirm_reply_7"
+                            }
+                        ],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "confirmreply",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "boolean",
+                        "description": "控制回复内容是否输出给用户",
+                        "label": "回复对用户可见",
+                        "type": "switch",
+                        "value": False,
+                        "key": "stream"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
+                        "label": "回复内容",
+                        "type": "textarea",
+                        "value": "SELECT\n  SBLX AS \"设备类型\",\n  EQUIP_NAME AS \"设备名称\",\n  SCCJ AS \"生产厂家\",\n  TYRQ AS \"投运日期\"\nFROM nusp_fac_equipment\nWHERE xjdw LIKE {{geo}};",
+                        "key": "text"
+                    }
+                ],
+                "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
+                "name": "确定回复",
+                "disabled": False,
+                "category": "大模型"
+            }
+        },
+        {
+            "id": "code_fragment_1",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": -319.49586685447025,
+                "y": 155.25565264027563
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "boolean",
+                        "description": "代码执行成功",
+                        "label": "执行成功",
+                        "type": "source",
+                        "targets": [],
+                        "key": "_runSuccess_"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "代码执行异常",
+                        "label": "执行异常",
+                        "type": "source",
+                        "targets": [],
+                        "key": "_runFailed_"
+                    },
+                    {
+                        "valueType": "string",
+                        "description": "代码执行的全部结果",
+                        "label": "执行结果",
+                        "type": "source",
+                        "targets": [],
+                        "key": "_runResult_"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "confirm_reply_6"
+                            }
+                        ],
+                        "key": "finish",
+                        "required": False
+                    },
+                    {
+                        "valueType": "string",
+                        "description": "",
+                        "label": "output_key",
+                        "type": "parameter",
+                        "targets": [
+                            {
+                                "targetHandle": "geo",
+                                "target": "memory_var_1"
+                            },
+                            {
+                                "targetHandle": "text",
+                                "target": "confirm_reply_6"
+                            }
+                        ],
+                        "key": "output_key"
+                    }
+                ],
+                "moduleType": "codeFragment",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "",
+                        "label": "input_key",
+                        "type": "parameter",
+                        "key": "input_key"
+                    },
+                    {
+                        "valueType": "string",
+                        "options": [
+                            {
+                                "label": "javascript",
+                                "value": "js"
+                            },
+                            {
+                                "label": "python",
+                                "value": "python"
+                            }
+                        ],
+                        "description": "选择编程语言",
+                        "label": "语言",
+                        "type": "radio",
+                        "value": "python",
+                        "key": "_language_"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "string",
+                        "description": "代码描述，非必填",
+                        "label": "代码描述",
+                        "type": "textarea",
+                        "value": "",
+                        "key": "_description_"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "string",
+                        "description": "用户编写的函数，Python函数名需指定为userFunction，输入输出为Key-Value数据类型，Key为String类型，Key和入参和岀参的设置对应",
+                        "label": "代码内容",
+                        "type": "textarea",
+                        "value": "import re\n\ndef userFunction(params):\n    def extract_after_think(info):\n        # 使用正则表达式匹配第一个</think>之后的所有内容\n        match = re.search(r'</think>(.*)', info, re.DOTALL)\n        if match:\n            return match.group(1).strip()  # 返回匹配到的内容并去除首尾空白\n        else:\n            return info\n\n    result = {}\n    try:\n        # 提取内容并保存到result中\n         temp = extract_after_think(params['input_key'])\n         temprp = temp.replace('\\n', '')\n         result['output_key'] = \"'%\" + temprp +\"%'\"\n    except Exception as e:\n        # 捕获可能的异常并记录错误信息\n        result['error'] = str(e)\n\n    return result",
+                        "key": "_code_"
+                    }
+                ],
+                "intro": "通过编写代码对输入数据进行精确的处理与加工",
+                "name": "代码块",
+                "disabled": False,
+                "category": "高阶能力"
+            }
+        },
+        {
+            "id": "memory_var_1",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 187.41334017570892,
+                "y": 131.6960333509331
+            },
+            "data": {
+                "outputs": [],
+                "moduleType": "addMemoryVariable",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "",
+                        "label": "geo",
+                        "type": "agentMemoryVar",
+                        "targets": [],
+                        "key": "geo"
+                    }
+                ],
+                "intro": "使用该组件将变量存为记忆变量后，可以在智能体的其他组件中引用",
+                "name": "添加记忆变量",
+                "disabled": False,
+                "category": "高阶能力"
+            }
+        },
+        {
+            "id": "confirm_reply_6",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 591.6882106464707,
+                "y": 135.4006165467965
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "回复内容原样输出。",
+                        "label": "回复内容",
+                        "type": "source",
+                        "value": "",
+                        "targets": [],
+                        "key": "text"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "confirm_reply_5"
+                            }
+                        ],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "confirmreply",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "boolean",
+                        "description": "控制回复内容是否输出给用户",
+                        "label": "回复对用户可见",
+                        "type": "switch",
+                        "value": False,
+                        "key": "stream"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
+                        "label": "回复内容",
+                        "type": "textarea",
+                        "value": "您可以输入希望用户看到的内容，当触发条件判定成立，将显示您输入的内容。",
+                        "key": "text"
+                    }
+                ],
+                "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
+                "name": "确定回复",
+                "disabled": False,
+                "category": "大模型"
+            }
+        },
+        {
+            "id": "database_query_1",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 2402.86927334456,
+                "y": 110.86520200031254
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "SQL查询的全部结果",
+                        "label": "查询结果",
+                        "type": "source",
+                        "value": "",
+                        "targets": [],
+                        "key": "queryResult"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "SQL查询执行成功",
+                        "label": "调用成功",
+                        "type": "source",
+                        "value": False,
+                        "targets": [],
+                        "key": "success"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "SQL查询执行异常",
+                        "label": "调用失败",
+                        "type": "source",
+                        "value": False,
+                        "targets": [],
+                        "key": "failed"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "confirm_reply_8"
+                            }
+                        ],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "databaseQuery",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "数据查询sql",
+                        "label": "SQL",
+                        "type": "target",
+                        "value": "",
+                        "key": "sql"
+                    },
+                    {
+                        "connected": False,
+                        "databaseUuid": "793a32627a094b41a7d52e5443b7857b",
+                        "valueType": "string",
+                        "description": "查询的数据库",
+                        "label": "查询的数据库",
+                        "type": "selectDatabase",
+                        "value": {},
+                        "key": "database"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "显示查询结果",
+                        "label": "显示查询结果",
+                        "type": "switch",
+                        "value": True,
+                        "key": "showTable"
+                    }
+                ],
+                "intro": "数据库查询",
+                "name": "数据库查询",
+                "disabled": False,
+                "category": "数据库"
+            }
+        },
+        {
+            "id": "confirm_reply_7",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 1543.7577279314946,
+                "y": 156.21737446259584
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "回复内容原样输出。",
+                        "label": "回复内容",
+                        "type": "source",
+                        "value": "",
+                        "targets": [],
+                        "key": "text"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "confirm_reply_10"
+                            }
+                        ],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "confirmreply",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "boolean",
+                        "description": "控制回复内容是否输出给用户",
+                        "label": "回复对用户可见",
+                        "type": "switch",
+                        "value": True,
+                        "key": "stream"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
+                        "label": "回复内容",
+                        "type": "textarea",
+                        "value": "基本信息如下",
+                        "key": "text"
+                    }
+                ],
+                "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
+                "name": "确定回复",
+                "disabled": False,
+                "category": "大模型"
+            }
+        },
+        {
+            "id": "confirm_reply_8",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 1067.1535700820075,
+                "y": 890.5267338164495
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "回复内容原样输出。",
+                        "label": "回复内容",
+                        "type": "source",
+                        "value": "",
+                        "targets": [
+                            {
+                                "targetHandle": "sql",
+                                "target": "database_query_2"
+                            }
+                        ],
+                        "key": "text"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "confirm_reply_9"
+                            }
+                        ],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "confirmreply",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "boolean",
+                        "description": "控制回复内容是否输出给用户",
+                        "label": "回复对用户可见",
+                        "type": "switch",
+                        "value": False,
+                        "key": "stream"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
+                        "label": "回复内容",
+                        "type": "textarea",
+                        "value": "SELECT\nCONTENT as '故障事件内容',\nOCCUR_TIME as '故障发生时间',\nBUSI_TYPE_NAME as '故障业务类型名称',\nBUSI_TYPE_SUBCLASS as '故障业务子类名称'\nFROM\n    T_EVENT_ZNJS_DWXXJS t1\nWHERE\n    t1.EQUIP_ID in (select `EQUIP_ID` from nusp_fac_equipment \nwhere xjdw like {{geo}});",
+                        "key": "text"
+                    }
+                ],
+                "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
+                "name": "确定回复",
+                "disabled": False,
+                "category": "大模型"
+            }
+        },
+        {
+            "id": "confirm_reply_9",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 1574.6426907565042,
+                "y": 892.7600770675024
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "回复内容原样输出。",
+                        "label": "回复内容",
+                        "type": "source",
+                        "value": "",
+                        "targets": [],
+                        "key": "text"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "database_query_2"
+                            }
+                        ],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "confirmreply",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "boolean",
+                        "description": "控制回复内容是否输出给用户",
+                        "label": "回复对用户可见",
+                        "type": "switch",
+                        "value": True,
+                        "key": "stream"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
+                        "label": "回复内容",
+                        "type": "textarea",
+                        "value": "发生的历史故障如下",
+                        "key": "text"
+                    }
+                ],
+                "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
+                "name": "确定回复",
+                "disabled": False,
+                "category": "大模型"
+            }
+        },
+        {
+            "id": "database_query_2",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 2080.157377078698,
+                "y": 864.3978662788228
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "SQL查询的全部结果",
+                        "label": "查询结果",
+                        "type": "source",
+                        "value": "",
+                        "targets": [],
+                        "key": "queryResult"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "SQL查询执行成功",
+                        "label": "调用成功",
+                        "type": "source",
+                        "value": False,
+                        "targets": [],
+                        "key": "success"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "SQL查询执行异常",
+                        "label": "调用失败",
+                        "type": "source",
+                        "value": False,
+                        "targets": [],
+                        "key": "failed"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "databaseQuery",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "数据查询sql",
+                        "label": "SQL",
+                        "type": "target",
+                        "value": "",
+                        "key": "sql"
+                    },
+                    {
+                        "connected": False,
+                        "databaseUuid": "793a32627a094b41a7d52e5443b7857b",
+                        "valueType": "string",
+                        "description": "查询的数据库",
+                        "label": "查询的数据库",
+                        "type": "selectDatabase",
+                        "value": {},
+                        "key": "database"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "显示查询结果",
+                        "label": "显示查询结果",
+                        "type": "switch",
+                        "value": True,
+                        "key": "showTable"
+                    }
+                ],
+                "intro": "数据库查询",
+                "name": "数据库查询",
+                "disabled": False,
+                "category": "数据库"
+            }
+        },
+        {
+            "id": "info_class",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": -1479.7489037112273,
+                "y": 151.55533226592678
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "以JSON格式输出信息分类结果",
+                        "label": "分类结果",
+                        "type": "source",
+                        "targets": [],
+                        "key": "matchResult"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [],
+                        "key": "finish"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "label": "查询地区设备清单",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "ai_chat_2"
+                            }
+                        ],
+                        "key": "9f4da034-1f5c-44d4-9345-1cb53dfcbd61"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "label": "不同设备",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "confirm_reply_3"
+                            }
+                        ],
+                        "key": "1c8384d9-2910-4ae5-bb36-7b2853be955a"
+                    }
+                ],
+                "moduleType": "infoClass",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "引用变量：{{text}}",
+                        "label": "信息输入",
+                        "type": "target",
+                        "value": "",
+                        "key": "text"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "search",
+                        "description": "引用变量：{{knSearch}}",
+                        "label": "知识库搜索结果",
+                        "type": "target",
+                        "value": "",
+                        "key": "knSearch"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "text",
+                        "description": "知识库高级配置",
+                        "label": "知识库高级配置",
+                        "type": "target",
+                        "value": "",
+                        "key": "knConfig"
+                    },
+                    {
+                        "connected": False,
+                        "min": 0,
+                        "max": 6,
+                        "valueType": "chatHistory",
+                        "description": "",
+                        "step": 1,
+                        "label": "聊天上下文",
+                        "type": "inputNumber",
+                        "value": 0,
+                        "key": "historyText"
+                    },
+                    {
+                        "valueType": "string",
+                        "description": "",
+                        "label": "选择模型",
+                        "type": "selectChatModel",
+                        "value": "qwen2.5-72b-instruct",
+                        "key": "model",
+                        "required": True
+                    },
+                    {
+                        "valueType": "string",
+                        "description": "简单分类无需调整提示词，可补充逻辑判断描述。",
+                        "label": "提示词 (Prompt)",
+                        "type": "textarea",
+                        "value": "你是电网行业问数智能体的二分类路由器。你的唯一任务：根据用户输入判定应走哪一个流程，并且只输出对应代号。\n\n输出代号（严格二选一，且必须输出其一）：\n查询地区设备清单\n不同设备：指设备事件/缺陷/跳闸等记录或统计\n决策优先级（从高到低，命中即停）：\n事件/统计关键词命中 → 不同设备。 事件/统计关键词示例（包含但不限于）：跳闸、缺陷、故障、检修、告警、录波、重合、统计、次数、对比、比较、趋势、最近、近一周/上月/季度、原因、厂家、是否遗留、是否移交综合室、值班人、记录、日志、处理、事故。\n清单/罗列关键词命中 → 查询地区设备清单。 清单关键词示例：清单、名单、有哪些、列出、罗列、一览、台账、盘点、汇总、分布、名录、列表。\n地名/站名/区域线索命中（即使是冷门或不在词典中）→ 查询地区设备清单。 判定启发式（任一满足即可视为区域线索）：\n后缀/词形：片区、区、市、县、旗、州、盟、镇、乡、村、园、园区、街、道、路、巷、岭、山、岛、湾、洲、滩、港、口、桥、湖、河、江、水库、矿、厂 等；\n设施/站点：变电站、开闭所、运维站、开关站、枢纽、站、所、#×主变（如“#1主变”常与站点/设备清单相关）；\n编码/别称：看似地名或站/所代号的短词/缩写/拼音/字母数字组合（如“GZ-01”“DF变”“临江新城”“洪泽洲”），即使很冷门也按区域线索处理；\n含“kV + 站/所”（如“110kV××站”）。\n模糊/极短输入的兜底：当未命中1)与2)，且输入很短或语义不明（如仅16个汉字或13个词），一律 → 查询地区设备清单。\n若仍无法判断（几乎不可能出现），绝不空输出，强制 → 查询地区设备清单。\n特殊歧义处理：\n仅出现设备类别或设备名（如“主变”“断路器”“XX线路”）但无事件/统计词且无清单词：默认 → 查询地区设备清单（视为想看该类设备分布/清单）。\n同时出现清单词与事件词时：以事件词优先 → 不同设备。\n输出规范（务必遵守）：\n严格只选择 查询地区设备清单 或 不同设备 之一。\n不输出任何其他字符、标点、空格、换行、前后缀或解释。",
+                        "key": "quotePrompt"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "引用变量：{{labels}}",
+                        "label": "标签",
+                        "type": "addLabel",
+                        "value": [
+                            {
+                                "value": "查询地区设备清单",
+                                "key": "9f4da034-1f5c-44d4-9345-1cb53dfcbd61"
+                            },
+                            {
+                                "value": "不同设备",
+                                "key": "1c8384d9-2910-4ae5-bb36-7b2853be955a"
+                            }
+                        ],
+                        "key": "labels"
+                    }
+                ],
+                "intro": "根据提示词完成信息分类，且不同的信息类型配置不同的回复方式和内容。",
+                "name": "信息分类",
+                "disabled": False,
+                "category": "大模型"
+            }
+        },
+        {
+            "id": "confirm_reply_10",
+            "type": "custom",
+            "initialized": False,
+            "position": {
+                "x": 1954.5790409016909,
+                "y": 156.83070120629836
+            },
+            "data": {
+                "outputs": [
+                    {
+                        "valueType": "string",
+                        "description": "回复内容原样输出。",
+                        "label": "回复内容",
+                        "type": "source",
+                        "value": "",
+                        "targets": [],
+                        "key": "text"
+                    },
+                    {
+                        "valueType": "boolean",
+                        "description": "运行完成后开关打开，下游链接组件开始运行。",
+                        "label": "模块运行结束",
+                        "type": "source",
+                        "targets": [
+                            {
+                                "targetHandle": "switchAny",
+                                "target": "database_query_1"
+                            }
+                        ],
+                        "key": "finish"
+                    }
+                ],
+                "moduleType": "confirmreply",
+                "inputs": [
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游所有条件方可激活当前组件执行逻辑",
+                        "label": "联动激活",
+                        "type": "target",
+                        "keyType": "trigger",
+                        "value": False,
+                        "key": "switch"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "boolean",
+                        "description": "同时满足上游任一条件即可激活当前组件执行逻辑",
+                        "label": "任一激活",
+                        "type": "target",
+                        "keyType": "triggerAny",
+                        "value": False,
+                        "key": "switchAny"
+                    },
+                    {
+                        "connected": False,
+                        "valueType": "boolean",
+                        "description": "控制回复内容是否输出给用户",
+                        "label": "回复对用户可见",
+                        "type": "switch",
+                        "value": False,
+                        "key": "stream"
+                    },
+                    {
+                        "connected": True,
+                        "valueType": "string",
+                        "description": "可以使用 \\n 来实现连续换行。\n\n可以通过外部模块输入实现回复，外部模块输入时会覆盖当前填写的内容。引用变量：{{text}}",
+                        "label": "回复内容",
+                        "type": "textarea",
+                        "value": "SELECT\n  SBLX AS \"设备类型\",\n  EQUIP_NAME AS \"设备名称\",\n  SCCJ AS \"生产厂家\",\n  TYRQ AS \"投运日期\"\nFROM nusp_fac_equipment\nWHERE xjdw LIKE '%慈溪%';",
+                        "key": "text"
+                    }
+                ],
+                "intro": "结合触发条件使用，输出预设内容或输出上游模块接入内容。",
+                "name": "确定回复",
+                "disabled": False,
+                "category": "大模型"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "ae87bfff-e243-4568-ba5e-abed78f520ca",
+            "type": "custom",
+            "source": "ai_chat_2",
+            "target": "code_fragment_1",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": -537.8967916173706,
+            "sourceY": 1736.8637629224547,
+            "targetY": 282.7556526402756,
+            "targetX": -321.49586685447025,
+            "animated": False
+        },
+        {
+            "id": "73854df4-c615-4b89-9745-39f061fb0b9f",
+            "type": "custom",
+            "source": "code_fragment_1",
+            "target": "memory_var_1",
+            "sourceHandle": "output_key",
+            "targetHandle": "geo",
+            "data": {},
+            "label": "",
+            "sourceX": 36.50413314552975,
+            "sourceY": 982.2556221226976,
+            "targetY": 216.19604860972217,
+            "targetX": 183.41334017570892,
+            "animated": False
+        },
+        {
+            "id": "dd3deca5-4016-42da-bf85-94eeffc81c63",
+            "type": "custom",
+            "source": "code_fragment_1",
+            "target": "confirm_reply_6",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": 36.50413314552975,
+            "sourceY": 936.2556221226976,
+            "targetY": 272.9006318055856,
+            "targetX": 587.6882106464707,
+            "animated": False
+        },
+        {
+            "id": "382f5234-c036-47cb-906e-67dab1170b77",
+            "type": "custom",
+            "source": "code_fragment_1",
+            "target": "confirm_reply_6",
+            "sourceHandle": "output_key",
+            "targetHandle": "text",
+            "data": {},
+            "label": "",
+            "sourceX": 36.50413314552975,
+            "sourceY": 982.2556221226976,
+            "targetY": 440.9006318055856,
+            "targetX": 587.6882106464707,
+            "animated": False
+        },
+        {
+            "id": "fe59a264-47c7-4d36-920f-6937a2b5d1fe",
+            "type": "custom",
+            "source": "confirm_reply_6",
+            "target": "confirm_reply_5",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": 915.6882106464707,
+            "sourceY": 661.4006318055856,
+            "targetY": 252.32823978954264,
+            "targetX": 1046.058092873814,
+            "animated": False
+        },
+        {
+            "id": "05ff6e28-b2f5-4ed1-82e6-85553e025fc7",
+            "type": "custom",
+            "source": "confirm_reply_5",
+            "target": "confirm_reply_7",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": 1374.058092873814,
+            "sourceY": 640.8282397895426,
+            "targetY": 293.71737446259584,
+            "targetX": 1539.7577279314946,
+            "animated": False
+        },
+        {
+            "id": "bd4e52a8-21da-45a3-874e-50914e4b72c5",
+            "type": "custom",
+            "source": "database_query_1",
+            "target": "confirm_reply_8",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": 2766.86927334456,
+            "sourceY": 733.8652325178907,
+            "targetY": 1028.0267338164495,
+            "targetX": 1063.1535700820075,
+            "animated": False
+        },
+        {
+            "id": "64b029e9-0bb8-4283-88f6-90e32346fa71",
+            "type": "custom",
+            "source": "confirm_reply_8",
+            "target": "confirm_reply_9",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": 1391.1535700820075,
+            "sourceY": 1416.5267338164495,
+            "targetY": 1030.2600160323461,
+            "targetX": 1570.6426907565042,
+            "animated": False
+        },
+        {
+            "id": "7d0e23bf-5bc8-4687-9d61-6be29ab6dbf3",
+            "type": "custom",
+            "source": "confirm_reply_9",
+            "target": "database_query_2",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": 1898.6425686861917,
+            "sourceY": 1418.7600160323461,
+            "targetY": 1001.897927313979,
+            "targetX": 2076.157377078698,
+            "animated": False
+        },
+        {
+            "id": "8030bed7-8a5b-4059-ad81-762f6125c7ea",
+            "type": "custom",
+            "source": "confirm_reply_8",
+            "target": "database_query_2",
+            "sourceHandle": "text",
+            "targetHandle": "sql",
+            "data": {},
+            "label": "",
+            "sourceX": 1391.1535700820075,
+            "sourceY": 1370.5267338164495,
+            "targetY": 1058.897927313979,
+            "targetX": 2076.157377078698,
+            "animated": False
+        },
+        {
+            "id": "29233f0c-8bb9-423b-86ba-e31b136d0c00",
+            "type": "custom",
+            "source": "info_class",
+            "target": "ai_chat_2",
+            "sourceHandle": "9f4da034-1f5c-44d4-9345-1cb53dfcbd61",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": -1115.7489037112273,
+            "sourceY": 1097.5553017483487,
+            "targetY": 325.3637629224547,
+            "targetX": -865.8967916173706,
+            "animated": False
+        },
+        {
+            "id": "c448d3e4-70a2-4b71-8b15-d4591bda6487",
+            "type": "custom",
+            "source": "simpleInputId",
+            "target": "info_class",
+            "sourceHandle": "userChatInput",
+            "targetHandle": "text",
+            "data": {},
+            "label": "",
+            "sourceX": -1726.0187299418194,
+            "sourceY": 745.1277427176028,
+            "targetY": 346.0553322659268,
+            "targetX": -1483.7489037112273,
+            "animated": False
+        },
+        {
+            "id": "be70ae29-1ca7-4c3a-bad3-83e81f1d675c",
+            "type": "custom",
+            "source": "simpleInputId",
+            "target": "ai_chat_2",
+            "sourceHandle": "userChatInput",
+            "targetHandle": "text",
+            "data": {},
+            "label": "",
+            "sourceX": -1726.0187299418194,
+            "sourceY": 745.1277427176028,
+            "targetY": 382.3637629224547,
+            "targetX": -865.8967916173706,
+            "animated": False
+        },
+        {
+            "id": "485b9e3d-c021-498d-a00f-c01676e6279d",
+            "type": "custom",
+            "source": "info_class",
+            "target": "confirm_reply_3",
+            "sourceHandle": "1c8384d9-2910-4ae5-bb36-7b2853be955a",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": -1115.7489037112273,
+            "sourceY": 1143.5553017483487,
+            "targetY": 2261.291172048472,
+            "targetX": -877.0587219566071,
+            "animated": False
+        },
+        {
+            "id": "62933575-0c99-49e2-acfb-a7b26dfb45a8",
+            "type": "custom",
+            "source": "simpleInputId",
+            "target": "info_class",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": -1726.0187299418194,
+            "sourceY": 929.1277427176028,
+            "targetY": 289.0553322659268,
+            "targetX": -1483.7489037112273,
+            "animated": False
+        },
+        {
+            "id": "7a9f0d50-f3b3-4653-9445-efea1ebeca59",
+            "type": "custom",
+            "source": "confirm_reply_7",
+            "target": "confirm_reply_10",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": 1867.7578500018071,
+            "sourceY": 682.217404980174,
+            "targetY": 294.3306859475093,
+            "targetX": 1950.5790409016909,
+            "animated": False
+        },
+        {
+            "id": "d7d1ce51-abdd-4506-b82f-445e521aa971",
+            "type": "custom",
+            "source": "confirm_reply_5",
+            "target": "database_query_1",
+            "sourceHandle": "text",
+            "targetHandle": "sql",
+            "data": {},
+            "label": "",
+            "sourceX": 1374.058092873814,
+            "sourceY": 594.8282397895426,
+            "targetY": 305.36520200031254,
+            "targetX": 2398.86927334456,
+            "animated": False
+        },
+        {
+            "id": "29bdd989-6a29-43a2-beb0-dfe92c6d6fb1",
+            "type": "custom",
+            "source": "confirm_reply_10",
+            "target": "database_query_1",
+            "sourceHandle": "finish",
+            "targetHandle": "switchAny",
+            "data": {},
+            "label": "",
+            "sourceX": 2278.579040901691,
+            "sourceY": 682.8306859475093,
+            "targetY": 248.36520200031254,
+            "targetX": 2398.86927334456,
+            "animated": False
+        },
+        {
+            "id": "vueflow__edge-ai_chat_2answerText-code_fragment_1input_key",
+            "type": "custom",
+            "source": "ai_chat_2",
+            "target": "code_fragment_1",
+            "sourceHandle": "answerText",
+            "targetHandle": "input_key",
+            "data": {},
+            "label": "",
+            "animated": False,
+            "sourceX": -537.8967916173706,
+            "sourceY": 1690.8637629224547,
+            "targetX": -321.49586685447025,
+            "targetY": 375.7556526402756
+        }
+    ],
+    "position": [
+        564.0687405660566,
+        -186.51099284311113
+    ],
+    "zoom": 0.4873096957025821,
+    "viewport": {
+        "x": 564.0687405660566,
+        "y": -186.51099284311113,
+        "zoom": 0.4873096957025821
     }
+}
 
     # 创建FlowInterpreter实例
     interpreter = FlowInterpreter(

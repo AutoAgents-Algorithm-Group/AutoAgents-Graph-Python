@@ -50,13 +50,14 @@ class TemplateProcessor:
     """模板处理工具类"""
     
     @staticmethod
-    def merge_template_io(template_io: List[Dict[str, Any]], custom_io: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+    def merge_template_io(template_io: List[Dict[str, Any]], custom_io: Optional[List[Dict[str, Any]]], module_type: str = None) -> List[Dict[str, Any]]:
         """
         合并模板IO配置和用户自定义IO配置
         
         Args:
             template_io: 模板中inputs或outputs列表，每个元素是一个字段的字典，字段完整
             custom_io: 用户传入的inputs或outputs列表，通常是部分字段，可能只有部分key覆盖
+            module_type: 模块类型，用于特殊插入逻辑
             
         Returns:
             合并后的IO配置列表
@@ -67,6 +68,21 @@ class TemplateProcessor:
 
         merged = []
         template_keys = set()
+        dynamic_items = []  # 存储动态参数
+        
+        # 先收集动态参数 - 通过type=parameter来识别
+        if custom_io:
+            for c_item in custom_io:
+                # 识别动态参数（通过type=parameter且不在模板中）
+                item_key = c_item.get("key", "")
+                item_type = c_item.get("type", "")
+                
+                # 检查是否是动态参数：type为parameter且不在模板的默认keys中
+                template_default_keys = {"switch", "switchAny", "_language_", "_description_", "_code_", 
+                                       "_runSuccess_", "_runFailed_", "_runResult_", "finish"}
+                
+                if item_type == "parameter" and item_key not in template_default_keys:
+                    dynamic_items.append(deepcopy(c_item))
         
         # 遍历模板里的所有字段
         for t_item in template_io:
@@ -82,11 +98,20 @@ class TemplateProcessor:
             else:
                 # 用户没定义，直接用模板字段完整拷贝
                 merged.append(deepcopy(t_item))
+                
+            # 对于codeFragment的inputs，在switchAny之后插入动态输入参数
+            if (module_type == "codeFragment" and 
+                t_item.get("key") == "switchAny" and
+                dynamic_items):
+                # 插入动态参数到当前位置
+                merged.extend(dynamic_items)
 
-        # 添加模板中没有的自定义字段（如动态生成的labels输出）
-        for c_item in custom_io:
-            if c_item.get("key") not in template_keys:
-                merged.append(deepcopy(c_item))
+        # 对于非codeFragment，在末尾添加模板中没有的自定义字段（非动态参数）
+        if module_type != "codeFragment":
+            for c_item in custom_io:
+                if (c_item.get("key") not in template_keys and 
+                    not c_item.get("key", "").startswith("_dynamic_")):
+                    merged.append(deepcopy(c_item))
 
         return merged
 
@@ -289,43 +314,45 @@ class StateConverter:
                 }
             
         elif module_type == "codeFragment":
-            # 代码块模块
+            # 代码块模块 - 只处理基本配置参数，动态参数在TemplateProcessor中处理
             inputs.update({
                 "_language_": state_dict.get("language", "js"),
                 "_description_": state_dict.get("description", ""),
                 "_code_": state_dict.get("code", "")
             })
-            # 处理动态inputs - 转换为连接点格式
+            
+            # 将动态inputs/outputs信息保留，让TemplateProcessor处理插入顺序
             if state_dict.get("inputs"):
+                # 将动态inputs信息转换为列表格式，供TemplateProcessor使用
                 dynamic_inputs = state_dict["inputs"]
                 for param_name, param_info in dynamic_inputs.items():
-                    # 将参数信息转换为连接点格式
-                    inputs[param_info["key"]] = {
+                    # 创建连接点格式的参数，但不直接添加到inputs字典
+                    # 而是通过特殊的key标记，让TemplateProcessor处理
+                    inputs[f"_dynamic_input_{param_info['key']}"] = {
                         "key": param_info["key"],
                         "type": param_info.get("type", "target"),
-                        "label": param_name,  # 使用参数名作为label
+                        "label": param_name,
                         "valueType": param_info.get("valueType", "string"),
                         "description": param_info.get("description", ""),
                         "connected": param_info.get("connected", True)
                     }
                     if "value" in param_info:
-                        inputs[param_info["key"]]["value"] = param_info["value"]
+                        inputs[f"_dynamic_input_{param_info['key']}"]["value"] = param_info["value"]
             
-            # 处理动态outputs - 转换为连接点格式  
+            # 处理动态outputs
             if state_dict.get("outputs"):
                 dynamic_outputs = state_dict["outputs"]
                 for param_name, param_info in dynamic_outputs.items():
-                    # 将参数信息转换为连接点格式
-                    outputs[param_info["key"]] = {
+                    outputs[f"_dynamic_output_{param_info['key']}"] = {
                         "key": param_info["key"],
                         "type": param_info.get("type", "source"),
-                        "label": param_name,  # 使用参数名作为label
+                        "label": param_name,
                         "valueType": param_info.get("valueType", "string"),
                         "description": param_info.get("description", ""),
                         "targets": param_info.get("targets", [])
                     }
                     if "value" in param_info:
-                        outputs[param_info["key"]]["value"] = param_info["value"]
+                        outputs[f"_dynamic_output_{param_info['key']}"]["value"] = param_info["value"]
                 
         elif module_type == "forEach":
             # 循环模块
@@ -509,7 +536,7 @@ class NodeBuilder:
         else:
             # 标准格式，转换并合并
             converted_inputs = DataConverter.json_to_json_list(inputs)
-            final_inputs = TemplateProcessor.merge_template_io(template.get("inputs", []), converted_inputs)
+            final_inputs = TemplateProcessor.merge_template_io(template.get("inputs", []), converted_inputs, module_type)
         
         if isinstance(outputs, list):
             # 特殊格式直接使用
@@ -517,7 +544,7 @@ class NodeBuilder:
         else:
             # 标准格式，转换并合并
             converted_outputs = DataConverter.json_to_json_list(outputs)
-            final_outputs = TemplateProcessor.merge_template_io(template.get("outputs", []), converted_outputs)
+            final_outputs = TemplateProcessor.merge_template_io(template.get("outputs", []), converted_outputs, module_type)
         
         # 需要导入FlowNode类
         from .FlowGraph import FlowNode
