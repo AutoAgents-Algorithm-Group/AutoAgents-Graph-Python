@@ -1,5 +1,5 @@
 from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState
+from autoagents_graph.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState,OfficeWordExportState,MarkdownToWordState,CodeExtractorState,DatabaseQueryState
 import uuid
 
 def main():
@@ -20,6 +20,16 @@ def main():
             uploadPicture=False,
             fileUpload=False,
             fileContrast=False,
+        )
+    )
+
+    # 数据库查询节点
+    graph.add_node(
+        id="database_query",
+        position={'x': 2272.5417895502255, 'y': -1689.7306025344403},
+        state=DatabaseQueryState(
+            database={'databaseUuid': '793a32627a094b41a7d52e5443b7857b'},
+            showTable=True,
         )
     )
 
@@ -550,6 +560,7 @@ def main():
         id="code_fragment",
         position={'x': 966.1452273108512, 'y': -1660.84372712498},
         state=CodeFragmentState(
+            language="python",
             code="""import re
 
 def userFunction(params):
@@ -570,6 +581,17 @@ def userFunction(params):
         result['error'] = str(e)
 
     return result""",
+            inputs={'input_key': {'key': 'input_key', 'type': 'parameter', 'valueType': 'string', 'description': '', 'connected': True}},
+            outputs={'output_key': {'key': 'output_key', 'type': 'parameter', 'valueType': 'string', 'description': '', 'targets': [{'targetHandle': 'markdown', 'target': '851eb3a6-09a2-41d4-9f91-81847b96d748'}]}},
+        )
+    )
+
+    # 代码提取器节点
+    graph.add_node(
+        id="code_extractor",
+        position={'x': 1445.2535010870245, 'y': -1679.5923735987617},
+        state=CodeExtractorState(
+            inputs={'Markdown': {'key': 'markdown', 'type': 'target', 'valueType': 'string', 'description': 'Markdown', 'connected': True, 'value': ''}},
         )
     )
 
@@ -1009,7 +1031,7 @@ LAST_UPDATE_TIME	最新修改时间
     # 确定回复节点
     graph.add_node(
         id="confirm_reply_3",
-        position={'x': -1907.0064271975132, 'y': 1609.8168871492817},
+        position={'x': -1996.3315661618683, 'y': 2499.2672070496687},
         state=ConfirmReplyState(
             text="不同设备类型正在开发中，敬请期待！",
         )
@@ -1069,7 +1091,7 @@ LAST_UPDATE_TIME	最新修改时间
     # 确定回复节点
     graph.add_node(
         id="confirm_reply_5",
-        position={'x': 1338.9603325056646, 'y': 114.82823978954264},
+        position={'x': 1050.058092873814, 'y': 114.82823978954264},
         state=ConfirmReplyState(
             isvisible=False,
             text="""SELECT
@@ -1085,8 +1107,9 @@ WHERE xjdw LIKE {{geo}};""",
     # 代码块节点
     graph.add_node(
         id="code_fragment_1",
-        position={'x': -381.7209874850624, 'y': 79.50333187259804},
+        position={'x': -319.49586685447025, 'y': 155.25565264027563},
         state=CodeFragmentState(
+            language="python",
             code="""import re
 
 def userFunction(params):
@@ -1097,7 +1120,7 @@ def userFunction(params):
             return match.group(1).strip()  # 返回匹配到的内容并去除首尾空白
         else:
             return info
-            
+
     result = {}
     try:
         # 提取内容并保存到result中
@@ -1109,6 +1132,8 @@ def userFunction(params):
         result['error'] = str(e)
 
     return result""",
+            inputs={'input_key': {'key': 'input_key', 'type': 'parameter', 'valueType': 'string', 'description': '', 'connected': True}},
+            outputs={'output_key': {'key': 'output_key', 'type': 'parameter', 'valueType': 'string', 'description': '', 'targets': [{'targetHandle': 'geo', 'target': 'c43107a6-d4ff-44ff-a44b-00d31697defe'}, {'targetHandle': 'text', 'target': '96b27700-fc4f-47ae-ab1d-56c6742ea937'}]}},
         )
     )
 
@@ -1124,17 +1149,27 @@ def userFunction(params):
     # 确定回复节点
     graph.add_node(
         id="confirm_reply_6",
-        position={'x': 927.162774046186, 'y': 129.98973649196236},
+        position={'x': 591.6882106464707, 'y': 135.4006165467965},
         state=ConfirmReplyState(
             isvisible=False,
             text="您可以输入希望用户看到的内容，当触发条件判定成立，将显示您输入的内容。",
         )
     )
 
+    # 数据库查询节点
+    graph.add_node(
+        id="database_query_1",
+        position={'x': 2402.86927334456, 'y': 110.86520200031254},
+        state=DatabaseQueryState(
+            database={'databaseUuid': '793a32627a094b41a7d52e5443b7857b'},
+            showTable=True,
+        )
+    )
+
     # 确定回复节点
     graph.add_node(
         id="confirm_reply_7",
-        position={'x': 1638.2634085153472, 'y': -522.0183931941859},
+        position={'x': 1543.7577279314946, 'y': 156.21737446259584},
         state=ConfirmReplyState(
             text="基本信息如下",
         )
@@ -1162,9 +1197,19 @@ where xjdw like {{geo}});""",
     # 确定回复节点
     graph.add_node(
         id="confirm_reply_9",
-        position={'x': 1461.8012992739357, 'y': 1329.7203589787257},
+        position={'x': 1574.6426907565042, 'y': 892.7600770675024},
         state=ConfirmReplyState(
             text="发生的历史故障如下",
+        )
+    )
+
+    # 数据库查询节点
+    graph.add_node(
+        id="database_query_2",
+        position={'x': 2080.157377078698, 'y': 864.3978662788228},
+        state=DatabaseQueryState(
+            database={'databaseUuid': '793a32627a094b41a7d52e5443b7857b'},
+            showTable=True,
         )
     )
 
@@ -1174,6 +1219,7 @@ where xjdw like {{geo}});""",
         id="info_class",
         position={'x': -1479.7489037112273, 'y': 151.55533226592678},
         state=InfoClassState(
+            historyText=0,
             model="qwen2.5-72b-instruct",
             quotePrompt="""你是电网行业问数智能体的二分类路由器。你的唯一任务：根据用户输入判定应走哪一个流程，并且只输出对应代号。
 
@@ -1216,22 +1262,19 @@ WHERE xjdw LIKE '%慈溪%';""",
         )
     )
 
-    # 知识库搜索节点
-    graph.add_node(
-        id="kb_search",
-        position={'x': 2520.5119615134663, 'y': 117.09506828560988},
-        state=KnowledgeSearchState(
-            similarity=0.2,
-            topK=20,
-            rerankModelType="oneapi-xinference:bce-rerank",
-        )
-    )
-
     # 添加连接边
     graph.add_edge("confirm_reply", "ai_chat", "finish", "switchAny")
     graph.add_edge("ai_chat", "code_fragment", "finish", "switchAny")
     graph.add_edge("ai_chat", "code_fragment", "answerText", "input_key")
+    graph.add_edge("code_fragment", "code_extractor", "output_key", "markdown")
+    graph.add_edge("code_fragment", "code_extractor", "finish", "switchAny")
+    graph.add_edge("code_extractor", "confirm_reply_1", "code", "text")
+    graph.add_edge("code_extractor", "confirm_reply_1", "finish", "switchAny")
+    graph.add_edge("confirm_reply_1", "database_query", "text", "sql")
+    graph.add_edge("confirm_reply_1", "database_query", "finish", "switchAny")
     graph.add_edge("confirm_reply", "memory_var", "text", "sql_structure")
+    graph.add_edge("database_query", "ai_chat_1", "queryResult", "text")
+    graph.add_edge("database_query", "ai_chat_1", "finish", "switchAny")
     graph.add_edge("ai_chat_2", "code_fragment_1", "finish", "switchAny")
     graph.add_edge("ai_chat_2", "code_fragment_1", "answerText", "input_key")
     graph.add_edge("code_fragment_1", "memory_var_1", "output_key", "geo")
@@ -1239,16 +1282,18 @@ WHERE xjdw LIKE '%慈溪%';""",
     graph.add_edge("code_fragment_1", "confirm_reply_6", "output_key", "text")
     graph.add_edge("confirm_reply_6", "confirm_reply_5", "finish", "switchAny")
     graph.add_edge("confirm_reply_5", "confirm_reply_7", "finish", "switchAny")
+    graph.add_edge("database_query_1", "confirm_reply_8", "finish", "switchAny")
     graph.add_edge("confirm_reply_8", "confirm_reply_9", "finish", "switchAny")
+    graph.add_edge("confirm_reply_9", "database_query_2", "finish", "switchAny")
+    graph.add_edge("confirm_reply_8", "database_query_2", "text", "sql")
     graph.add_edge("info_class", "ai_chat_2", list(info_class_labels.keys())[0], "switchAny")
     graph.add_edge(START, "info_class", "userChatInput", "text")
     graph.add_edge(START, "ai_chat_2", "userChatInput", "text")
     graph.add_edge("info_class", "confirm_reply_3", list(info_class_labels.keys())[1], "switchAny")
+    graph.add_edge(START, "info_class", "finish", "switchAny")
     graph.add_edge("confirm_reply_7", "confirm_reply_10", "finish", "switchAny")
-    graph.add_edge(START, "ai_chat_2", "finish", "switchAny")
-    graph.add_edge("confirm_reply_10", "kb_search", "finish", "switchAny")
-    graph.add_edge("confirm_reply_5", "kb_search", "text", "text")
-    graph.add_edge("kb_search", "confirm_reply_8", "finish", "switchAny")
+    graph.add_edge("confirm_reply_5", "database_query_1", "text", "sql")
+    graph.add_edge("confirm_reply_10", "database_query_1", "finish", "switchAny")
 
     # 编译
     graph.compile(

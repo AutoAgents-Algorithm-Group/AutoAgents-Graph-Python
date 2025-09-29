@@ -192,7 +192,7 @@ NODE_TEMPLATES = {
                 "label": "未点击按钮",
                 "targets": [],
                 "valueType": "boolean",
-                "description": "当未点击任何按钮时值为true"
+                "description": "当未点击任何按钮时值为True"
             },
             {
                 "key": "finish",
@@ -976,5 +976,344 @@ NODE_TEMPLATES = {
                 "description": "运行完成后开关打开,下游链接组件开始运行。"
             }
         ],
+    },
+    "officeWordExport": {
+        "name": "文档输出",
+        "intro": "将信息输出全部或者通过占位符的形式填入Word文档中，供用户下载",
+        "category": "高阶能力",
+        "disabled": False,
+        "moduleType": "officeWordExport",
+        "inputs": [
+            {
+                "key": "switch",
+                "type": "target",
+                "label": "联动激活",
+                "value": False,
+                "keyType": "trigger",
+                "connected": True,
+                "valueType": "boolean",
+                "description": "同时满足上游所有条件方可激活当前组件执行逻辑"
+            },
+            {
+                "key": "switchAny",
+                "type": "target",
+                "label": "任一激活",
+                "value": False,
+                "keyType": "triggerAny",
+                "connected": True,
+                "valueType": "boolean",
+                "description": "同时满足上游任一条件即可激活当前组件执行逻辑"
+            },
+            {
+                "key": "text",
+                "type": "target",
+                "label": "信息输入",
+                "value": "",
+                "connected": True,
+                "valueType": "string",
+                "description": "使用\"信息输入\"节点时，优先将上游组件的信息全部填入空白文档中"
+            },
+            {
+                "key": "templateFile",
+                "type": "uploadFile",
+                "label": "文档模版",
+                "value": None,
+                "connected": False,
+                "valueType": "string",
+                "description": "点击上传文档，文件格式支持doc/docx"
+            }
+        ],
+        "outputs": [
+            {
+                "key": "fileInfo",
+                "type": "source",
+                "label": "文档信息",
+                "targets": [],
+                "valueType": "string",
+                "description": "以JSON格式输出内容包括文件名fileName、文件下载地址fileUrl等"
+            },
+            {
+                "key": "finish",
+                "type": "source",
+                "label": "模块运行结束",
+                "targets": [],
+                "valueType": "boolean",
+                "description": "运行完成后开关打开，下游链接组件开始运行。"
+            }
+        ]
+    },
+    "markdownToWord":{  
+            "name": "Markdown转Word",
+            "intro": "将Markdown内容转换为Word文档，供用户下载",
+            "category": "高阶能力",
+            "disabled": False,
+            "moduleType": "markdownToWord",
+            "inputs": [
+        {
+            "key": "switch",
+            "type": "target",
+            "label": "联动激活",
+            "value": False,
+            "keyType": "trigger",
+            "connected": True,
+            "valueType": "boolean",
+            "description": "同时满足上游所有条件方可激活当前组件执行逻辑"
+        },
+        {
+            "key": "switchAny",
+            "type": "target",
+            "label": "任一激活",
+            "value": False,
+            "keyType": "triggerAny",
+            "connected": True,
+            "valueType": "boolean",
+            "description": "同时满足上游任一条件即可激活当前组件执行逻辑"
+        },
+        {
+            "key": "text",
+            "type": "target",
+            "label": "Markdown内容",
+            "value": "",
+            "connected": True,
+            "valueType": "string",
+            "description": "Markdown内容"
+        },
+        {
+            "key": "fileName",
+            "type": "textarea",
+            "label": "Word文档名称",
+            "value": "",
+            "connected": True,
+            "valueType": "string",
+            "description": "定义生成后的文档名称"
+        },
+        {
+            "key": "settings",
+            "type": "textarea",
+            "label": "Word文档格式",
+            "value": "# 页眉，可以使用变量：当前页数{PAGE}，总页数{NUMPAGES}，对齐方式：LEFT,CENTER,RIGHT\ndoc-header-content=\ndoc-header-align=\n# 页脚，可以使用变量：当前页数{PAGE}，总页数{NUMPAGES}，对齐方式：LEFT,CENTER,RIGHT\ndoc-footer-content={PAGE}\ndoc-footer-align=CENTER\n# 页面边距设置，单位cm\ndoc-pageMargin-left=2.2\ndoc-pageMargin-right=2.2\ndoc-pageMargin-top=2.2\ndoc-pageMargin-bottom=2.2\n# 是否展示标题级别编号：1.1、1.1.1、1.1.2、1.2等\ndoc-showTitleNumber=True\n# 一级标题样式设置字体、字号、字色、加粗、对齐、行距\ndoc-title1-fontFamily=宋体\ndoc-title1-fontSize=小三\ndoc-title1-color=\ndoc-title1-bold=True\ndoc-title1-align=LEFT\ndoc-title1-spacing=1.5\n# 二级标题样式设置字体、字号、字色、加粗、对齐、行距\ndoc-title2-fontFamily=宋体\ndoc-title2-fontSize=四号\ndoc-title2-color=\ndoc-title2-bold=True\ndoc-title2-align=LEFT\ndoc-title2-spacing=1.5\n# 三级标题样式设置字体、字号、字色、加粗、对齐、行距\ndoc-title3-fontFamily=宋体\ndoc-title3-fontSize=小四\ndoc-title3-color=\ndoc-title3-bold=True\ndoc-title3-align=LEFT\ndoc-title3-spacing=1.5\n# ...其他级标题样式按以上规则配置，title后跟对应的标题级别即可\n# 正文样式设置字体、字号、加粗\ndoc-content-fontFamily=宋体\ndoc-content-fontSize=小四\ndoc-content-color=\ndoc-content-bold=\n# 设置行距、首行缩进\ndoc-content-spacing=1.0\ndoc-content-indentFirstLineChars=2\n# 表格样式-表头设置字体、字号、字色、加粗、背景色、对齐\ndoc-table-header-fontFamily=宋体\ndoc-table-header-fontSize=小四\ndoc-table-header-color=000000\ndoc-table-header-backgroundColor=eeeeee\ndoc-table-header-bold=True\ndoc-table-header-align=CENTER\ndoc-table-header-vertAlign=CENTER\n# 表格样式-内容设置字体、字号、字色、加粗、背景色、对齐\ndoc-table-body-fontFamily=宋体\ndoc-table-body-fontSize=小四\ndoc-table-body-color=000000\ndoc-table-body-backgroundColor=\ndoc-table-body-bold=False\ndoc-table-body-align=CENTER\ndoc-table-body-vertAlign=CENTER\n# 表格样式-边框设置线型(NONE, SINGLE, THICK, DOUBLE, DOTTED, DASHED)、粗细、颜色\ndoc-table-border-type=SINGLE\ndoc-table-border-size=3\ndoc-table-border-color=000000",
+            "connected": False,
+            "valueType": "string",
+            "description": "定义生成后的文档的格式"
+        },
+        {
+            "key": "stream",
+            "type": "switch",
+            "label": "文档信息用户可见",
+            "value": True,
+            "connected": False,
+            "valueType": "boolean",
+            "description": "控制文档信息是否输出给用户"
+        }
+        ],
+        "outputs": [
+        {
+            "key": "fileInfo",
+            "type": "source",
+            "label": "文档信息",
+            "targets": [],
+            "valueType": "string",
+            "description": "以JSON格式输出内容包括文件名fileName、文件下载地址fileUrl等"
+        },
+        {
+            "key": "success",
+            "type": "source",
+            "label": "成功",
+            "targets": [],
+            "valueType": "boolean"
+        },
+        {
+            "key": "failed",
+            "type": "source",
+            "label": "失败",
+            "targets": [],
+            "valueType": "boolean"
+        },
+        {
+            "key": "finish",
+            "type": "source",
+            "label": "模块运行结束",
+            "targets": [],
+            "valueType": "boolean",
+            "description": "运行完成后开关打开，下游链接组件开始运行。"
+        }
+        ]
+    },
+    "codeExtractor":{
+        
+            "name": "代码提取器",
+            "intro": "代码提取器",
+            "inputs": [
+            {
+                "key": "switch",
+                "type": "target",
+                "label": "联动激活",
+                "value": False,
+                "keyType": "trigger",
+                "connected": True,
+                "valueType": "boolean",
+                "description": "同时满足上游所有条件方可激活当前组件执行逻辑"
+            },
+            {
+                "key": "switchAny",
+                "type": "target",
+                "label": "任一激活",
+                "value": False,
+                "keyType": "triggerAny",
+                "connected": True,
+                "valueType": "boolean",
+                "description": "同时满足上游任一条件即可激活当前组件执行逻辑"
+            },
+            {
+                "key": "markdown",
+                "type": "target",
+                "label": "Markdown",
+                "value": "",
+                "connected": True,
+                "valueType": "string",
+                "description": "Markdown"
+            },
+            {
+                "key": "codeType",
+                "type": "selectCodeType",
+                "label": "代码类型",
+                "value": "SQL",
+                "connected": False,
+                "valueType": "string",
+                "description": "代码类型"
+            }
+            ],
+            "outputs": [
+            {
+                "key": "code",
+                "type": "source",
+                "label": "代码",
+                "targets": [],
+                "valueType": "string",
+                "description": "代码提取结果"
+            },
+            {
+                "key": "success",
+                "type": "source",
+                "label": "提取成功",
+                "targets": [],
+                "valueType": "boolean",
+                "description": "提取成功"
+            },
+            {
+                "key": "failed",
+                "type": "source",
+                "label": "提取失败",
+                "targets": [],
+                "valueType": "boolean",
+                "description": "提取失败"
+            },
+            {
+                "key": "finish",
+                "type": "source",
+                "label": "模块运行结束",
+                "targets": [],
+                "valueType": "boolean",
+                "description": "运行完成后开关打开，下游链接组件开始运行。"
+            }
+            ],
+            "category": "数据库",
+            "disabled": False,
+            "moduleType": "codeExtract"
+    },
+    "DatabaseQuery":{
+        
+            "name": "数据库查询",
+            "intro": "数据库查询",
+            "inputs": [
+            {
+                "key": "switch",
+                "type": "target",
+                "label": "联动激活",
+                "value": False,
+                "keyType": "trigger",
+                "connected": True,
+                "valueType": "boolean",
+                "description": "同时满足上游所有条件方可激活当前组件执行逻辑"
+            },
+            {
+                "key": "switchAny",
+                "type": "target",
+                "label": "任一激活",
+                "value": False,
+                "keyType": "triggerAny",
+                "connected": True,
+                "valueType": "boolean",
+                "description": "同时满足上游任一条件即可激活当前组件执行逻辑"
+            },
+            {
+                "key": "sql",
+                "type": "target",
+                "label": "SQL",
+                "value": "",
+                "connected": True,
+                "valueType": "string",
+                "description": "数据查询sql"
+            },
+            {
+                "key": "database",
+                "type": "selectDatabase",
+                "label": "查询的数据库",
+                "value": None,
+                "connected": False,
+                "valueType": "string",
+                "description": "查询的数据库"
+            },
+            {
+                "key": "showTable",
+                "type": "switch",
+                "label": "显示查询结果",
+                "value": True,
+                "valueType": "boolean",
+                "description": "显示查询结果"
+            }
+            ],
+            "outputs": [
+            {
+                "key": "queryResult",
+                "type": "source",
+                "label": "查询结果",
+                "targets": [],
+                "valueType": "string",
+                "description": "SQL查询的全部结果"
+            },
+            {
+                "key": "success",
+                "type": "source",
+                "label": "调用成功",
+                "targets": [],
+                "valueType": "boolean",
+                "description": "SQL查询执行成功"
+            },
+            {
+                "key": "failed",
+                "type": "source",
+                "label": "调用失败",
+                "targets": [],
+                "valueType": "boolean",
+                "description": "SQL查询执行异常"
+            },
+            {
+                "key": "finish",
+                "type": "source",
+                "label": "模块运行结束",
+                "targets": [],
+                "valueType": "boolean",
+                "description": "运行完成后开关打开，下游链接组件开始运行。"
+            }
+            ],
+            "category": "数据库",
+            "disabled": False,
+            "moduleType": "databaseQuery"
+        
     }
 }
+
+# 添加别名映射，支持通过moduleType直接访问模板
+NODE_TEMPLATES["codeExtract"] = NODE_TEMPLATES["codeExtractor"]
+NODE_TEMPLATES["databaseQuery"] = NODE_TEMPLATES["DatabaseQuery"]

@@ -170,6 +170,32 @@ class KeywordIdentifyState(BaseNodeState):
     identifyResult: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
 
 
+class OfficeWordExportState(BaseNodeState):
+    """文档输出模块状态"""
+    text: Optional[str] = ""
+    templateFile: Optional[str] = None
+    fileInfo: Optional[str] = ""
+
+class MarkdownToWordState(BaseNodeState):
+    """Markdown转Word模块状态"""
+    markdown: Optional[str] = ""
+    word: Optional[str] = ""
+    fileInfo: Optional[str] = ""
+
+class CodeExtractorState(BaseNodeState):
+    """代码提取器模块状态"""
+    code: Optional[str] = ""
+    fileInfo: Optional[str] = ""
+
+class DatabaseQueryState(BaseNodeState):
+    """数据库查询模块状态"""
+    sql: Optional[str] = ""
+    database: Optional[Union[str, Dict[str, Any]]] = ""  # 支持字符串或字典格式
+    showTable: Optional[bool] = True
+    queryResult: Optional[str] = ""
+    success: Optional[bool] = False
+    failed: Optional[bool] = False
+
 # 状态工厂字典，根据module_type获取对应的State类
 NODE_STATE_FACTORY = {
     "httpInvoke": HttpInvokeState,
@@ -184,4 +210,8 @@ NODE_STATE_FACTORY = {
     "forEach": ForEachState,
     "documentQuestion": DocumentQuestionState,
     "keywordIdentify": KeywordIdentifyState,
+    "officeWordExport": OfficeWordExportState,
+    "markdownToWord": MarkdownToWordState,
+    "codeExtractor": CodeExtractorState,
+    "databaseQuery": DatabaseQueryState,
 }

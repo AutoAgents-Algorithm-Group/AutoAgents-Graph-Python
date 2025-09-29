@@ -3,7 +3,7 @@ from typing import Dict, List, Any, Optional, Union
 from .models.GraphTypes import (
     BaseNodeState, HttpInvokeState, QuestionInputState, AiChatState,
     ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
-    InfoClassState, CodeFragmentState, ForEachState
+    InfoClassState, CodeFragmentState, ForEachState, OfficeWordExportState,MarkdownToWordState,CodeExtractorState,DatabaseQueryState
 )
 
 
@@ -143,6 +143,10 @@ class StateConverter:
             InfoClassState: "infoClass",
             CodeFragmentState: "codeFragment",
             ForEachState: "forEach",
+            OfficeWordExportState: "officeWordExport",
+            MarkdownToWordState: "markdownToWord",
+            CodeExtractorState: "codeExtract",  # 使用实际的moduleType
+            DatabaseQueryState: "databaseQuery",
         }
         
         for state_class, module_type in type_mapping.items():
@@ -291,11 +295,37 @@ class StateConverter:
                 "_description_": state_dict.get("description", ""),
                 "_code_": state_dict.get("code", "")
             })
-            # 如果有动态inputs/outputs，也需要处理
+            # 处理动态inputs - 转换为连接点格式
             if state_dict.get("inputs"):
-                inputs.update(state_dict["inputs"])
+                dynamic_inputs = state_dict["inputs"]
+                for param_name, param_info in dynamic_inputs.items():
+                    # 将参数信息转换为连接点格式
+                    inputs[param_info["key"]] = {
+                        "key": param_info["key"],
+                        "type": param_info.get("type", "target"),
+                        "label": param_name,  # 使用参数名作为label
+                        "valueType": param_info.get("valueType", "string"),
+                        "description": param_info.get("description", ""),
+                        "connected": param_info.get("connected", True)
+                    }
+                    if "value" in param_info:
+                        inputs[param_info["key"]]["value"] = param_info["value"]
+            
+            # 处理动态outputs - 转换为连接点格式  
             if state_dict.get("outputs"):
-                outputs.update(state_dict["outputs"])
+                dynamic_outputs = state_dict["outputs"]
+                for param_name, param_info in dynamic_outputs.items():
+                    # 将参数信息转换为连接点格式
+                    outputs[param_info["key"]] = {
+                        "key": param_info["key"],
+                        "type": param_info.get("type", "source"),
+                        "label": param_name,  # 使用参数名作为label
+                        "valueType": param_info.get("valueType", "string"),
+                        "description": param_info.get("description", ""),
+                        "targets": param_info.get("targets", [])
+                    }
+                    if "value" in param_info:
+                        outputs[param_info["key"]]["value"] = param_info["value"]
                 
         elif module_type == "forEach":
             # 循环模块
@@ -306,7 +336,38 @@ class StateConverter:
                 "length": state_dict.get("length", 0),
                 "loopEnd": state_dict.get("loopEnd", False)
             })
-        
+            
+        elif module_type == "officeWordExport":
+            # 文档输出模块
+            inputs.update({
+                "text": state_dict.get("text", ""),
+                "templateFile": state_dict.get("templateFile")
+            })
+        elif module_type == "markdownToWord":
+            # Markdown转Word模块
+            inputs.update({
+                "markdown": state_dict.get("markdown", ""),
+                "word": state_dict.get("word", ""),
+                "fileInfo": state_dict.get("fileInfo", "")
+            })
+        elif module_type in ["codeExtractor", "codeExtract"]:
+            # 代码提取器模块
+            inputs.update({
+                "markdown": state_dict.get("markdown", ""),
+                "codeType": state_dict.get("codeType", "SQL")
+            })
+        elif module_type == "databaseQuery":
+            # 数据库查询模块
+            inputs.update({
+                "sql": state_dict.get("sql", ""),
+                "database": state_dict.get("database", ""),
+                "showTable": state_dict.get("showTable", True)
+            })
+            outputs.update({
+                "queryResult": state_dict.get("queryResult", ""),
+                "success": state_dict.get("success", False),
+                "failed": state_dict.get("failed", False)
+            })
         return inputs, outputs
 
     @staticmethod

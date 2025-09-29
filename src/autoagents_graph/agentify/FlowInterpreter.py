@@ -2,7 +2,8 @@ from typing import List
 from .models.GraphTypes import (
     QuestionInputState, AiChatState, ConfirmReplyState, 
     KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
-    InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState
+    InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState,
+    OfficeWordExportState,MarkdownToWordState,CodeExtractorState,DatabaseQueryState
 )
 
 
@@ -50,15 +51,69 @@ class FlowInterpreter:
         
         if module_type in ["codeFragment", "codeExtract"]:
             # 特殊处理codeFragment/codeExtract - 提取代码相关参数
+            inputs_dict = {}
+            outputs_dict = {}
+            
+            # 处理inputs
             for node_input in node_inputs:
                 key = node_input.get("key")
                 value = node_input.get("value")
+                field_type = node_input.get("type", "")
+                key_type = node_input.get("keyType", "")
+                label = node_input.get("label", "")
+                
+                # 跳过trigger相关的系统字段
+                if key_type in ["trigger", "triggerAny"]:
+                    continue
                 
                 if key == "_code_" and value:
                     # 将_code_映射到code字段
                     custom_inputs["code"] = value
-                elif key in ["language", "description"] and value:
-                    custom_inputs[key] = value
+                elif key == "_language_" and value:
+                    # 将_language_映射到language字段
+                    custom_inputs["language"] = value
+                elif key == "_description_" and value:
+                    # 将_description_映射到description字段
+                    custom_inputs["description"] = value
+                elif field_type in ["parameter", "target"] and key not in ["switch", "switchAny"]:
+                    # 提取自定义输入参数，使用label作为参数名
+                    param_name = label if label else key
+                    inputs_dict[param_name] = {
+                        "key": key,
+                        "type": field_type,
+                        "valueType": node_input.get("valueType", "string"),
+                        "description": node_input.get("description", ""),
+                        "connected": node_input.get("connected", False)
+                    }
+                    if value is not None:
+                        inputs_dict[param_name]["value"] = value
+            
+            # 处理outputs
+            node_outputs = node_data.get("outputs", [])
+            for node_output in node_outputs:
+                key = node_output.get("key")
+                field_type = node_output.get("type", "")
+                label = node_output.get("label", "")
+                
+                # 只处理自定义的输出参数（parameter类型），跳过系统输出
+                if field_type == "parameter" and key not in ["_runSuccess_", "_runFailed_", "_runResult_", "finish"]:
+                    param_name = label if label else key
+                    outputs_dict[param_name] = {
+                        "key": key,
+                        "type": field_type,
+                        "valueType": node_output.get("valueType", "string"),
+                        "description": node_output.get("description", ""),
+                        "targets": node_output.get("targets", [])
+                    }
+                    if "value" in node_output:
+                        outputs_dict[param_name]["value"] = node_output.get("value")
+            
+            # 如果有自定义参数，添加到custom_inputs中
+            if inputs_dict:
+                custom_inputs["inputs"] = inputs_dict
+            if outputs_dict:
+                custom_inputs["outputs"] = outputs_dict
+                
             return custom_inputs
         
         # 提取用户明确指定的参数值，只提取非系统字段的重要参数
@@ -85,7 +140,11 @@ class FlowInterpreter:
                 "model", "systemPrompt", "quotePrompt", "temperature", "topP", "maxToken",
                 "text",  # 对于confirmreply的预设文本
                 "items", "index", "item", "length", "loopEnd", "loopStart",  # forEach相关参数
-                "_code_", "language", "description"  # codeFragment/codeExtract相关参数
+                "_code_", "language", "description",  # codeFragment/codeExtract相关参数
+                "templateFile"  
+                "markdown", "word" , "fileInfo" 
+                "code", "fileInfo" 
+                "sql", "database", "showTable", "queryResult", "success", "failed" 
             }
             
             # 包含有意义的参数，且值不为默认值的情况
@@ -167,9 +226,13 @@ class FlowInterpreter:
             "addMemoryVariable": "memory_var",
             "infoClass": "info_class",
             "codeFragment": "code_fragment",
-            "codeExtract": "code_extract",  # 添加对codeExtract的支持
             "forEach": "for_each",
-            "httpInvoke": "http_invoke"
+            "httpInvoke": "http_invoke",
+            "officeWordExport": "word_export",
+            "markdownToWord": "markdown_to_word",
+            "codeExtractor": "code_extractor",
+            "codeExtract": "code_extractor",  # 支持两种命名方式
+            "databaseQuery": "database_query",
         }
         
         base_name = type_mapping.get(module_type, "node")
@@ -273,14 +336,17 @@ class FlowInterpreter:
             "aiChat": "AiChatState",
             "confirmreply": "ConfirmReplyState",
             "knowledgesSearch": "KnowledgeSearchState",
-            "databaseQuery": "KnowledgeSearchState",  # 添加对databaseQuery的支持
             "pdf2md": "Pdf2MdState",
             "addMemoryVariable": "AddMemoryVariableState",
             "infoClass": "InfoClassState",
             "codeFragment": "CodeFragmentState",
-            "codeExtract": "CodeFragmentState",  # 添加对codeExtract的支持，映射到CodeFragmentState
             "forEach": "ForEachState",
             "httpInvoke": "HttpInvokeState",
+            "officeWordExport": "OfficeWordExportState",
+            "markdownToWord": "MarkdownToWordState",
+            "codeExtractor": "CodeExtractorState",
+            "codeExtract": "CodeExtractorState",  # 支持两种命名方式
+            "databaseQuery": "DatabaseQueryState",
         }
         return state_name_mapping.get(module_type)
 
@@ -292,14 +358,17 @@ class FlowInterpreter:
             "aiChat": AiChatState,
             "confirmreply": ConfirmReplyState,
             "knowledgesSearch": KnowledgeSearchState,
-            "databaseQuery": KnowledgeSearchState,  # 添加对databaseQuery的支持(假装有)
             "pdf2md": Pdf2MdState,
             "addMemoryVariable": AddMemoryVariableState,
             "infoClass": InfoClassState,
             "codeFragment": CodeFragmentState,
-            "codeExtract": CodeFragmentState,  # 添加对codeExtract的支持，映射到CodeFragmentState
             "forEach": ForEachState,
             "httpInvoke": HttpInvokeState,
+            "officeWordExport": OfficeWordExportState,
+            "markdownToWord": MarkdownToWordState,
+            "codeExtractor": CodeExtractorState,
+            "codeExtract": CodeExtractorState,  # 支持两种命名方式
+            "databaseQuery": DatabaseQueryState,
         }
         return state_mapping.get(module_type)
     
@@ -358,7 +427,7 @@ class FlowInterpreter:
         """生成代码头部（导入和初始化部分）"""
         code_lines = []
         code_lines.append("from autoagents_graph.agentify import FlowGraph, START")
-        code_lines.append("from autoagents_graph.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState")
+        code_lines.append("from autoagents_graph.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState,OfficeWordExportState,MarkdownToWordState,CodeExtractorState,DatabaseQueryState")
         if has_infoclass:
             code_lines.append("import uuid")
         code_lines.append("")
