@@ -25,24 +25,26 @@
 ## 基础用法
 
 ```python
-from autoagents_graph.engine.agentify import AgentifyGraph, START
+from autoagents_graph import NL2Workflow
+from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import (
     QuestionInputState, AiChatState, ConfirmReplyState, 
     KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
     InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState
 )
 
-### 创建AgentifyGraph实例（必需认证参数）
-graph = AgentifyGraph(
-    personal_auth_key="7217394b7d3e4becab017447adeac239", 
-    personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",  
-    base_url="https://uat.agentspro.cn"  # 可选，有默认值
+### 创建NL2Workflow实例（必需认证参数）
+workflow = NL2Workflow(
+    platform="agentify",                                    # 平台类型
+    personal_auth_key="7217394b7d3e4becab017447adeac239",  # 认证密钥
+    personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB", # 认证密码
+    base_url="https://uat.agentspro.cn"                    # API地址（可选）
 )
 ```
 
 ### 添加节点的基本语法
 ```python
-graph.add_node(
+workflow.add_node(
     id="节点唯一标识",              # 必需：节点ID，在整个流程中唯一
     state=NodeState(               # 必需：节点状态，使用对应的State类
         # 在这里配置节点参数
@@ -54,7 +56,7 @@ graph.add_node(
 
 ### 添加边的基本语法
 ```python
-graph.add_edge(
+workflow.add_edge(
     source="源节点ID",
     target="目标节点ID", 
     source_handle="源输出端口",     # 可选，默认""
@@ -64,7 +66,7 @@ graph.add_edge(
 
 ### 编译和部署
 ```python
-graph.compile(
+workflow.compile(
     name="智能体名称",              # 可选，默认"未命名智能体"
     avatar="头像URL",              # 可选，有默认头像
     intro="智能体介绍",             # 可选
@@ -229,7 +231,7 @@ graph.add_node(
 
 ```python
 # 示例
-    graph.add_node(
+    workflow.add_node(
         id="ai1",
         state=AiChatState(
             model="doubao-deepseek-v3",
@@ -248,7 +250,7 @@ graph.add_node(
         )
     )
 
-    graph.add_node(
+    workflow.add_node(
         id="addMemoryVariable1",
         state=AddMemoryVariableState(
             variables={
@@ -260,7 +262,7 @@ graph.add_node(
     )
 
     # 添加边，将AI输出存为记忆变量
-    graph.add_edge("ai1", "addMemoryVariable1", "answerText", "ai1_answerText")
+    workflow.add_edge("ai1", "addMemoryVariable1", "answerText", "ai1_answerText")
 ```
 
 ## 3. HTTP调用（httpInvoke）
@@ -1815,25 +1817,27 @@ graph.add_edge("save_sql", "dynamic_query", "finish", "switchAny")
 ## 完整工作流示例
 ### Example 1: 文档提问助手（如果用户提出单纯的文档提问助手，请不要有知识库）
 ```python
-from autoagents_graph.engine.agentify import AgentifyGraph, START
+from autoagents_graph import NL2Workflow
+from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
 
 def main():
-    graph = AgentifyGraph(
+    workflow = NL2Workflow(
+        platform="agentify",
         personal_auth_key="7217394b7d3e4becab017447adeac239",
         personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
         base_url="https://uat.agentspro.cn"
     )
 
     # 添加节点
-    graph.add_node(
+    workflow.add_node(
         id=START,
         state=QuestionInputState(
             uploadFile=True
         )
     )
 
-    graph.add_node(
+    workflow.add_node(
         id="pdf2md1",
         state=Pdf2MdState(
             pdf2mdType="deep_pdf2md"
@@ -1841,7 +1845,7 @@ def main():
     )
 
 
-    graph.add_node(
+    workflow.add_node(
         id="confirmreply1",
         state=ConfirmReplyState(
             text=r"文件内容：{{@pdf2md1_pdf2mdResult}}",
@@ -1849,7 +1853,7 @@ def main():
         )
     )
 
-    graph.add_node(
+    workflow.add_node(
         id="ai1",
         state=AiChatState(
             model="doubao-deepseek-v3",
@@ -1868,7 +1872,7 @@ def main():
         )
     )
 
-    graph.add_node(
+    workflow.add_node(
         id="addMemoryVariable1",
         state=AddMemoryVariableState(
             variables={
@@ -1880,19 +1884,19 @@ def main():
     )
 
     # 添加连接边
-    graph.add_edge(START, "pdf2md1", "finish", "switchAny")
-    graph.add_edge(START, "pdf2md1", "files", "files")
-    graph.add_edge(START, "addMemoryVariable1", "userChatInput", "question1_userChatInput")
+    workflow.add_edge(START, "pdf2md1", "finish", "switchAny")
+    workflow.add_edge(START, "pdf2md1", "files", "files")
+    workflow.add_edge(START, "addMemoryVariable1", "userChatInput", "question1_userChatInput")
 
-    graph.add_edge("pdf2md1", "confirmreply1", "finish", "switchAny")
-    graph.add_edge("pdf2md1", "addMemoryVariable1", "pdf2mdResult", "pdf2md1_pdf2mdResult")
+    workflow.add_edge("pdf2md1", "confirmreply1", "finish", "switchAny")
+    workflow.add_edge("pdf2md1", "addMemoryVariable1", "pdf2mdResult", "pdf2md1_pdf2mdResult")
 
-    graph.add_edge("confirmreply1", "ai1", "finish", "switchAny")
+    workflow.add_edge("confirmreply1", "ai1", "finish", "switchAny")
 
-    graph.add_edge("ai1", "addMemoryVariable1", "answerText", "ai1_answerText")
+    workflow.add_edge("ai1", "addMemoryVariable1", "answerText", "ai1_answerText")
 
     # 编译工作流
-    graph.compile(
+    workflow.compile(
         name="文档助手",
         intro="这是一个专业的文档助手，可以帮助用户分析和理解文档内容",
         category="文档处理",
@@ -1905,18 +1909,20 @@ if __name__ == "__main__":
 
 ### Example 2: 小说创作助手
 ```python
-from autoagents_graph.engine.agentify import AgentifyGraph, START
+from autoagents_graph import NL2Workflow
+from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState, InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState
 
 def main():
-    graph = AgentifyGraph(
+    workflow = NL2Workflow(
+        platform="agentify",
         personal_auth_key="7217394b7d3e4becab017447adeac239",
         personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
         base_url="https://uat.agentspro.cn"
     )
 
     # 用户输入节点
-    graph.add_node(
+    workflow.add_node(
         id=START,
         state=QuestionInputState(
             inputText=True,
@@ -1928,7 +1934,7 @@ def main():
     )
 
     # 文档解析节点
-    graph.add_node(
+    workflow.add_node(
         id="pdf_parser",
         state=Pdf2MdState(
             pdf2mdType="deep_pdf2md"
@@ -1936,7 +1942,7 @@ def main():
     )
 
     # 确认回复节点
-    graph.add_node(
+    workflow.add_node(
         id="confirm_parse",
         state=ConfirmReplyState(
             text="文档解析完成，正在生成小说内容...",
@@ -1945,7 +1951,7 @@ def main():
     )
 
     # AI创作节点
-    graph.add_node(
+    workflow.add_node(
         id="ai_writer",
         state=AiChatState(
             model="doubao-deepseek-v3",
@@ -1960,13 +1966,13 @@ def main():
     )
 
     # 记忆变量节点（保存AI生成内容）
-    graph.add_node(
+    workflow.add_node(
         id="save_content",
         state=AddMemoryVariableState()
     )
 
     # 最终确认节点
-    graph.add_node(
+    workflow.add_node(
         id="final_output",
         state=ConfirmReplyState(
             text="小说创作完成！",
@@ -1975,22 +1981,22 @@ def main():
     )
 
     # 连接边
-    graph.add_edge(START, "pdf_parser", "finish", "switchAny")
-    graph.add_edge(START, "pdf_parser", "files", "files")
+    workflow.add_edge(START, "pdf_parser", "finish", "switchAny")
+    workflow.add_edge(START, "pdf_parser", "files", "files")
     
-    graph.add_edge("pdf_parser", "confirm_parse", "success", "switchAny")
+    workflow.add_edge("pdf_parser", "confirm_parse", "success", "switchAny")
     
-    graph.add_edge("confirm_parse", "ai_writer", "finish", "switchAny")
-    graph.add_edge(START, "ai_writer", "userChatInput", "text")
-    graph.add_edge("pdf_parser", "ai_writer", "pdf2mdResult", "text")
+    workflow.add_edge("confirm_parse", "ai_writer", "finish", "switchAny")
+    workflow.add_edge(START, "ai_writer", "userChatInput", "text")
+    workflow.add_edge("pdf_parser", "ai_writer", "pdf2mdResult", "text")
     
-    graph.add_edge("ai_writer", "save_content", "finish", "switchAny")
-    graph.add_edge("ai_writer", "save_content", "answerText", "feedback")
+    workflow.add_edge("ai_writer", "save_content", "finish", "switchAny")
+    workflow.add_edge("ai_writer", "save_content", "answerText", "feedback")
     
-    graph.add_edge("save_content", "final_output", "finish", "switchAny")
+    workflow.add_edge("save_content", "final_output", "finish", "switchAny")
 
     # 编译
-    graph.compile(
+    workflow.compile(
         name="小说创作助手",
         intro="根据用户提供的素材自动生成完整小说",
         category="内容创作",
@@ -2003,12 +2009,14 @@ if __name__ == "__main__":
 
 ### Example 3: 复杂系统
 ```python
-from autoagents_graph.engine.agentify import AgentifyGraph, START
+from autoagents_graph import NL2Workflow
+from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState, ForEachState,OfficeWordExportState, MarkdownToWordState, CodeExtractorState, DatabaseQueryState
 import uuid
 
 def main():
-    graph = AgentifyGraph(
+    workflow = NL2Workflow(
+        platform="agentify",
         personal_auth_key="7217394b7d3e4becab017447adeac239",
         personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
         base_url="https://uat.agentspro.cn"
@@ -2016,7 +2024,7 @@ def main():
 
     # 添加节点
     # 用户提问节点
-    graph.add_node(
+    workflow.add_node(
         id=START,
         position={'x': -2050.0187299418194, 'y': 168.1277274588137},
         state=QuestionInputState(
@@ -2029,7 +2037,7 @@ def main():
     )
 
     # 确定回复节点
-    graph.add_node(
+    workflow.add_node(
         id="confirm_reply_3",
         position={'x': -873.0587219566071, 'y': 2123.791172048472},
         state=ConfirmReplyState(
@@ -2038,7 +2046,7 @@ def main():
     )
 
     # 智能对话节点
-    graph.add_node(
+    workflow.add_node(
         id="ai_chat_2",
         position={'x': -861.8967916173706, 'y': 187.8637781812438},
         state=AiChatState(
@@ -2051,7 +2059,7 @@ def main():
     )
 
     # 确定回复节点
-    graph.add_node(
+    workflow.add_node(
         id="confirm_reply_5",
         position={'x': 1050.058092873814, 'y': 114.82823978954264},
         state=ConfirmReplyState(
@@ -2067,7 +2075,7 @@ WHERE xjdw LIKE {{geo}};""",
     )
 
     # 代码块节点
-    graph.add_node(
+    workflow.add_node(
         id="code_fragment_1",
         position={'x': -319.49586685447025, 'y': 155.25565264027563},
         state=CodeFragmentState(
@@ -2100,7 +2108,7 @@ def userFunction(params):
     )
 
     # 添加记忆变量节点
-    graph.add_node(
+    workflow.add_node(
         id="memory_var_1",
         position={'x': 187.41334017570892, 'y': 131.6960333509331},
         state=AddMemoryVariableState(
@@ -2109,7 +2117,7 @@ def userFunction(params):
     )
 
     # 确定回复节点
-    graph.add_node(
+    workflow.add_node(
         id="confirm_reply_6",
         position={'x': 591.6882106464707, 'y': 135.4006165467965},
         state=ConfirmReplyState(
@@ -2119,7 +2127,7 @@ def userFunction(params):
     )
 
     # 数据库查询节点
-    graph.add_node(
+    workflow.add_node(
         id="database_query_1",
         position={'x': 2402.86927334456, 'y': 110.86520200031254},
         state=DatabaseQueryState(
@@ -2129,7 +2137,7 @@ def userFunction(params):
     )
 
     # 确定回复节点
-    graph.add_node(
+    workflow.add_node(
         id="confirm_reply_7",
         position={'x': 1543.7577279314946, 'y': 156.21737446259584},
         state=ConfirmReplyState(
@@ -2138,7 +2146,7 @@ def userFunction(params):
     )
 
     # 确定回复节点
-    graph.add_node(
+    workflow.add_node(
         id="confirm_reply_8",
         position={'x': 1067.1535700820075, 'y': 890.5267338164495},
         state=ConfirmReplyState(
@@ -2157,7 +2165,7 @@ where xjdw like {{geo}});""",
     )
 
     # 确定回复节点
-    graph.add_node(
+    workflow.add_node(
         id="confirm_reply_9",
         position={'x': 1574.6426907565042, 'y': 892.7600770675024},
         state=ConfirmReplyState(
@@ -2166,7 +2174,7 @@ where xjdw like {{geo}});""",
     )
 
     # 数据库查询节点
-    graph.add_node(
+    workflow.add_node(
         id="database_query_2",
         position={'x': 2080.157377078698, 'y': 864.3978662788228},
         state=DatabaseQueryState(
@@ -2177,7 +2185,7 @@ where xjdw like {{geo}});""",
 
     # 信息分类节点
     info_class_labels = {'9f4da034-1f5c-44d4-9345-1cb53dfcbd61': '查询地区设备清单', '1c8384d9-2910-4ae5-bb36-7b2853be955a': '不同设备'}
-    graph.add_node(
+    workflow.add_node(
         id="info_class",
         position={'x': -1479.7489037112273, 'y': 151.55533226592678},
         state=InfoClassState(
@@ -2209,7 +2217,7 @@ where xjdw like {{geo}});""",
     )
 
     # 确定回复节点
-    graph.add_node(
+    workflow.add_node(
         id="confirm_reply_10",
         position={'x': 1954.5790409016909, 'y': 156.83070120629836},
         state=ConfirmReplyState(
@@ -2225,28 +2233,28 @@ WHERE xjdw LIKE '%慈溪%';""",
     )
 
     # 添加连接边
-    graph.add_edge("ai_chat_2", "code_fragment_1", "finish", "switchAny")
-    graph.add_edge("code_fragment_1", "memory_var_1", "output_key", "geo")
-    graph.add_edge("code_fragment_1", "confirm_reply_6", "finish", "switchAny")
-    graph.add_edge("code_fragment_1", "confirm_reply_6", "output_key", "text")
-    graph.add_edge("confirm_reply_6", "confirm_reply_5", "finish", "switchAny")
-    graph.add_edge("confirm_reply_5", "confirm_reply_7", "finish", "switchAny")
-    graph.add_edge("database_query_1", "confirm_reply_8", "finish", "switchAny")
-    graph.add_edge("confirm_reply_8", "confirm_reply_9", "finish", "switchAny")
-    graph.add_edge("confirm_reply_9", "database_query_2", "finish", "switchAny")
-    graph.add_edge("confirm_reply_8", "database_query_2", "text", "sql")
-    graph.add_edge("info_class", "ai_chat_2", list(info_class_labels.keys())[0], "switchAny")
-    graph.add_edge(START, "info_class", "userChatInput", "text")
-    graph.add_edge(START, "ai_chat_2", "userChatInput", "text")
-    graph.add_edge("info_class", "confirm_reply_3", list(info_class_labels.keys())[1], "switchAny")
-    graph.add_edge(START, "info_class", "finish", "switchAny")
-    graph.add_edge("confirm_reply_7", "confirm_reply_10", "finish", "switchAny")
-    graph.add_edge("confirm_reply_5", "database_query_1", "text", "sql")
-    graph.add_edge("confirm_reply_10", "database_query_1", "finish", "switchAny")
-    graph.add_edge("ai_chat_2", "code_fragment_1", "answerText", "input_key")
+    workflow.add_edge("ai_chat_2", "code_fragment_1", "finish", "switchAny")
+    workflow.add_edge("code_fragment_1", "memory_var_1", "output_key", "geo")
+    workflow.add_edge("code_fragment_1", "confirm_reply_6", "finish", "switchAny")
+    workflow.add_edge("code_fragment_1", "confirm_reply_6", "output_key", "text")
+    workflow.add_edge("confirm_reply_6", "confirm_reply_5", "finish", "switchAny")
+    workflow.add_edge("confirm_reply_5", "confirm_reply_7", "finish", "switchAny")
+    workflow.add_edge("database_query_1", "confirm_reply_8", "finish", "switchAny")
+    workflow.add_edge("confirm_reply_8", "confirm_reply_9", "finish", "switchAny")
+    workflow.add_edge("confirm_reply_9", "database_query_2", "finish", "switchAny")
+    workflow.add_edge("confirm_reply_8", "database_query_2", "text", "sql")
+    workflow.add_edge("info_class", "ai_chat_2", list(info_class_labels.keys())[0], "switchAny")
+    workflow.add_edge(START, "info_class", "userChatInput", "text")
+    workflow.add_edge(START, "ai_chat_2", "userChatInput", "text")
+    workflow.add_edge("info_class", "confirm_reply_3", list(info_class_labels.keys())[1], "switchAny")
+    workflow.add_edge(START, "info_class", "finish", "switchAny")
+    workflow.add_edge("confirm_reply_7", "confirm_reply_10", "finish", "switchAny")
+    workflow.add_edge("confirm_reply_5", "database_query_1", "text", "sql")
+    workflow.add_edge("confirm_reply_10", "database_query_1", "finish", "switchAny")
+    workflow.add_edge("ai_chat_2", "code_fragment_1", "answerText", "input_key")
 
     # 编译
-    graph.compile(
+    workflow.compile(
         name="从json导出的工作流",
         intro="",
         category="自动生成",

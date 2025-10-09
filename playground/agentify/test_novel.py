@@ -2,19 +2,21 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from src.autoagents_graph.engine.agentify import AgentifyGraph, START
+from src.autoagents_graph import NL2Workflow
+from src.autoagents_graph.engine.agentify import START
 from src.autoagents_graph.engine.agentify.models import QuestionInputState, KnowledgeSearchState, AiChatState, ConfirmReplyState, ForEachState,AddMemoryVariableState
 
 
 def main():
-    graph = AgentifyGraph(
+    workflow = NL2Workflow(
+        platform="agentify",
         personal_auth_key="7217394b7d3e4becab017447adeac239",
         personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
         base_url="https://uat.agentspro.cn"
     )
 
     # 用户输入节点
-    graph.add_node(
+    workflow.add_node(
         id=START,
         state=QuestionInputState(
             inputText=True,
@@ -24,7 +26,7 @@ def main():
     )
 
     # 小说大纲生成AI
-    graph.add_node(
+    workflow.add_node(
         id="outline_gen",
         state=AiChatState(
             model="doubao-deepseek-v3",
@@ -36,19 +38,19 @@ def main():
     )
 
     # 保存大纲的记忆变量
-    graph.add_node(
+    workflow.add_node(
         id="save_outline",
         state=AddMemoryVariableState()
     )
 
     # 章节内容循环处理
-    graph.add_node(
+    workflow.add_node(
         id="chapter_loop",
         state=ForEachState()
     )
 
     # 章节内容生成AI
-    graph.add_node(
+    workflow.add_node(
         id="chapter_gen",
         state=AiChatState(
             model="doubao-deepseek-v3",
@@ -59,7 +61,7 @@ def main():
     )
 
     # 最终结果汇总
-    graph.add_node(
+    workflow.add_node(
         id="final_output",
         state=ConfirmReplyState(
             text="小说生成完成！以下是完整内容：\n",
@@ -68,19 +70,19 @@ def main():
     )
 
     # 连接流程
-    graph.add_edge(START, "outline_gen", "userChatInput", "text")
-    graph.add_edge("outline_gen", "save_outline", "answerText", "feedback")
+    workflow.add_edge(START, "outline_gen", "userChatInput", "text")
+    workflow.add_edge("outline_gen", "save_outline", "answerText", "feedback")
 
-    graph.add_edge("save_outline", "chapter_loop", "finish", "switchAny")
-    graph.add_edge("outline_gen", "chapter_loop", "answerText", "items")
+    workflow.add_edge("save_outline", "chapter_loop", "finish", "switchAny")
+    workflow.add_edge("outline_gen", "chapter_loop", "answerText", "items")
 
-    graph.add_edge("chapter_loop", "chapter_gen", "loopStart", "switchAny")
-    graph.add_edge("chapter_gen", "chapter_loop", "finish", "loopEnd")
+    workflow.add_edge("chapter_loop", "chapter_gen", "loopStart", "switchAny")
+    workflow.add_edge("chapter_gen", "chapter_loop", "finish", "loopEnd")
 
-    graph.add_edge("chapter_loop", "final_output", "finish", "switchAny")
-    graph.add_edge("chapter_gen", "final_output", "answerText", "text")
+    workflow.add_edge("chapter_loop", "final_output", "finish", "switchAny")
+    workflow.add_edge("chapter_gen", "final_output", "answerText", "text")
 
-    graph.compile(
+    workflow.compile(
         name="智能小说生成系统",
         intro="根据用户输入自动生成完整小说内容",
         category="内容创作",

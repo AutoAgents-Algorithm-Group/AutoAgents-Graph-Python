@@ -3,19 +3,21 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 import uuid
-from src.autoagents_graph.engine.agentify import AgentifyGraph, START
+from src.autoagents_graph import NL2Workflow
+from src.autoagents_graph.engine.agentify import START
 from src.autoagents_graph.engine.agentify.models import QuestionInputState, InfoClassState, AiChatState, ConfirmReplyState, KnowledgeSearchState
 
 
 def main():
-    graph = AgentifyGraph(
+    workflow = NL2Workflow(
+        platform="agentify",
         personal_auth_key="7217394b7d3e4becab017447adeac239",
         personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
         base_url="https://uat.agentspro.cn"
     )
 
     # 用户输入节点
-    graph.add_node(
+    workflow.add_node(
         id=START,
         state=QuestionInputState(
             inputText=True,
@@ -29,7 +31,7 @@ def main():
     ad_label_id = str(uuid.uuid1())
     other_label_id = str(uuid.uuid1())
     
-    graph.add_node(
+    workflow.add_node(
         id="classifier",
         state=InfoClassState(
             model="doubao-deepseek-v3",
@@ -52,7 +54,7 @@ def main():
     )
 
     # 知识库搜索节点
-    graph.add_node(
+    workflow.add_node(
         id="kb_search",
         state=KnowledgeSearchState(
             datasets=["ad_knowledge_base"],
@@ -63,7 +65,7 @@ def main():
     )
 
     # 广告问题AI回答节点
-    graph.add_node(
+    workflow.add_node(
         id="ad_answer",
         state=AiChatState(
             model="doubao-deepseek-v3",
@@ -82,7 +84,7 @@ def main():
     )
 
     # 非广告问题回复节点
-    graph.add_node(
+    workflow.add_node(
         id="other_reply",
         state=ConfirmReplyState(
             text="抱歉，我只能处理广告相关的问题。如果您有广告创意、投放策略、文案撰写等方面的需求，我很乐意为您提供帮助！",
@@ -92,22 +94,22 @@ def main():
 
     # 添加连接边
     # 用户输入到分类器
-    graph.add_edge(START, "classifier", "finish", "switchAny")
-    graph.add_edge(START, "classifier", "userChatInput", "text")
+    workflow.add_edge(START, "classifier", "finish", "switchAny")
+    workflow.add_edge(START, "classifier", "userChatInput", "text")
 
     # 广告相关分支：分类器 -> 知识库搜索 -> AI回答
-    graph.add_edge("classifier", "kb_search", ad_label_id, "switchAny")
-    graph.add_edge(START, "kb_search", "userChatInput", "text")
+    workflow.add_edge("classifier", "kb_search", ad_label_id, "switchAny")
+    workflow.add_edge(START, "kb_search", "userChatInput", "text")
     
-    graph.add_edge("kb_search", "ad_answer", "finish", "switchAny")
-    graph.add_edge(START, "ad_answer", "userChatInput", "text")
-    graph.add_edge("kb_search", "ad_answer", "quoteQA", "knSearch")
+    workflow.add_edge("kb_search", "ad_answer", "finish", "switchAny")
+    workflow.add_edge(START, "ad_answer", "userChatInput", "text")
+    workflow.add_edge("kb_search", "ad_answer", "quoteQA", "knSearch")
 
     # 其他问题分支：分类器 -> 确定回复
-    graph.add_edge("classifier", "other_reply", other_label_id, "switchAny")
+    workflow.add_edge("classifier", "other_reply", other_label_id, "switchAny")
 
     # 编译工作流
-    graph.compile(
+    workflow.compile(
         name="智能广告处理助手",
         intro="专业的广告助手，能够根据用户输入智能分类处理，为广告相关问题提供专业解答",
         category="营销助手",

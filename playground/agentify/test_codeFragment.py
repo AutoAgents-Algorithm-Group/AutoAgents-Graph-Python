@@ -3,20 +3,22 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 import uuid
-from src.autoagents_graph.engine.agentify import AgentifyGraph, START
+from src.autoagents_graph import NL2Workflow
+from src.autoagents_graph.engine.agentify import START
 from src.autoagents_graph.engine.agentify.models import QuestionInputState, CodeFragmentState, ConfirmReplyState
 
 
 def main():
     # 初始化工作流
-    graph = AgentifyGraph(
+    workflow = NL2Workflow(
+        platform="agentify",
         personal_auth_key="833c6771a8ae4ee88e6f4d5f7f2a62e5",
         personal_auth_secret="XceT7Cf86SfX2LNhl5I0QuOYomt1NvqZ",
         base_url="https://uat.agentspro.cn"
     )
 
     # 添加节点
-    graph.add_node(
+    workflow.add_node(
         id=START,
         state=QuestionInputState()
     )
@@ -41,7 +43,7 @@ def main():
     input_label_keys = [list(input_label.keys())[0] for input_label in input_labels]
     output_labels_keys = [list(output_label.keys())[0] for output_label in output_labels]
 
-    graph.add_node(
+    workflow.add_node(
         id="codeFragment1",
         state=CodeFragmentState(
             model="doubao-deepseek-v3",
@@ -54,7 +56,7 @@ def main():
         )
     )
 
-    graph.add_node(
+    workflow.add_node(
         id="confirmreply1",
         state=ConfirmReplyState(
             stream=True
@@ -62,14 +64,14 @@ def main():
     )
 
     # 添加连接边
-    graph.add_edge(START, "codeFragment1", "finish", "switchAny")
-    graph.add_edge(START, "codeFragment1", "userChatInput", input_label_keys[0])
+    workflow.add_edge(START, "codeFragment1", "finish", "switchAny")
+    workflow.add_edge(START, "codeFragment1", "userChatInput", input_label_keys[0])
     
-    graph.add_edge("codeFragment1", "confirmreply1", output_labels_keys[0], "text")
+    workflow.add_edge("codeFragment1", "confirmreply1", output_labels_keys[0], "text")
     
 
     # 编译工作流
-    graph.compile(
+    workflow.compile(
         name="代码块执行",
         intro="这是一个专业的代码块执行系统",
         category="代码块执行",

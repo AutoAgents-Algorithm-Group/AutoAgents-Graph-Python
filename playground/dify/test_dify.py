@@ -79,7 +79,7 @@ def main():
 
     # 编译并保存
     yaml_result = workflow.compile()
-    workflow.save("playground/dify/dify_workflow_output.yaml")
+    workflow.save("playground/dify/outputs/dify_workflow_output.yaml")
     
     print(f"Dify工作流测试完成，YAML长度: {len(yaml_result)} 字符")
 

@@ -151,21 +151,12 @@ class NL2Workflow:
         Returns:
             创建的边实例
         """
-        if self.platform == "agentify":
-            return self.graph.add_edge(
-                source=source, 
-                target=target, 
-                source_handle=source_handle, 
-                target_handle=target_handle)
-        
-        elif self.platform == "dify":
-            # Dify平台的默认句柄处理
-            if not source_handle:
-                source_handle = "source"
-            if not target_handle:
-                target_handle = "target"
-            
-            return self.graph.add_edge(source, target, source_handle, target_handle)
+        return self.graph.add_edge(
+            source=source, 
+            target=target, 
+            source_handle=source_handle, 
+            target_handle=target_handle
+        )
     
     def compile(self, **kwargs) -> Union[None, str]:
         """

@@ -191,20 +191,26 @@ class DifyGraph:
     def add_edge(self, 
                  source: str, 
                  target: str,
-                 source_handle: str = "source",
-                 target_handle: str = "target") -> DifyEdge:
+                 source_handle: str = "",
+                 target_handle: str = "") -> DifyEdge:
         """
         添加边连接两个节点
         
         Args:
             source: 源节点ID
             target: 目标节点ID
-            source_handle: 源句柄
-            target_handle: 目标句柄
+            source_handle: 源句柄（默认为"source"）
+            target_handle: 目标句柄（默认为"target"）
             
         Returns:
             创建的DifyEdge实例
         """
+        # Dify平台的默认句柄处理
+        if not source_handle:
+            source_handle = "source"
+        if not target_handle:
+            target_handle = "target"
+            
         # 生成边ID
         edge_id = f"{source}-{source_handle}-{target}-{target_handle}"
         

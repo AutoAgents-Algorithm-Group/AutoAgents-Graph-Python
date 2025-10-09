@@ -1762,7 +1762,7 @@ def main():
 
     # 方法1: 生成SDK代码并自动保存（推荐）
     success = interpreter.generate_workflow_file(
-        json_data, output_path=r"playground/agentify/generated_workflow.py", overwrite=True
+        json_data, output_path=r"playground/agentify/outputs/generated_workflow.py", overwrite=True
     )
 
     if success:
