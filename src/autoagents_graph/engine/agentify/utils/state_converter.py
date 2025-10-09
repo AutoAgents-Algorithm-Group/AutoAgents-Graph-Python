@@ -223,12 +223,12 @@ class StateConverter:
                         outputs[f"_dynamic_output_{param_info['key']}"]["value"] = param_info["value"]
                 
         elif module_type == "forEach":
-            # 循环模块
+            # 循环模块（index、item、length 会自动生成为字符串格式，如 "a545776c.index"）
             inputs.update({
                 "items": state_dict.get("items", []),
-                "index": state_dict.get("index", 0),
-                "item": state_dict.get("item"),
-                "length": state_dict.get("length", 0),
+                "index": state_dict.get("index", ""),  # 自动生成的变量名字符串
+                "item": state_dict.get("item", ""),    # 自动生成的变量名字符串
+                "length": state_dict.get("length", ""), # 自动生成的变量名字符串
                 "loopEnd": state_dict.get("loopEnd", False)
             })
             

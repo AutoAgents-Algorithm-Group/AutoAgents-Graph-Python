@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field
 from datetime import datetime
+import uuid
 
 
 class AgentGuide(BaseModel):
@@ -144,13 +145,24 @@ class CodeFragmentState(BaseNodeState):
 
 
 class ForEachState(BaseNodeState):
-    """循环模块状态"""
+    """循环模块状态
+    
+    注意：index、item、length 字段会自动生成唯一的随机ID格式（如 a545776c.index），
+    不接受用户传入的值，每次创建实例都会自动生成新的唯一标识符。
+    """
     items: Optional[List[Any]] = Field(default_factory=list)
-    index: Optional[int] = 0
-    item: Optional[Any] = None
-    length: Optional[int] = 0
+    index: Optional[str] = ""  # 自动生成，格式：随机ID.index
+    item: Optional[str] = ""   # 自动生成，格式：随机ID.item
+    length: Optional[str] = "" # 自动生成，格式：随机ID.length
     loopEnd: Optional[bool] = False
     loopStart: Optional[bool] = False
+    
+    def model_post_init(self, __context):
+        """初始化后自动生成循环变量的唯一标识符"""
+        random_id = uuid.uuid4().hex[:8]
+        self.index = f"{random_id}.index"
+        self.item = f"{random_id}.item"
+        self.length = f"{random_id}.length"
 
 
 class DocumentQuestionState(BaseNodeState):
