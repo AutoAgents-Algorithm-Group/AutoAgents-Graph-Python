@@ -85,8 +85,8 @@ class AiChatState(BaseNodeState):
 
 class ConfirmReplyState(BaseNodeState):
     """确定回复模块状态"""
-    isvisible: Optional[bool] = True
     text: Optional[str] = ""
+    isvisible: Optional[bool] = True
 
 
 class KnowledgeSearchState(BaseNodeState):
