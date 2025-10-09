@@ -112,10 +112,9 @@ class NL2Workflow:
             raise ValueError("state must be a BaseModel instance")
         
         if self.platform == "agentify":
-            # AgentsPro平台直接使用AgentifyGraph的add_node
             return self.graph.add_node(
-                id=id,
-                position=position,
+                id=id, 
+                position=position, 
                 state=state
             )
         
@@ -153,7 +152,11 @@ class NL2Workflow:
             创建的边实例
         """
         if self.platform == "agentify":
-            return self.graph.add_edge(source, target, source_handle, target_handle)
+            return self.graph.add_edge(
+                source=source, 
+                target=target, 
+                source_handle=source_handle, 
+                target_handle=target_handle)
         
         elif self.platform == "dify":
             # Dify平台的默认句柄处理
