@@ -49,8 +49,8 @@ class AgentifyParser:
                         custom_inputs[key] = value
             return custom_inputs
         
-        if module_type in ["codeFragment", "codeExtractor"]:
-            # 特殊处理codeFragment/codeExtractor - 提取代码相关参数
+        if module_type in ["codeFragment", "codeExtract"]:
+            # 特殊处理codeFragment/codeExtract - 提取代码相关参数
             inputs_dict = {}
             outputs_dict = {}
             
@@ -140,7 +140,7 @@ class AgentifyParser:
                 "model", "systemPrompt", "quotePrompt", "temperature", "topP", "maxToken",
                 "text",  # 对于confirmreply的预设文本
                 "items", "index", "item", "length", "loopEnd", "loopStart",  # forEach相关参数
-                "_code_", "language", "description",  # codeFragment/codeExtractor相关参数
+                "_code_", "language", "description",  # codeFragment/codeExtract相关参数
                 "templateFile"  
                 "markdown", "word" , "fileInfo" 
                 "code", "fileInfo" 
@@ -230,8 +230,8 @@ class AgentifyParser:
             "httpInvoke": "http_invoke",
             "officeWordExport": "word_export",
             "markdownToWord": "markdown_to_word",
-            "codeExtractor": "code_extractor",
-            "DatabaseQuery": "database_query",
+            "codeExtract": "code_extract",
+            "databaseQuery": "database_query",
         }
         
         base_name = type_mapping.get(module_type, "node")
@@ -343,8 +343,8 @@ class AgentifyParser:
             "httpInvoke": "HttpInvokeState",
             "officeWordExport": "OfficeWordExportState",
             "markdownToWord": "MarkdownToWordState",
-            "codeExtractor": "CodeExtractorState",
-            "DatabaseQuery": "DatabaseQueryState",
+            "codeExtract": "CodeExtractorState",
+            "databaseQuery": "DatabaseQueryState",
         }
         return state_name_mapping.get(module_type)
 
@@ -364,8 +364,8 @@ class AgentifyParser:
             "httpInvoke": HttpInvokeState,
             "officeWordExport": OfficeWordExportState,
             "markdownToWord": MarkdownToWordState,
-            "codeExtractor": CodeExtractorState,
-            "DatabaseQuery": DatabaseQueryState,
+            "codeExtract": CodeExtractorState,
+            "databaseQuery": DatabaseQueryState,
         }
         return state_mapping.get(module_type)
     

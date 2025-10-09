@@ -37,8 +37,8 @@ class StateConverter:
             ForEachState: "forEach",
             OfficeWordExportState: "officeWordExport",
             MarkdownToWordState: "markdownToWord",
-            CodeExtractorState: "codeExtractor",
-            DatabaseQueryState: "DatabaseQuery",
+            CodeExtractorState: "codeExtract",
+            DatabaseQueryState: "databaseQuery",
         }
         
         for state_class, module_type in type_mapping.items():

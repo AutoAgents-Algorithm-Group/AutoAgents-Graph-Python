@@ -1139,7 +1139,7 @@ NODE_TEMPLATES = {
         }
         ]
     },
-    "codeExtractor":{
+    "codeExtract":{
         
             "name": "代码提取器",
             "intro": "代码提取器",
@@ -1221,7 +1221,7 @@ NODE_TEMPLATES = {
             "disabled": False,
             "moduleType": "codeExtract"
     },
-    "DatabaseQuery":{
+    "databaseQuery":{
         
             "name": "数据库查询",
             "intro": "数据库查询",
