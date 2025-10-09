@@ -279,7 +279,7 @@ class AgentifyParser:
                 # 更新custom_inputs中的labels为变量引用
                 custom_inputs["labels"] = f"__{labels_var_name}__"  # 特殊标记，稍后替换
         
-        code_lines.append("    graph.add_node(")
+        code_lines.append("    workflow.add_node(")
         
         # 处理START节点的特殊情况
         if module_type == "questionInput" and node_id == "simpleInputId":
@@ -399,9 +399,9 @@ class AgentifyParser:
                     uuid_keys = list(labels_dict.keys())
                     if source_handle in uuid_keys:
                         index = uuid_keys.index(source_handle)
-                        return f'    graph.add_edge({source_formatted}, {target_formatted}, list({labels_var_name}.keys())[{index}], "{target_handle}")'
+                        return f'    workflow.add_edge({source_formatted}, {target_formatted}, list({labels_var_name}.keys())[{index}], "{target_handle}")'
             
-        return f'    graph.add_edge({source_formatted}, {target_formatted}, "{source_handle}", "{target_handle}")'
+        return f'    workflow.add_edge({source_formatted}, {target_formatted}, "{source_handle}", "{target_handle}")'
     
     @staticmethod
     def _is_uuid_format(text: str) -> bool:
@@ -423,13 +423,15 @@ class AgentifyParser:
     def _generate_header_code(self, has_infoclass: bool = False) -> List[str]:
         """生成代码头部（导入和初始化部分）"""
         code_lines = []
-        code_lines.append("from autoagents_graph.agentify import AgentifyGraph, START")
-        code_lines.append("from autoagents_graph.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState,OfficeWordExportState,MarkdownToWordState,CodeExtractorState,DatabaseQueryState")
+        code_lines.append("from autoagents_graph import NL2Workflow")
+        code_lines.append("from autoagents_graph.engine.agentify import START")
+        code_lines.append("from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState,OfficeWordExportState,MarkdownToWordState,CodeExtractorState,DatabaseQueryState")
         if has_infoclass:
             code_lines.append("import uuid")
         code_lines.append("")
         code_lines.append("def main():")
-        code_lines.append("    graph = AgentifyGraph(")
+        code_lines.append("    workflow = NL2Workflow(")
+        code_lines.append('        platform="agentify",')
         code_lines.append(f'        personal_auth_key="{self.auth_key}",')
         code_lines.append(f'        personal_auth_secret="{self.auth_secret}",')
         code_lines.append(f'        base_url="{self.base_url}"')
@@ -443,7 +445,7 @@ class AgentifyParser:
         code_lines = []
         code_lines.append("")
         code_lines.append("    # 编译")
-        code_lines.append("    graph.compile(")
+        code_lines.append("    workflow.compile(")
         code_lines.append('        name="从json导出的工作流",')
         code_lines.append('        intro="",')
         code_lines.append('        category="自动生成",')
