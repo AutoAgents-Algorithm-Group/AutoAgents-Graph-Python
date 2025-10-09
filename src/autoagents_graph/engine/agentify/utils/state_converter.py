@@ -3,7 +3,7 @@ from ..models.graph_types import (
     BaseNodeState, HttpInvokeState, QuestionInputState, AiChatState,
     ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
     InfoClassState, CodeFragmentState, ForEachState, OfficeWordExportState,
-    MarkdownToWordState, CodeExtractorState, DatabaseQueryState
+    MarkdownToWordState, CodeExtractState, DatabaseQueryState
 )
 
 
@@ -37,7 +37,7 @@ class StateConverter:
             ForEachState: "forEach",
             OfficeWordExportState: "officeWordExport",
             MarkdownToWordState: "markdownToWord",
-            CodeExtractorState: "codeExtract",
+            CodeExtractState: "codeExtract",
             DatabaseQueryState: "databaseQuery",
         }
         
@@ -245,7 +245,7 @@ class StateConverter:
                 "word": state_dict.get("word", ""),
                 "fileInfo": state_dict.get("fileInfo", "")
             })
-        elif module_type in ["codeExtractor"]:
+        elif module_type in ["codeExtract"]:
             # 代码提取器模块
             inputs.update({
                 "markdown": state_dict.get("markdown", ""),

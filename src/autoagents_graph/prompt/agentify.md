@@ -1481,7 +1481,7 @@ graph.add_edge("convert_with_error_handling", "error_msg", "failed", "switchAny"
 
 ---
 
-## 13. 代码提取器（codeExtractor）
+## 13. 代码提取器（codeExtract）
 
 ### 模块功能说明
 该模块用于从Markdown格式的文本中提取指定类型的代码块。支持提取SQL、Python、JavaScript等多种编程语言的代码，常用于AI生成的内容后处理、代码分析、自动化执行等场景。
@@ -1489,7 +1489,7 @@ graph.add_edge("convert_with_error_handling", "error_msg", "failed", "switchAny"
 ### State类定义
 
 ```python
-class CodeExtractorState(BaseNodeState):
+class CodeExtractState(BaseNodeState):
     """代码提取器模块状态"""
     markdown: Optional[str] = ""          # 输入的Markdown内容
     codeType: Optional[str] = "SQL"       # 要提取的代码类型
@@ -1503,7 +1503,7 @@ class CodeExtractorState(BaseNodeState):
 ```python
 graph.add_node(
     id="extract_sql",
-    state=CodeExtractorState(
+    state=CodeExtractState(
         codeType="SQL"  # 指定要提取的代码类型
     )
 )
@@ -1557,7 +1557,7 @@ graph.add_node(
 
 graph.add_node(
     id="extract_sql_code",
-    state=CodeExtractorState(
+    state=CodeExtractState(
         codeType="SQL"
     )
 )
@@ -1569,7 +1569,7 @@ graph.add_edge("ai_generate_sql", "extract_sql_code", "answerText", "markdown")
 # 示例2：带错误处理的代码提取
 graph.add_node(
     id="python_extractor",
-    state=CodeExtractorState(
+    state=CodeExtractState(
         codeType="Python"
     )
 )
@@ -1598,7 +1598,7 @@ graph.add_edge("python_extractor", "extraction_failed", "failed", "switchAny")
 # 示例3：提取并执行SQL查询
 graph.add_node(
     id="extract_and_query",
-    state=CodeExtractorState(
+    state=CodeExtractState(
         codeType="SQL"
     )
 )
@@ -1737,7 +1737,7 @@ graph.add_node(
 
 graph.add_node(
     id="sql_extractor",
-    state=CodeExtractorState(
+    state=CodeExtractState(
         codeType="SQL"
     )
 )
@@ -2011,7 +2011,7 @@ if __name__ == "__main__":
 ```python
 from autoagents_graph import NL2Workflow
 from autoagents_graph.engine.agentify import START
-from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState, ForEachState,OfficeWordExportState, MarkdownToWordState, CodeExtractorState, DatabaseQueryState
+from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState, ForEachState,OfficeWordExportState, MarkdownToWordState, CodeExtractState, DatabaseQueryState
 import uuid
 
 def main():

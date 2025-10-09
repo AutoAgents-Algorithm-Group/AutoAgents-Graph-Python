@@ -182,7 +182,7 @@ class MarkdownToWordState(BaseNodeState):
     word: Optional[str] = ""
     fileInfo: Optional[str] = ""
 
-class CodeExtractorState(BaseNodeState):
+class CodeExtractState(BaseNodeState):
     """代码提取器模块状态"""
     code: Optional[str] = ""
     fileInfo: Optional[str] = ""
@@ -212,6 +212,6 @@ NODE_STATE_FACTORY = {
     "keywordIdentify": KeywordIdentifyState,
     "officeWordExport": OfficeWordExportState,
     "markdownToWord": MarkdownToWordState,
-    "codeExtractor": CodeExtractorState,
+    "codeExtract": CodeExtractState,
     "databaseQuery": DatabaseQueryState,
 }

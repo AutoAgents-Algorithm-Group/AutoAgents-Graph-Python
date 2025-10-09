@@ -106,7 +106,7 @@ graph.compile(name="智能对话助手")
 - **HttpInvokeState** - HTTP请求节点
 - **OfficeWordExportState** - Word文档导出节点
 - **MarkdownToWordState** - Markdown转Word节点
-- **CodeExtractorState** - 代码提取器节点
+- **CodeExtractState** - 代码提取器节点
 - **DatabaseQueryState** - 数据库查询节点
 
 #### Dify平台节点

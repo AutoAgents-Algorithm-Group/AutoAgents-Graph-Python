@@ -3,7 +3,7 @@ from ..models.graph_types import (
     QuestionInputState, AiChatState, ConfirmReplyState, 
     KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
     InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState,
-    OfficeWordExportState,MarkdownToWordState,CodeExtractorState,DatabaseQueryState
+    OfficeWordExportState,MarkdownToWordState,CodeExtractState,DatabaseQueryState
 )
 
 
@@ -343,31 +343,10 @@ class AgentifyParser:
             "httpInvoke": "HttpInvokeState",
             "officeWordExport": "OfficeWordExportState",
             "markdownToWord": "MarkdownToWordState",
-            "codeExtract": "CodeExtractorState",
+            "codeExtract": "CodeExtractState",
             "databaseQuery": "DatabaseQueryState",
         }
         return state_name_mapping.get(module_type)
-
-    @staticmethod
-    def _get_state_class(module_type: str):
-        """根据module_type获取对应的State类"""
-        state_mapping = {
-            "questionInput": QuestionInputState,
-            "aiChat": AiChatState,
-            "confirmreply": ConfirmReplyState,
-            "knowledgesSearch": KnowledgeSearchState,
-            "pdf2md": Pdf2MdState,
-            "addMemoryVariable": AddMemoryVariableState,
-            "infoClass": InfoClassState,
-            "codeFragment": CodeFragmentState,
-            "forEach": ForEachState,
-            "httpInvoke": HttpInvokeState,
-            "officeWordExport": OfficeWordExportState,
-            "markdownToWord": MarkdownToWordState,
-            "codeExtract": CodeExtractorState,
-            "databaseQuery": DatabaseQueryState,
-        }
-        return state_mapping.get(module_type)
     
     @staticmethod
     def _generate_edge_code(edge: dict, id_mapping: dict = None, nodes: list = None, labels_vars: dict = None) -> str:
@@ -425,7 +404,7 @@ class AgentifyParser:
         code_lines = []
         code_lines.append("from autoagents_graph import NL2Workflow")
         code_lines.append("from autoagents_graph.engine.agentify import START")
-        code_lines.append("from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState,OfficeWordExportState,MarkdownToWordState,CodeExtractorState,DatabaseQueryState")
+        code_lines.append("from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState,OfficeWordExportState,MarkdownToWordState,CodeExtractState,DatabaseQueryState")
         if has_infoclass:
             code_lines.append("import uuid")
         code_lines.append("")
