@@ -51,13 +51,13 @@ pip install autoagents-graph
 
 AutoAgents Graph 提供三种主要使用方式：
 
-#### Text2Workflow - 跨平台转换器
+#### NL2Workflow - 跨平台转换器
 ```python
-from autoagents_graph import Text2Workflow
-from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
+from autoagents_graph import NL2Workflow
+from autoagents_graph.engine.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
 # 创建Dify平台工作流
-workflow = Text2Workflow(
+workflow = NL2Workflow(
     platform="dify",
     app_name="智能助手"
 )
@@ -71,24 +71,24 @@ workflow.add_node(id=END, state=DifyEndState(title="结束"))
 workflow.compile()
 ```
 
-#### FlowGraph - Agentify原生构建器
+#### AgentifyGraph - Agentify原生构建器
 ```python
-from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, AiChatState
+from autoagents_graph.engine.agentify import AgentifyGraph, START
+from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState
 
 # 创建Agentify工作流
-flow = FlowGraph(
+graph = AgentifyGraph(
     personal_auth_key="your_key",
     personal_auth_secret="your_secret"
 )
 
 # 构建智能对话流程
-flow.add_node(START, state=QuestionInputState(inputText=True))
-flow.add_node("ai", state=AiChatState(model="doubao-deepseek-v3"))
-flow.add_edge(START, "ai")
+graph.add_node(START, state=QuestionInputState(inputText=True))
+graph.add_node("ai", state=AiChatState(model="doubao-deepseek-v3"))
+graph.add_edge(START, "ai")
 
 # 发布到平台
-flow.compile(name="智能对话助手")
+graph.compile(name="智能对话助手")
 ```
 
 ### 支持的节点类型
@@ -103,6 +103,11 @@ flow.compile(name="智能对话助手")
 - **InfoClassState** - 信息分类节点
 - **CodeFragmentState** - 代码执行节点
 - **ForEachState** - 循环迭代节点
+- **HttpInvokeState** - HTTP请求节点
+- **OfficeWordExportState** - Word文档导出节点
+- **MarkdownToWordState** - Markdown转Word节点
+- **CodeExtractorState** - 代码提取器节点
+- **DatabaseQueryState** - 数据库查询节点
 
 #### Dify平台节点
 - **DifyStartState** - 开始节点

@@ -1,9 +1,8 @@
 import os
 import sys
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from src.autoagents_graph.agentify import FlowInterpreter
+from src.autoagents_graph.engine.agentify import AgentifyParser
 
 
 def main():
@@ -1754,8 +1753,8 @@ def main():
     }
 }
 
-    # 创建FlowInterpreter实例
-    interpreter = FlowInterpreter(
+    # 创建AgentifyParser实例
+    interpreter = AgentifyParser(
         auth_key="7217394b7d3e4becab017447adeac239",
         auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
         base_url="https://uat.agentspro.cn",
@@ -1763,24 +1762,13 @@ def main():
 
     # 方法1: 生成SDK代码并自动保存（推荐）
     success = interpreter.generate_workflow_file(
-        json_data, output_path="outputs/my_custom_workflow.py", overwrite=True
+        json_data, output_path=r"playground/agentify/generated_workflow.py", overwrite=True
     )
 
     if success:
         print("✅ 工作流文件生成成功！")
     else:
         print("❌ 工作流文件生成失败！")
-
-    # 方法2: 只生成代码字符串（如果需要进一步处理）
-    generated_code = interpreter.from_json_to_code(json_data)
-    print("生成的代码预览：")
-    print(generated_code[:200] + "..." if len(generated_code) > 200 else generated_code)
-
-    # 方法3: 生成代码并保存到指定路径
-    generated_code = interpreter.from_json_to_code(
-        json_data, "playground/agentify/generated_workflow.py"
-    )
-    print("✅ 代码已同时保存到备份路径")
 
 
 if __name__ == "__main__":

@@ -1,9 +1,14 @@
-from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.models import QuestionInputState, InfoClassState, AiChatState, ConfirmReplyState, KnowledgeSearchState
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 import uuid
+from src.autoagents_graph.engine.agentify import AgentifyGraph, START
+from src.autoagents_graph.engine.agentify.models import QuestionInputState, InfoClassState, AiChatState, ConfirmReplyState, KnowledgeSearchState
+
 
 def main():
-    graph = FlowGraph(
+    graph = AgentifyGraph(
         personal_auth_key="7217394b7d3e4becab017447adeac239",
         personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
         base_url="https://uat.agentspro.cn"

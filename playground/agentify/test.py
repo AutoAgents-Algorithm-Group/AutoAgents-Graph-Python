@@ -1,12 +1,13 @@
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.models import QuestionInputState, KnowledgeSearchState, AiChatState, ConfirmReplyState, ForEachState
+from src.autoagents_graph.engine.agentify import AgentifyGraph, START
+from src.autoagents_graph.engine.agentify.models import QuestionInputState, KnowledgeSearchState, AiChatState, ConfirmReplyState, ForEachState
+
 
 def main():
-    graph = FlowGraph(
+    graph = AgentifyGraph(
         personal_auth_key="7217394b7d3e4becab017447adeac239",
         personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
         base_url="https://uat.agentspro.cn"

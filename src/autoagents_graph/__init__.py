@@ -1,1 +1,7 @@
-# src/__init__.py - 主模块入口
+"""AutoAgents Graph - Workflow SDK for Multi-Platform"""
+
+from .services import NL2Workflow
+from .engine import *
+
+__version__ = "0.1.0"
+__all__ = ["NL2Workflow"]

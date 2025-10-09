@@ -3,14 +3,13 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 import uuid
-
-from src.autoagents_graph.agentify import FlowGraph, START
-from src.autoagents_graph.agentify.models import QuestionInputState, CodeFragmentState, ConfirmReplyState
+from src.autoagents_graph.engine.agentify import AgentifyGraph, START
+from src.autoagents_graph.engine.agentify.models import QuestionInputState, CodeFragmentState, ConfirmReplyState
 
 
 def main():
     # 初始化工作流
-    graph = FlowGraph(
+    graph = AgentifyGraph(
         personal_auth_key="833c6771a8ae4ee88e6f4d5f7f2a62e5",
         personal_auth_secret="XceT7Cf86SfX2LNhl5I0QuOYomt1NvqZ",
         base_url="https://uat.agentspro.cn"

@@ -50,13 +50,13 @@ pip install autoagents-graph
 
 AutoAgents Graph provides three main usage patterns:
 
-#### Text2Workflow - Cross-Platform Converter
+#### NL2Workflow - Cross-Platform Converter
 ```python
-from autoagents_graph import Text2Workflow
-from autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
+from autoagents_graph import NL2Workflow
+from autoagents_graph.engine.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
 # Create Dify platform workflow
-workflow = Text2Workflow(
+workflow = NL2Workflow(
     platform="dify",
     app_name="Smart Assistant"
 )
@@ -70,24 +70,24 @@ workflow.add_node(id=END, state=DifyEndState(title="End"))
 workflow.compile()
 ```
 
-#### FlowGraph - Agentify Native Builder
+#### AgentifyGraph - Agentify Native Builder
 ```python
-from autoagents_graph.agentify import FlowGraph, START
-from autoagents_graph.agentify.types import QuestionInputState, AiChatState
+from autoagents_graph.engine.agentify import AgentifyGraph, START
+from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState
 
 # Create Agentify workflow
-flow = FlowGraph(
+graph = AgentifyGraph(
     personal_auth_key="your_key",
     personal_auth_secret="your_secret"
 )
 
 # Build intelligent conversation flow
-flow.add_node(START, state=QuestionInputState(inputText=True))
-flow.add_node("ai", state=AiChatState(model="doubao-deepseek-v3"))
-flow.add_edge(START, "ai")
+graph.add_node(START, state=QuestionInputState(inputText=True))
+graph.add_node("ai", state=AiChatState(model="doubao-deepseek-v3"))
+graph.add_edge(START, "ai")
 
 # Publish to platform
-flow.compile(name="Smart Chat Assistant")
+graph.compile(name="Smart Chat Assistant")
 ```
 
 ### Supported Node Types
@@ -102,6 +102,11 @@ flow.compile(name="Smart Chat Assistant")
 - **InfoClassState** - Information classification node
 - **CodeFragmentState** - Code execution node
 - **ForEachState** - Loop iteration node
+- **HttpInvokeState** - HTTP request node
+- **OfficeWordExportState** - Word document export node
+- **MarkdownToWordState** - Markdown to Word conversion node
+- **CodeExtractorState** - Code extractor node
+- **DatabaseQueryState** - Database query node
 
 #### Dify Platform Nodes
 - **DifyStartState** - Start node

@@ -4,8 +4,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 
 import uuid
 
-from src.autoagents_graph import Text2Workflow
-from src.autoagents_graph.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
+from src.autoagents_graph import NL2Workflow
+from src.autoagents_graph.engine.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
     llm_summary_id = str(uuid.uuid4())  # ScEnsemble集成
 
     # 创建Dify平台工作流
-    workflow = Text2Workflow(
+    workflow = NL2Workflow(
         platform="dify",
         app_name="Multi-CoT Ensemble工作流",
         app_description="基于aflow框架的多轮思维链集成工作流"
