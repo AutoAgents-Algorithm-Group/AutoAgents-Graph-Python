@@ -53,42 +53,80 @@ AutoAgents Graph 提供三种主要使用方式：
 
 #### NL2Workflow - 跨平台转换器
 ```python
-from autoagents_graph import NL2Workflow
+from autoagents_graph import NL2Workflow, DifyConfig
 from autoagents_graph.engine.dify import DifyStartState, DifyLLMState, DifyEndState, START, END
 
 # 创建Dify平台工作流
 workflow = NL2Workflow(
     platform="dify",
-    app_name="智能助手"
+    config=DifyConfig(
+        app_name="智能助手",
+        app_description="专业的AI助手应用",
+        app_icon="🤖",
+        app_icon_background="#FFEAD5"
+    )
 )
 
 # 添加节点
-workflow.add_node(id=START, state=DifyStartState(title="开始"))
-workflow.add_node(id="ai", state=DifyLLMState(title="AI回答"))
-workflow.add_node(id=END, state=DifyEndState(title="结束"))
+workflow.add_node(
+    id=START, 
+    state=DifyStartState(
+        title="开始"
+    )
+)
+workflow.add_node(
+    id="ai", 
+    state=DifyLLMState(
+        title="AI回答"
+    )
+)
+workflow.add_node(
+    id=END, 
+    state=DifyEndState(
+        title="结束"
+    )
+)
 
 # 编译工作流
 workflow.compile()
 ```
 
-#### AgentifyGraph - Agentify原生构建器
+#### NL2Workflow - 统一工作流API
 ```python
-from autoagents_graph.engine.agentify import AgentifyGraph, START
+from autoagents_graph import NL2Workflow, AgentifyConfig
+from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState
 
 # 创建Agentify工作流
-graph = AgentifyGraph(
-    personal_auth_key="your_key",
-    personal_auth_secret="your_secret"
+workflow = NL2Workflow(
+    platform="agentify",
+    config=AgentifyConfig(
+        personal_auth_key="your_key",
+        personal_auth_secret="your_secret",
+        base_url="https://uat.agentspro.cn"
+    )
 )
 
 # 构建智能对话流程
-graph.add_node(START, state=QuestionInputState(inputText=True))
-graph.add_node("ai", state=AiChatState(model="doubao-deepseek-v3"))
-graph.add_edge(START, "ai")
+workflow.add_node(
+    id=START, 
+    state=QuestionInputState(
+        inputText=True
+    )
+)
+workflow.add_node(
+    id="ai", 
+    state=AiChatState(
+        model="doubao-deepseek-v3"
+    )
+)
+workflow.add_edge(
+    source=START, 
+    target="ai"
+)
 
 # 发布到平台
-graph.compile(name="智能对话助手")
+workflow.compile(name="智能对话助手")
 ```
 
 ### 支持的节点类型

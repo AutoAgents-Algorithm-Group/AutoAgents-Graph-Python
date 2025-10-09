@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 
-from src.autoagents_graph import NL2Workflow
+from src.autoagents_graph import NL2Workflow, DifyConfig
 from src.autoagents_graph.engine.dify import DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState, START, END
 
 
@@ -11,8 +11,12 @@ def main():
     # 创建Dify平台工作流
     workflow = NL2Workflow(
         platform="dify",
-        app_name="Dify测试工作流",
-        app_description="基于Text2Workflow构建的Dify工作流"
+        config=DifyConfig(
+            app_name="Dify测试工作流",
+            app_description="基于NL2Workflow构建的Dify工作流",
+            app_icon="🤖",
+            app_icon_background="#FFEAD5"
+        )
     )
 
     # 添加开始节点

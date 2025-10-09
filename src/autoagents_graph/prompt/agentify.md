@@ -25,7 +25,7 @@
 ## 基础用法
 
 ```python
-from autoagents_graph import NL2Workflow
+from autoagents_graph import NL2Workflow, AgentifyConfig
 from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import (
     QuestionInputState, AiChatState, ConfirmReplyState, 
@@ -35,10 +35,12 @@ from autoagents_graph.engine.agentify.models import (
 
 ### 创建NL2Workflow实例（必需认证参数）
 workflow = NL2Workflow(
-    platform="agentify",                                    # 平台类型
-    personal_auth_key="7217394b7d3e4becab017447adeac239",  # 认证密钥
-    personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB", # 认证密码
-    base_url="https://uat.agentspro.cn"                    # API地址（可选）
+    platform="agentify",                                  # 平台类型
+    config=AgentifyConfig(                                # 配置对象
+        personal_auth_key="7217394b7d3e4becab017447adeac239",  # 认证密钥
+        personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB", # 认证密码
+        base_url="https://uat.agentspro.cn"              # API地址（可选）
+    )
 )
 ```
 
@@ -1817,16 +1819,18 @@ graph.add_edge("save_sql", "dynamic_query", "finish", "switchAny")
 ## 完整工作流示例
 ### Example 1: 文档提问助手（如果用户提出单纯的文档提问助手，请不要有知识库）
 ```python
-from autoagents_graph import NL2Workflow
+from autoagents_graph import NL2Workflow, AgentifyConfig
 from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import QuestionInputState, Pdf2MdState, ConfirmReplyState, AiChatState, AddMemoryVariableState
 
 def main():
     workflow = NL2Workflow(
         platform="agentify",
-        personal_auth_key="7217394b7d3e4becab017447adeac239",
-        personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
-        base_url="https://uat.agentspro.cn"
+        config=AgentifyConfig(
+            personal_auth_key="7217394b7d3e4becab017447adeac239",
+            personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
+            base_url="https://uat.agentspro.cn"
+        )
     )
 
     # 添加节点
@@ -1909,16 +1913,18 @@ if __name__ == "__main__":
 
 ### Example 2: 小说创作助手
 ```python
-from autoagents_graph import NL2Workflow
+from autoagents_graph import NL2Workflow, AgentifyConfig
 from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState, InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState
 
 def main():
     workflow = NL2Workflow(
         platform="agentify",
-        personal_auth_key="7217394b7d3e4becab017447adeac239",
-        personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
-        base_url="https://uat.agentspro.cn"
+        config=AgentifyConfig(
+            personal_auth_key="7217394b7d3e4becab017447adeac239",
+            personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
+            base_url="https://uat.agentspro.cn"
+        )
     )
 
     # 用户输入节点
@@ -2009,7 +2015,7 @@ if __name__ == "__main__":
 
 ### Example 3: 复杂系统
 ```python
-from autoagents_graph import NL2Workflow
+from autoagents_graph import NL2Workflow, AgentifyConfig
 from autoagents_graph.engine.agentify import START
 from autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState, ForEachState,OfficeWordExportState, MarkdownToWordState, CodeExtractState, DatabaseQueryState
 import uuid
@@ -2017,9 +2023,11 @@ import uuid
 def main():
     workflow = NL2Workflow(
         platform="agentify",
-        personal_auth_key="7217394b7d3e4becab017447adeac239",
-        personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
-        base_url="https://uat.agentspro.cn"
+        config=AgentifyConfig(
+            personal_auth_key="7217394b7d3e4becab017447adeac239",
+            personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
+            base_url="https://uat.agentspro.cn"
+        )
     )
 
     # 添加节点

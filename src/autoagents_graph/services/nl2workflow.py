@@ -2,6 +2,7 @@ from typing import Optional, Dict, Any, Union
 from pydantic import BaseModel
 from ..engine.agentify.services import AgentifyGraph
 from ..engine.dify.services import DifyGraph
+from .config import AgentifyConfig, DifyConfig
 
 
 class NL2Workflow:
@@ -10,47 +11,44 @@ class NL2Workflow:
     """
     
     def __init__(self, 
-                 platform: str = "agentify",
-                 personal_auth_key: Optional[str] = None,
-                 personal_auth_secret: Optional[str] = None,
-                 base_url: str = "https://uat.agentspro.cn",
-                 **platform_kwargs):
+                 platform: str,
+                 config: Union[AgentifyConfig, DifyConfig]):
         """
         初始化NL2Workflow
         
         Args:
             platform: 目标平台 ("agentify" 或 "dify")
-            personal_auth_key: AgentsPro平台的认证密钥 (仅agentify平台需要)
-            personal_auth_secret: AgentsPro平台的认证密码 (仅agentify平台需要)
-            base_url: API基础URL (仅agentify平台需要)
-            **platform_kwargs: 平台特定的参数
+            config: 平台配置对象 (AgentifyConfig 或 DifyConfig)
         """
         self.platform = platform.lower()
         
         if self.platform not in ["agentify", "dify"]:
             raise ValueError(f"Unsupported platform: {platform}. Supported platforms: 'agentify', 'dify'")
         
+        if config is None:
+            raise ValueError(f"config is required for {platform} platform")
+        
         # 初始化对应平台的图构建器
         if self.platform == "agentify":
-            if not personal_auth_key or not personal_auth_secret:
-                raise ValueError("AgentsPro platform requires personal_auth_key and personal_auth_secret")
+            if not isinstance(config, AgentifyConfig):
+                raise TypeError("For agentify platform, config must be an instance of AgentifyConfig")
             
             self.graph = AgentifyGraph(
-                personal_auth_key=personal_auth_key,
-                personal_auth_secret=personal_auth_secret,
-                base_url=base_url
+                personal_auth_key=config.personal_auth_key,
+                personal_auth_secret=config.personal_auth_secret,
+                base_url=config.base_url
             )
         
         elif self.platform == "dify":
-            # Dify平台的参数
-            dify_kwargs = {
-                "app_name": platform_kwargs.get("app_name", "AutoAgents工作流"),
-                "app_description": platform_kwargs.get("app_description", "基于AutoAgents SDK构建的工作流"),
-                "app_icon": platform_kwargs.get("app_icon", "🤖"),
-                "app_icon_background": platform_kwargs.get("app_icon_background", "#FFEAD5")
-            }
+            if not isinstance(config, DifyConfig):
+                raise TypeError("For dify platform, config must be an instance of DifyConfig")
             
-            self.graph = DifyGraph(**dify_kwargs)
+            self.graph = DifyGraph(
+                app_name=config.app_name,
+                app_description=config.app_description,
+                app_icon=config.app_icon,
+                app_icon_background=config.app_icon_background
+            )
     
     def _get_node_type_from_state(self, state: BaseModel) -> str:
         """

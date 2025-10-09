@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from src.autoagents_graph import NL2Workflow
+from src.autoagents_graph import NL2Workflow, AgentifyConfig
 from src.autoagents_graph.engine.agentify import START
 from src.autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState,OfficeWordExportState,MarkdownToWordState,CodeExtractState,DatabaseQueryState
 import uuid
@@ -10,9 +10,11 @@ import uuid
 def main():
     workflow = NL2Workflow(
         platform="agentify",
-        personal_auth_key="7217394b7d3e4becab017447adeac239",
-        personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
-        base_url="https://uat.agentspro.cn"
+        config=AgentifyConfig(
+            personal_auth_key="7217394b7d3e4becab017447adeac239",
+            personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
+            base_url="https://uat.agentspro.cn"
+        )
     )
 
     # 添加节点
