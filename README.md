@@ -105,7 +105,7 @@ graph.compile(name="Smart Chat Assistant")
 - **HttpInvokeState** - HTTP request node
 - **OfficeWordExportState** - Word document export node
 - **MarkdownToWordState** - Markdown to Word conversion node
-- **CodeExtractorState** - Code extractor node
+- **CodeExtractState** - Code extractor node
 - **DatabaseQueryState** - Database query node
 
 #### Dify Platform Nodes

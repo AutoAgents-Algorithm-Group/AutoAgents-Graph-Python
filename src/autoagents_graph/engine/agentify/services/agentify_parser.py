@@ -1,10 +1,5 @@
 from typing import List
-from ..models.graph_types import (
-    QuestionInputState, AiChatState, ConfirmReplyState, 
-    KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,
-    InfoClassState, CodeFragmentState, ForEachState, HttpInvokeState,
-    OfficeWordExportState,MarkdownToWordState,CodeExtractState,DatabaseQueryState
-)
+from ..models.graph_types import NODE_STATE_FACTORY
 
 
 class AgentifyParser:
@@ -330,23 +325,10 @@ class AgentifyParser:
     @staticmethod
     def _get_state_class_name(module_type: str) -> str:
         """根据module_type获取对应的State类名称字符串"""
-        state_name_mapping = {
-            "questionInput": "QuestionInputState",
-            "aiChat": "AiChatState",
-            "confirmreply": "ConfirmReplyState",
-            "knowledgesSearch": "KnowledgeSearchState",
-            "pdf2md": "Pdf2MdState",
-            "addMemoryVariable": "AddMemoryVariableState",
-            "infoClass": "InfoClassState",
-            "codeFragment": "CodeFragmentState",
-            "forEach": "ForEachState",
-            "httpInvoke": "HttpInvokeState",
-            "officeWordExport": "OfficeWordExportState",
-            "markdownToWord": "MarkdownToWordState",
-            "codeExtract": "CodeExtractState",
-            "databaseQuery": "DatabaseQueryState",
-        }
-        return state_name_mapping.get(module_type)
+        state_class = NODE_STATE_FACTORY.get(module_type)
+        if state_class:
+            return state_class.__name__
+        return None
     
     @staticmethod
     def _generate_edge_code(edge: dict, id_mapping: dict = None, nodes: list = None, labels_vars: dict = None) -> str:
