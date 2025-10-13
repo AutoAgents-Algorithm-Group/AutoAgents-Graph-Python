@@ -54,12 +54,58 @@ class DifyParser:
                 params["query_variable_selector"] = node_data["query_variable_selector"]
             if "multiple_retrieval_config" in node_data:
                 params["multiple_retrieval_config"] = node_data["multiple_retrieval_config"]
-                
+
         elif node_type == "end":
             if "title" in node_data:
                 params["title"] = node_data["title"]
             if "outputs" in node_data:
                 params["outputs"] = node_data["outputs"]
+                
+        elif node_type == "answer":
+            if "title" in node_data:
+                params["title"] = node_data["title"]
+            if "variables" in node_data:
+                params["variables"] = node_data["variables"]
+                
+        elif node_type == "code":
+            if "title" in node_data:
+                params["title"] = node_data["title"]
+            if "code" in node_data:
+                params["code"] = node_data["code"]
+            if "code_language" in node_data:
+                params["code_language"] = node_data["code_language"]
+            if "outputs" in node_data:
+                params["outputs"] = node_data["outputs"]
+            if "variables" in node_data:
+                params["variables"] = node_data["variables"]
+                
+        elif node_type == "tool":
+            if "title" in node_data:
+                params["title"] = node_data["title"]
+            if "provider_id" in node_data:
+                params["provider_id"] = node_data["provider_id"]
+            if "provider_name" in node_data:
+                params["provider_name"] = node_data["provider_name"]
+            if "provider_type" in node_data:
+                params["provider_type"] = node_data["provider_type"]
+            if "tool_configurations" in node_data:
+                params["tool_configurations"] = node_data["tool_configurations"]
+            if "tool_description" in node_data:
+                params["tool_description"] = node_data["tool_description"]
+            if "tool_label" in node_data:
+                params["tool_label"] = node_data["tool_label"]
+            if "tool_name" in node_data:
+                params["tool_name"] = node_data["tool_name"]
+            if "tool_parameters" in node_data:
+                params["tool_parameters"] = node_data["tool_parameters"]
+                
+        elif node_type == "if-else":
+            if "title" in node_data:
+                params["title"] = node_data["title"]
+            if "conditions" in node_data:
+                params["conditions"] = node_data["conditions"]
+            if "logical_operator" in node_data:
+                params["logical_operator"] = node_data["logical_operator"]
         
         return params
     
@@ -71,6 +117,10 @@ class DifyParser:
             "llm": "DifyLLMState",
             "knowledge-retrieval": "DifyKnowledgeRetrievalState",
             "end": "DifyEndState",
+            "answer": "DifyAnswerState",
+            "code": "DifyCodeState",
+            "tool": "DifyToolState",
+            "if-else": "DifyIfElseState",
         }
         return type_mapping.get(node_type, None)
     
@@ -184,10 +234,15 @@ class DifyParser:
     def _generate_header_code() -> List[str]:
         """生成代码头部"""
         return [
-            "from autoagents_graph import NL2Workflow, DifyConfig",
-            "from autoagents_graph.engine.dify import (",
+            "import os",
+            "import sys",
+            "sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))",
+            "",
+            "from src.autoagents_graph import NL2Workflow, DifyConfig",
+            "from src.autoagents_graph.engine.dify import (",
             "    DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState,",
-            "    DifyEndState, START, END",
+            "    DifyEndState, DifyAnswerState, DifyCodeState, DifyToolState,",
+            "    DifyIfElseState, START, END",
             ")",
             "",
             "",
@@ -212,7 +267,7 @@ class DifyParser:
             "",
             "    # 编译并保存",
             "    yaml_result = workflow.compile()",
-            '    workflow.save("output/dify_workflow_output.yaml")',
+            '    workflow.save("playground/dify/outputs/dify_workflow_output.yaml")',
             "    print(f\"工作流已生成，YAML长度: {len(yaml_result)} 字符\")",
             "",
             "",
@@ -220,17 +275,21 @@ class DifyParser:
             "    main()",
         ]
     
-    def from_yaml_to_code(self, yaml_content: str, output_path: str = None) -> str:
+    def from_yaml_file(self, yaml_file_path: str, output_path: str = None) -> str:
         """
-        从YAML内容转换为SDK代码
+        从YAML文件转换为SDK代码
         
         Args:
-            yaml_content: YAML格式的内容
+            yaml_file_path: YAML文件路径
             output_path: 可选的输出文件路径
             
         Returns:
             生成的Python SDK代码字符串
         """
+        # 读取YAML文件
+        with open(yaml_file_path, 'r', encoding='utf-8') as f:
+            yaml_content = f.read()
+        
         # 解析YAML
         data = yaml.safe_load(yaml_content)
         
@@ -283,51 +342,4 @@ class DifyParser:
             print(f"代码已保存到: {output_path}")
         
         return generated_code
-    
-    def from_json_to_code(self, json_data: Dict[str, Any], output_path: str = None) -> str:
-        """
-        从JSON数据转换为SDK代码
-        
-        Args:
-            json_data: JSON格式的数据
-            output_path: 可选的输出文件路径
-            
-        Returns:
-            生成的Python SDK代码字符串
-        """
-        # 将JSON转换为YAML格式
-        yaml_content = yaml.dump(json_data, default_flow_style=False, allow_unicode=True)
-        return self.from_yaml_to_code(yaml_content, output_path)
-    
-    def from_yaml_file(self, yaml_file_path: str, output_path: str = None) -> str:
-        """
-        从YAML文件转换为SDK代码
-        
-        Args:
-            yaml_file_path: YAML文件路径
-            output_path: 可选的输出文件路径
-            
-        Returns:
-            生成的Python SDK代码字符串
-        """
-        with open(yaml_file_path, 'r', encoding='utf-8') as f:
-            yaml_content = f.read()
-        
-        return self.from_yaml_to_code(yaml_content, output_path)
-    
-    def from_json_file(self, json_file_path: str, output_path: str = None) -> str:
-        """
-        从JSON文件转换为SDK代码
-        
-        Args:
-            json_file_path: JSON文件路径
-            output_path: 可选的输出文件路径
-            
-        Returns:
-            生成的Python SDK代码字符串
-        """
-        with open(json_file_path, 'r', encoding='utf-8') as f:
-            json_data = json.load(f)
-        
-        return self.from_json_to_code(json_data, output_path)
 

@@ -1,5 +1,9 @@
-from autoagents_graph import NL2Workflow, DifyConfig
-from autoagents_graph.engine.dify import (
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+
+from src.autoagents_graph import NL2Workflow, DifyConfig
+from src.autoagents_graph.engine.dify import (
     DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState,
     DifyEndState, START, END
 )
@@ -57,7 +61,7 @@ def main():
 
     # 编译并保存
     yaml_result = workflow.compile()
-    workflow.save("output/dify_workflow_output.yaml")
+    workflow.save("playground/dify/outputs/dify_workflow_output.yaml")
     print(f"工作流已生成，YAML长度: {len(yaml_result)} 字符")
 
 

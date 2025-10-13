@@ -1,13 +1,17 @@
 app:
-  description: 通过DifyParser自动生成
-  icon: 🤖
-  icon_background: '#FFEAD5'
+  description: “文思泉涌”是一款基于 LLM 协同创作理念打造的自动化长文案生产工作流。它将复杂的写作任务解构为“策略规划、分段精撰、整合润色”三大核心步骤，模拟专业内容团队的协作模式。通过“大纲生成器”精准构筑文章骨架，再由“章节迭代器”并行处理各部分细节，最后经“总编辑”模块赋予全文灵魂。无论是深度行业报告、营销白皮书还是万字博客，文思泉涌都能高效、稳定地输出逻辑严谨、结构清晰、风格统一的高质量内容，将您的灵感瞬间化为杰作。
+  icon: ✍️
+  icon_background: '#E0F2FE'
   mode: workflow
-  name: 从Dify导出的工作流
+  name: 文思泉涌
   use_icon_as_answer_icon: false
-dependencies: []
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/ollama:0.0.3@9ded90ac00e8510119a24be7396ba77191c9610d5e1e29f59d68fa1229822fc7
 kind: app
-version: 0.3.1
+version: 0.3.0
 workflow:
   conversation_variables: []
   environment_variables: []
@@ -40,9 +44,9 @@ workflow:
         - local_file
         - remote_url
       number_limits: 3
-    opening_statement: ''
+    opening_statement: 欢迎使用智能分段写作系统。请输入文章主题和目标字数，系统将通过专业的流水线式写作流程，为您生成一篇结构完整、内容丰富的文章。
     retriever_resource:
-      enabled: true
+      enabled: false
     sensitive_word_avoidance:
       enabled: false
     speech_to_text:
@@ -56,87 +60,78 @@ workflow:
       voice: ''
   graph:
     edges:
-    - id: start-source-outline_generator-target
-      type: custom
-      source: start
-      target: outline_generator
-      sourceHandle: source
-      targetHandle: target
-      data:
-        isInLoop: false
+    - data:
+        isInIteration: false
         sourceType: start
         targetType: llm
-      zIndex: 0
-    - id: section_iterator-source-final_editor-target
+      id: start-to-outline
+      source: start
+      sourceHandle: source
+      target: outline_generator
+      targetHandle: target
       type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: iteration
+        targetType: llm
+      id: iteration-to-editor
       source: section_iterator
+      sourceHandle: source
       target: final_editor
-      sourceHandle: source
       targetHandle: target
-      data:
-        isInLoop: false
-        sourceType: unknown
-        targetType: llm
-      zIndex: 0
-    - id: section_iteratorstart0-source-node_1749443261566-target
       type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: section_iterator
+        sourceType: iteration-start
+        targetType: llm
+      id: section_iteratorstart0-source-1749443261566-target
       source: section_iteratorstart0
-      target: node_1749443261566
       sourceHandle: source
+      target: '1749443261566'
       targetHandle: target
-      data:
-        isInLoop: false
-        sourceType: unknown
-        targetType: llm
-      zIndex: 0
-    - id: outline_generator-source-node_1749449203563-target
       type: custom
-      source: outline_generator
-      target: node_1749449203563
-      sourceHandle: source
-      targetHandle: target
-      data:
+      zIndex: 1002
+    - data:
+        isInIteration: false
         isInLoop: false
         sourceType: llm
         targetType: code
-      zIndex: 0
-    - id: node_1749449203563-source-section_iterator-target
-      type: custom
-      source: node_1749449203563
-      target: section_iterator
+      id: outline_generator-source-1749449203563-target
+      source: outline_generator
       sourceHandle: source
+      target: '1749449203563'
       targetHandle: target
-      data:
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
         isInLoop: false
         sourceType: code
-        targetType: unknown
-      zIndex: 0
-    - id: final_editor-source-end-target
-      type: custom
-      source: final_editor
-      target: end
+        targetType: iteration
+      id: 1749449203563-source-section_iterator-target
+      source: '1749449203563'
       sourceHandle: source
+      target: section_iterator
       targetHandle: target
-      data:
+      type: custom
+      zIndex: 0
+    - data:
         isInLoop: false
         sourceType: llm
         targetType: end
+      id: final_editor-source-1749448335087-target
+      source: final_editor
+      sourceHandle: source
+      target: '1749448335087'
+      targetHandle: target
+      type: custom
       zIndex: 0
     nodes:
-    - id: start
-      type: custom
-      position:
-        x: 401.90026926950384
-        y: 486.7408933479527
-      positionAbsolute:
-        x: 401.90026926950384
-        y: 486.7408933479527
-      sourcePosition: right
-      targetPosition: left
-      width: 244
-      height: 54
-      selected: false
-      data:
+    - data:
         desc: ''
         selected: false
         title: 开始
@@ -167,20 +162,20 @@ workflow:
           required: true
           type: text-input
           variable: target_audience
-    - id: outline_generator
-      type: custom
+      height: 207
+      id: start
       position:
-        x: 665.4736898687406
+        x: 401.90026926950384
         y: 486.7408933479527
       positionAbsolute:
-        x: 665.4736898687406
+        x: 401.90026926950384
         y: 486.7408933479527
+      selected: false
       sourcePosition: right
       targetPosition: left
-      width: 244
-      height: 54
-      selected: false
-      data:
+      type: custom
+      width: 243
+    - data:
         context:
           enabled: false
           variable_selector: []
@@ -213,27 +208,63 @@ workflow:
 
             '
         selected: false
-        structured_output: null
         structured_output_enabled: false
         title: 大纲生成器
         type: llm
         variables: []
         vision:
           enabled: false
-    - id: final_editor
-      type: custom
+      height: 109
+      id: outline_generator
       position:
-        x: 1385.656212163108
-        y: 833.4731210545426
+        x: 665.4736898687406
+        y: 486.7408933479527
       positionAbsolute:
-        x: 1385.656212163108
-        y: 833.4731210545426
+        x: 665.4736898687406
+        y: 486.7408933479527
+      selected: false
       sourcePosition: right
       targetPosition: left
-      width: 244
-      height: 54
+      type: custom
+      width: 243
+    - data:
+        desc: ''
+        error_handle_mode: terminated
+        height: 268
+        input_parameters:
+        - value_selector:
+          - outline_generator
+          - text
+          variable: outline
+        is_array_input: true
+        is_parallel: false
+        iterator_selector:
+        - '1749449203563'
+        - result
+        output_selector:
+        - '1749443261566'
+        - text
+        output_type: array[string]
+        parallel_nums: 10
+        selected: false
+        start_node_id: section_iteratorstart0
+        title: 章节迭代器
+        type: iteration
+        width: 497
+      height: 268
+      id: section_iterator
+      position:
+        x: 1209.9734511109368
+        y: 486.7408933479527
+      positionAbsolute:
+        x: 1209.9734511109368
+        y: 486.7408933479527
       selected: false
-      data:
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 497
+    - data:
         context:
           enabled: false
           variable_selector: []
@@ -285,32 +316,55 @@ workflow:
 
 
             请直接输出最终完成的、完整的文章正文，从总标题开始。不要包含任何额外的解释或元信息。'
-        selected: false
-        structured_output: null
-        structured_output_enabled: false
+        selected: true
         title: 总编辑
         type: llm
         variables: []
         vision:
           enabled: false
-    - id: node_1749443261566
-      type: custom
+      height: 109
+      id: final_editor
       position:
-        x: 139.0
-        y: 67.07269804075315
+        x: 1385.656212163108
+        y: 833.4731210545426
       positionAbsolute:
-        x: 139.0
-        y: 67.07269804075315
+        x: 1385.656212163108
+        y: 833.4731210545426
+      selected: false
       sourcePosition: right
       targetPosition: left
-      width: 244
-      height: 54
-      selected: false
-      data:
+      type: custom
+      width: 243
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 60
+      id: section_iteratorstart0
+      parentId: section_iterator
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 1233.9734511109368
+        y: 554.7408933479527
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 55
+      zIndex: 1002
+    - data:
         context:
           enabled: false
           variable_selector: []
         desc: ''
+        isInIteration: true
+        isInLoop: false
+        iteration_id: section_iterator
         model:
           completion_params: {}
           mode: chat
@@ -355,27 +409,27 @@ workflow:
 
             4.  **直接输出**：请直接输出撰写好的正文内容，不要添加任何额外的标题或说明。'
         selected: false
-        structured_output: null
-        structured_output_enabled: false
         title: LLM 4
         type: llm
         variables: []
         vision:
           enabled: false
-    - id: end
-      type: custom
+      height: 109
+      id: '1749443261566'
+      parentId: section_iterator
       position:
-        x: 1374.8045005525457
-        y: 978.5493669568815
+        x: 139
+        y: 67.07269804075315
       positionAbsolute:
-        x: 1374.8045005525457
-        y: 978.5493669568815
+        x: 1348.9734511109368
+        y: 553.8135913887058
+      selected: false
       sourcePosition: right
       targetPosition: left
-      width: 244
-      height: 54
-      selected: false
-      data:
+      type: custom
+      width: 243
+      zIndex: 1002
+    - data:
         desc: ''
         outputs:
         - value_selector:
@@ -389,20 +443,20 @@ workflow:
         selected: false
         title: 结束
         type: end
-    - id: node_1749449203563
-      type: custom
+      height: 142
+      id: '1749448335087'
       position:
-        x: 937.9239083622927
-        y: 486.7408933479527
+        x: 1374.8045005525457
+        y: 978.5493669568815
       positionAbsolute:
-        x: 937.9239083622927
-        y: 486.7408933479527
+        x: 1374.8045005525457
+        y: 978.5493669568815
+      selected: true
       sourcePosition: right
       targetPosition: left
-      width: 244
-      height: 54
-      selected: false
-      data:
+      type: custom
+      width: 243
+    - data:
         code: "import json\nimport re\n\ndef main(**kwargs) -> dict:\n  \"\"\"\n \
           \ 加强版主函数：\n  1. 从可能混杂的文本中提取出最外层的 JSON 对象或数组。\n  2. 将提取出的 JSON 字符串解析为 Python\
           \ 对象。\n  \"\"\"\n  outline_str = kwargs.get('outline_string', '')\n  \n\
@@ -433,7 +487,20 @@ workflow:
           - outline_generator
           - text
           variable: outline_string
+      height: 64
+      id: '1749449203563'
+      position:
+        x: 937.9239083622927
+        y: 486.7408933479527
+      positionAbsolute:
+        x: 937.9239083622927
+        y: 486.7408933479527
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
     viewport:
-      x: 0.0
-      y: 0.0
-      zoom: 1.0
+      x: -279.1267287500343
+      y: -216.50467169097385
+      zoom: 0.6766689120332702

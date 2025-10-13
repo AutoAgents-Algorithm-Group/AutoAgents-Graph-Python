@@ -79,7 +79,11 @@ class NL2Workflow:
             "DifyStartState": "start",
             "DifyLLMState": "llm",
             "DifyKnowledgeRetrievalState": "knowledge-retrieval",
-            "DifyEndState": "end"
+            "DifyEndState": "end",
+            "DifyAnswerState": "answer",
+            "DifyCodeState": "code",
+            "DifyToolState": "tool",
+            "DifyIfElseState": "if-else"
         }
         
         state_class_name = state.__class__.__name__
@@ -121,7 +125,7 @@ class NL2Workflow:
             node_type = self._get_node_type_from_state(state)
             
             if node_type == "unknown":
-                raise ValueError(f"Unsupported state type for Dify platform: {state.__class__.__name__}. Please use DifyTypes (DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState).")
+                raise ValueError(f"Unsupported state type for Dify platform: {state.__class__.__name__}. Please use DifyTypes (DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState, DifyAnswerState, DifyCodeState, DifyToolState, DifyIfElseState).")
             
             # 直接使用Dify节点数据
             node_data = state.dict()
