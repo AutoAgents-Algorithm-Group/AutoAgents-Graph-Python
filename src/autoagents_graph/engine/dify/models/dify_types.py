@@ -55,7 +55,7 @@ class DifyApp(BaseModel):
 
 
 class DifyConfig(BaseModel):
-    """完整的Dify配置模型"""
+    """完整的Dify YAML配置模型"""
     app: DifyApp = Field(default_factory=DifyApp)
     dependencies: List = Field(default_factory=list)
     kind: str = "app"

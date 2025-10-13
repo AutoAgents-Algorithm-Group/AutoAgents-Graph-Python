@@ -7,7 +7,7 @@ license = {text = "MIT"}
 authors = [
     { name = "Hehua Fan", email = "forhheart5532@gmail.com" }
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 keywords = ["ai", "workflow", "automation", "llm", "graph"]
 classifiers = [
     "Development Status :: 3 - Alpha",

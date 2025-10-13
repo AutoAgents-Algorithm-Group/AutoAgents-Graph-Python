@@ -1,5 +1,5 @@
 # src/dify/__init__.py
-from .services import DifyGraph, START, END
+from .services import DifyGraph, START, END, DifyParser
 from .models import (
     DifyNode, DifyEdge, DifyConfig, DifyApp, DifyWorkflow,
     DifyGraph as DifyGraphModel, DifyStartState, DifyLLMState, 
@@ -7,7 +7,7 @@ from .models import (
 )
 
 __all__ = [
-    "DifyGraph", "START", "END",
+    "DifyGraph", "START", "END", "DifyParser",
     "DifyNode", "DifyEdge", "DifyConfig", "DifyApp", "DifyWorkflow",
     "DifyGraphModel", "DifyStartState", "DifyLLMState", 
     "DifyKnowledgeRetrievalState", "DifyEndState", "create_dify_node_state"
