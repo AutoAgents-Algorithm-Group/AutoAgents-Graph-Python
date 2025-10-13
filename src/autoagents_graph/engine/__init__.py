@@ -11,7 +11,7 @@ from .agentify import (
 )
 from .dify import (
     DifyGraph, START as DIFY_START, END as DIFY_END,
-    DifyNode, DifyEdge, DifyConfig, DifyApp, DifyWorkflow,
+    DifyNode, DifyEdge, DifyWorkflowConfig, DifyApp, DifyWorkflow,
     DifyGraphModel, DifyStartState, DifyLLMState, 
     DifyKnowledgeRetrievalState, DifyEndState, create_dify_node_state
 )
@@ -35,7 +35,7 @@ __all__ = [
     "DIFY_END",
     "DifyNode",
     "DifyEdge",
-    "DifyConfig",
+    "DifyWorkflowConfig",
     "DifyApp",
     "DifyWorkflow",
     "DifyGraphModel",

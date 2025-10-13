@@ -3,7 +3,7 @@ import uuid
 from typing import Optional, List, Dict, Any
 
 from ..models.dify_types import (
-    DifyConfig, DifyApp, DifyWorkflow, DifyGraph as DifyGraphModel,
+    DifyWorkflowConfig, DifyApp, DifyWorkflow, DifyGraph as DifyGraphModel,
     DifyNode, DifyEdge, create_dify_node_state
 )
 
@@ -242,23 +242,39 @@ class DifyGraph:
     
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典格式"""
-        # 创建图模型
-        graph = DifyGraphModel(
-            edges=[edge.dict() for edge in self.edges],
-            nodes=[node.dict() for node in self.nodes],
-            viewport=self.workflow.graph.viewport
-        )
-        
-        # 更新工作流图
-        self.workflow.graph = graph
-        
-        # 创建完整配置
-        config = DifyConfig(
-            app=self.app,
-            workflow=self.workflow
-        )
-        
-        return config.dict()
+        # 如果有原始数据，使用原始数据作为基础
+        if hasattr(self, '_original_data') and self._original_data:
+            result = self._original_data.copy()
+            
+            # 更新图数据
+            result["workflow"]["graph"]["edges"] = [edge.dict() for edge in self.edges]
+            result["workflow"]["graph"]["nodes"] = [node.dict() for node in self.nodes]
+            
+            # 更新应用信息
+            result["app"]["name"] = self.app.name
+            result["app"]["description"] = self.app.description
+            result["app"]["icon"] = self.app.icon
+            result["app"]["icon_background"] = self.app.icon_background
+            
+            return result
+        else:
+            # 创建图模型
+            graph = DifyGraphModel(
+                edges=[edge.dict() for edge in self.edges],
+                nodes=[node.dict() for node in self.nodes],
+                viewport=self.workflow.graph.viewport
+            )
+            
+            # 更新工作流图
+            self.workflow.graph = graph
+            
+            # 创建完整配置
+            config = DifyWorkflowConfig(
+                app=self.app,
+                workflow=self.workflow
+            )
+            
+            return config.dict()
     
     def to_yaml(self, **yaml_kwargs) -> str:
         """
@@ -314,6 +330,9 @@ class DifyGraph:
             app_icon_background=data.get("app", {}).get("icon_background", "#FFEAD5")
         )
         
+        # 保存原始数据以便完整重建
+        builder._original_data = data
+        
         # 加载工作流配置
         workflow_data = data.get("workflow", {})
         builder.workflow = DifyWorkflow(**workflow_data)
@@ -332,6 +351,53 @@ class DifyGraph:
             builder.edges.append(edge)
         
         return builder
+    
+    def add_dependency(self, plugin_id: str):
+        """添加插件依赖"""
+        if not hasattr(self, 'dependencies'):
+            self.dependencies = []
+        
+        dependency = {
+            "current_identifier": None,
+            "type": "marketplace",
+            "value": {
+                "marketplace_plugin_unique_identifier": plugin_id
+            }
+        }
+        self.dependencies.append(dependency)
+    
+    def set_environment_variable(self, name: str, value: str, description: str = ""):
+        """设置环境变量"""
+        if not hasattr(self.workflow, 'environment_variables'):
+            self.workflow.environment_variables = []
+        
+        env_var = {
+            "description": description,
+            "id": str(uuid.uuid4()),
+            "name": name,
+            "selector": ["env", name],
+            "value": value,
+            "value_type": "string"
+        }
+        self.workflow.environment_variables.append(env_var)
+    
+    def enable_file_upload(self, allowed_extensions: List[str] = None, 
+                          allowed_types: List[str] = None, 
+                          number_limits: int = 3):
+        """启用文件上传功能"""
+        if allowed_extensions is None:
+            allowed_extensions = [".JPG", ".JPEG", ".PNG", ".GIF", ".WEBP", ".SVG"]
+        if allowed_types is None:
+            allowed_types = ["image"]
+        
+        self.workflow.features["file_upload"]["enabled"] = True
+        self.workflow.features["file_upload"]["allowed_file_extensions"] = allowed_extensions
+        self.workflow.features["file_upload"]["allowed_file_types"] = allowed_types
+        self.workflow.features["file_upload"]["number_limits"] = number_limits
+    
+    def set_opening_statement(self, statement: str):
+        """设置开场白"""
+        self.workflow.features["opening_statement"] = statement
     
     @classmethod
     def from_yaml_file(cls, file_path: str) -> 'DifyGraph':
