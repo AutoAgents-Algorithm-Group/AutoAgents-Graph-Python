@@ -4,27 +4,32 @@ from pydantic import BaseModel, Field
 
 class DifyNode(BaseModel):
     """Dify节点模型"""
+    data: Dict[str, Any] = Field(default_factory=dict)  
+    draggable: Optional[bool] = None  # 是否可拖拽
+    height: Optional[int] = None
     id: str
-    type: str = "custom"
+    parentId: Optional[str] = None  # 父节点ID（用于iteration内的节点）
     position: Dict[str, float]
     positionAbsolute: Optional[Dict[str, float]] = None
+    selectable: Optional[bool] = None  # 是否可选择
+    selected: Optional[bool] = False
     sourcePosition: Optional[str] = None
     targetPosition: Optional[str] = None
+    type: str = "custom"
     width: Optional[int] = None
-    height: Optional[int] = None
-    selected: Optional[bool] = False
-    data: Dict[str, Any] = Field(default_factory=dict)
+    zIndex: Optional[int] = None  # z轴层级
 
 
 class DifyEdge(BaseModel):
     """Dify边模型"""
+    data: Dict[str, Any] = Field(default_factory=dict)  
     id: str
-    type: str = "custom"
+    selected: Optional[bool] = None  # 添加selected字段
     source: str
-    target: str
     sourceHandle: Optional[str] = "source"
+    target: str
     targetHandle: Optional[str] = "target"
-    data: Dict[str, Any] = Field(default_factory=dict)
+    type: str = "custom"
     zIndex: Optional[int] = 0
 
 
@@ -79,6 +84,9 @@ class DifyStartState(BaseModel):
             "variable": "sys_input"
         }
     ])
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
 
 
 class DifyLLMState(BaseModel):
@@ -98,7 +106,10 @@ class DifyLLMState(BaseModel):
     title: str = "LLM"
     type: str = "llm"
     variables: List = Field(default_factory=list)
-    vision: Dict[str, bool] = Field(default_factory=lambda: {"enabled": False})
+    vision: Dict[str, Any] = Field(default_factory=lambda: {"enabled": False})  # 改为Any以支持configs
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
 
 
 class DifyKnowledgeRetrievalState(BaseModel):
@@ -114,6 +125,9 @@ class DifyKnowledgeRetrievalState(BaseModel):
     selected: bool = False
     title: str = "知识检索"
     type: str = "knowledge-retrieval"
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
 
 
 class DifyEndState(BaseModel):
@@ -123,15 +137,22 @@ class DifyEndState(BaseModel):
     selected: bool = False
     title: str = "结束"
     type: str = "end"
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
 
 
 class DifyAnswerState(BaseModel):
     """Dify直接回复节点状态"""
+    answer: str = ""  # 回复内容，支持变量引用如 {{#variable#}}
     desc: str = ""
     selected: bool = False
     title: str = "直接回复"
     type: str = "answer"
     variables: List = Field(default_factory=list)
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
 
 
 class DifyCodeState(BaseModel):
@@ -144,11 +165,18 @@ class DifyCodeState(BaseModel):
     title: str = "代码执行"
     type: str = "code"
     variables: List = Field(default_factory=list)
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
 
 
 class DifyToolState(BaseModel):
     """Dify工具调用节点状态"""
     desc: str = ""
+    is_team_authorization: Optional[bool] = None
+    output_schema: Optional[Any] = None
+    paramSchemas: Optional[List[Dict[str, Any]]] = None
+    params: Optional[Dict[str, Any]] = None
     provider_id: str = ""
     provider_name: str = ""
     provider_type: str = "builtin"
@@ -158,18 +186,62 @@ class DifyToolState(BaseModel):
     tool_description: str = ""
     tool_label: str = ""
     tool_name: str = ""
+    tool_node_version: Optional[str] = None
     tool_parameters: Dict[str, Any] = Field(default_factory=dict)
     type: str = "tool"
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
 
 
 class DifyIfElseState(BaseModel):
     """Dify条件分支节点状态"""
-    conditions: List[Dict[str, Any]] = Field(default_factory=list)
+    cases: List[Dict[str, Any]] = Field(default_factory=list)  # cases是必须的，包含条件配置
     desc: str = ""
     logical_operator: str = "and"
     selected: bool = False
     title: str = "条件分支"
     type: str = "if-else"
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
+
+
+class DifyIterationState(BaseModel):
+    """Dify迭代节点状态"""
+    desc: str = ""
+    error_handle_mode: str = "terminated"  # 错误处理模式
+    height: Optional[int] = None
+    input_parameters: List[Dict[str, Any]] = Field(default_factory=list)  # 输入参数
+    is_array_input: bool = True  # 是否数组输入
+    is_parallel: bool = False  # 是否并行执行
+    iterator_selector: List[Any] = Field(default_factory=list)  # 迭代器选择器
+    output_selector: List[Any] = Field(default_factory=list)  # 输出选择器
+    output_type: str = "array[string]"  # 输出类型
+    parallel_nums: int = 10  # 并行数量
+    selected: bool = False
+    start_node_id: str = ""  # 迭代开始节点ID
+    title: str = "迭代"
+    type: str = "iteration"
+    width: Optional[int] = None
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
+
+
+class DifyIterationStartState(BaseModel):
+    """Dify迭代开始节点状态"""
+    desc: str = ""
+    isInIteration: bool = True  # 在迭代块内
+    selected: bool = False
+    title: str = ""
+    type: str = "iteration-start"
+    
+    class Config:
+        extra = "allow"  # 允许额外字段，保留原始数据
+    
+    # 注意：parentId 是节点层级的属性，不应在State中定义
+    # iteration_id 对于 iteration-start 节点不需要（它本身就是迭代的起点）
 
 
 # 节点状态工厂
@@ -182,6 +254,8 @@ DIFY_NODE_STATE_FACTORY = {
     "code": DifyCodeState,
     "tool": DifyToolState,
     "if-else": DifyIfElseState,
+    "iteration": DifyIterationState,
+    "iteration-start": DifyIterationStartState,
 }
 
 

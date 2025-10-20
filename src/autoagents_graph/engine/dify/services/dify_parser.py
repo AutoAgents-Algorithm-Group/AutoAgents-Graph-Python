@@ -1,6 +1,7 @@
 from typing import List, Dict, Any
 import yaml
 import json
+from .dify_node_registry import DifyNodeRegistry
 
 
 class DifyParser:
@@ -15,7 +16,27 @@ class DifyParser:
     @staticmethod
     def _extract_node_params(node_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        从节点数据中提取参数
+        从节点数据中提取参数（使用注册表）
+        
+        Args:
+            node_data: 节点的data字段
+            
+        Returns:
+            提取的参数字典
+        """
+        node_type = node_data.get("type", "")
+        
+        try:
+            # 使用注册表提取参数
+            return DifyNodeRegistry.extract_node_params(node_data, node_type)
+        except KeyError:
+            # 如果节点类型不在注册表中，回退到原始逻辑
+            return DifyParser._extract_node_params_legacy(node_data)
+    
+    @staticmethod
+    def _extract_node_params_legacy(node_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        从节点数据中提取参数（原始逻辑，用作回退）
         
         Args:
             node_data: 节点的data字段
@@ -44,6 +65,13 @@ class DifyParser:
                 params["context"] = node_data["context"]
             if "variables" in node_data:
                 params["variables"] = node_data["variables"]
+            # 迭代相关字段（用于iteration内的节点）
+            if "isInIteration" in node_data:
+                params["isInIteration"] = node_data["isInIteration"]
+            if "iteration_id" in node_data:
+                params["iteration_id"] = node_data["iteration_id"]
+            if "isInLoop" in node_data:
+                params["isInLoop"] = node_data["isInLoop"]
                 
         elif node_type == "knowledge-retrieval":
             if "title" in node_data:
@@ -102,16 +130,60 @@ class DifyParser:
         elif node_type == "if-else":
             if "title" in node_data:
                 params["title"] = node_data["title"]
-            if "conditions" in node_data:
-                params["conditions"] = node_data["conditions"]
+            if "cases" in node_data:
+                params["cases"] = node_data["cases"]
             if "logical_operator" in node_data:
                 params["logical_operator"] = node_data["logical_operator"]
+                
+        elif node_type == "iteration":
+            if "title" in node_data:
+                params["title"] = node_data["title"]
+            if "error_handle_mode" in node_data:
+                params["error_handle_mode"] = node_data["error_handle_mode"]
+            if "input_parameters" in node_data:
+                params["input_parameters"] = node_data["input_parameters"]
+            if "is_array_input" in node_data:
+                params["is_array_input"] = node_data["is_array_input"]
+            if "is_parallel" in node_data:
+                params["is_parallel"] = node_data["is_parallel"]
+            if "iterator_selector" in node_data:
+                params["iterator_selector"] = node_data["iterator_selector"]
+            if "output_selector" in node_data:
+                params["output_selector"] = node_data["output_selector"]
+            if "output_type" in node_data:
+                params["output_type"] = node_data["output_type"]
+            if "parallel_nums" in node_data:
+                params["parallel_nums"] = node_data["parallel_nums"]
+            if "start_node_id" in node_data:
+                params["start_node_id"] = node_data["start_node_id"]
+            # iteration 节点的尺寸信息（容器节点需要）
+            if "width" in node_data:
+                params["width"] = node_data["width"]
+            if "height" in node_data:
+                params["height"] = node_data["height"]
+                
+        elif node_type == "iteration-start":
+            if "title" in node_data:
+                params["title"] = node_data["title"]
+            if "isInIteration" in node_data:
+                params["isInIteration"] = node_data["isInIteration"]
+            # 注意：parentId 是节点层级属性，不在 data 中
+            # iteration_id 对 iteration-start 也不需要
         
         return params
     
     @staticmethod
     def _get_state_class_name(node_type: str) -> str:
-        """根据节点类型获取State类名"""
+        """根据节点类型获取State类名（使用注册表）"""
+        try:
+            return DifyNodeRegistry.get_state_class_name(node_type)
+        except KeyError:
+            # 如果节点类型不在注册表中，回退到原始映射
+            return DifyParser._get_state_class_name_legacy(node_type)
+    
+    @staticmethod
+    def _get_state_class_name_legacy(node_type: str) -> str:
+        """根据节点类型获取State类名（原始逻辑）"""
         type_mapping = {
             "start": "DifyStartState",
             "llm": "DifyLLMState",
@@ -121,6 +193,8 @@ class DifyParser:
             "code": "DifyCodeState",
             "tool": "DifyToolState",
             "if-else": "DifyIfElseState",
+            "iteration": "DifyIterationState",
+            "iteration-start": "DifyIterationStartState",
         }
         return type_mapping.get(node_type, None)
     
@@ -169,10 +243,17 @@ class DifyParser:
         node_id = node.get("id")
         node_data = node.get("data", {})
         position = node.get("position", {"x": 0, "y": 0})
+        parent_id = node.get("parentId")  # 获取节点层级的 parentId
         node_type = node_data.get("type", "")
         
-        # 获取变量名
-        var_name = id_mapping.get(node_id, node_id)
+        # 对于特殊节点类型，使用常量；否则直接使用原始ID
+        if node_type == "start":
+            id_for_code = "START"
+        elif node_type == "end":
+            id_for_code = "END"
+        else:
+            # 直接使用原始节点ID，不进行sanitize
+            id_for_code = f'"{node_id}"'
         
         # 获取State类名
         state_class = DifyParser._get_state_class_name(node_type)
@@ -187,48 +268,67 @@ class DifyParser:
         code_lines.append(f"    # 添加{node_data.get('title', node_type)}节点")
         code_lines.append("    workflow.add_node(")
         
-        # ID参数
-        if var_name == "START":
-            code_lines.append("        id=START,")
-        elif var_name == "END":
-            code_lines.append("        id=END,")
-        else:
-            code_lines.append(f'        id="{var_name}",')
+        # ID参数 - 直接使用原始ID
+        code_lines.append(f"        id={id_for_code},")
         
         # position参数
         code_lines.append(f"        position={DifyParser._format_value(position)},")
         
         # state参数
+        has_parent = bool(parent_id)
         if params:
             code_lines.append(f"        state={state_class}(")
             for key, value in params.items():
                 formatted_value = DifyParser._format_value(value)
                 code_lines.append(f"            {key}={formatted_value},")
-            code_lines.append("        )")
+            code_lines.append("        )" + ("," if has_parent else ""))
         else:
-            code_lines.append(f"        state={state_class}()")
+            code_lines.append(f"        state={state_class}()" + ("," if has_parent else ""))
+        
+        # 如果有 parentId，添加 parent_id 参数
+        if parent_id:
+            code_lines.append(f"        parent_id=\"{parent_id}\"")
         
         code_lines.append("    )")
         
         return "\n".join(code_lines)
     
     @staticmethod
-    def _generate_edge_code(edge: Dict[str, Any], id_mapping: Dict[str, str]) -> str:
+    def _generate_edge_code(edge: Dict[str, Any], id_mapping: Dict[str, Any]) -> str:
         """生成单个边的代码"""
         source = edge.get("source")
         target = edge.get("target")
-        source_handle = edge.get("sourceHandle", "")
-        target_handle = edge.get("targetHandle", "")
+        source_handle = edge.get("sourceHandle", "source")
+        target_handle = edge.get("targetHandle", "target")
         
-        # 获取映射后的ID
-        source_var = id_mapping.get(source, source)
-        target_var = id_mapping.get(target, target)
+        # 确定节点类型以判断是否使用常量
+        # 通过id_mapping查找节点类型（如果有的话）
+        source_type = id_mapping.get(source, {}).get("type") if isinstance(id_mapping.get(source), dict) else None
+        target_type = id_mapping.get(target, {}).get("type") if isinstance(id_mapping.get(target), dict) else None
         
-        # 格式化变量名
-        source_formatted = source_var if source_var in ["START", "END"] else f'"{source_var}"'
-        target_formatted = target_var if target_var in ["START", "END"] else f'"{target_var}"'
+        # 格式化源节点ID
+        if source == "start" or source_type == "start":
+            source_formatted = "START"
+        elif source == "end" or source_type == "end":
+            source_formatted = "END"
+        else:
+            source_formatted = f'"{source}"'
         
-        return f'    workflow.add_edge({source_formatted}, {target_formatted})'
+        # 格式化目标节点ID
+        if target == "start" or target_type == "start":
+            target_formatted = "START"
+        elif target == "end" or target_type == "end":
+            target_formatted = "END"
+        elif target == "answer":
+            target_formatted = '"answer"'
+        else:
+            target_formatted = f'"{target}"'
+        
+        # 如果是if-else的边，需要传递source_handle
+        if source_handle in ["true", "false"]:
+            return f'    workflow.add_edge({source_formatted}, {target_formatted}, source_handle="{source_handle}")'
+        else:
+            return f'    workflow.add_edge({source_formatted}, {target_formatted})'
     
     @staticmethod
     def _generate_header_code() -> List[str]:
@@ -242,7 +342,8 @@ class DifyParser:
             "from src.autoagents_graph.engine.dify import (",
             "    DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState,",
             "    DifyEndState, DifyAnswerState, DifyCodeState, DifyToolState,",
-            "    DifyIfElseState, START, END",
+            "    DifyIfElseState, DifyIterationState, DifyIterationStartState,",
+            "    START, END",
             ")",
             "",
             "",
@@ -299,13 +400,13 @@ class DifyParser:
         nodes = graph_data.get("nodes", [])
         edges = graph_data.get("edges", [])
         
-        # 建立ID映射
+        # 建立ID映射（包含节点类型信息，供边生成时使用）
         id_mapping = {}
         for node in nodes:
             node_id = node.get("id")
             node_type = node.get("data", {}).get("type", "")
-            var_name = DifyParser._sanitize_node_id(node_id, node_type)
-            id_mapping[node_id] = var_name
+            # 保存节点类型信息，用于边生成时判断
+            id_mapping[node_id] = {"type": node_type}
         
         # 生成代码
         code_lines = []

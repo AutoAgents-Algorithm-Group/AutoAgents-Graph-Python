@@ -72,24 +72,10 @@ def main():
         test_from_yaml_file()
         
         print("\n" + "=" * 60)
-        print("✅ 所有测试完成!")
+        print("测试完成!")
         print("=" * 60)
+      
         
-        print("\n📖 使用说明:")
-        print("1. 从Dify平台导出工作流YAML文件")
-        print("2. 将文件放在 playground/dify/inputs/ 目录下")
-        print("3. 运行此程序生成对应的Python SDK代码")
-        print("4. 生成的代码保存在 playground/dify/outputs/ 目录下")
-        
-        print("\n💡 支持的节点类型:")
-        print("- start (开始节点)")
-        print("- llm (LLM节点)")
-        print("- knowledge-retrieval (知识检索节点)")
-        print("- end (结束节点)")
-        print("- answer (直接回复节点)")
-        print("- code (代码执行节点)")
-        print("- tool (工具调用节点)")
-        print("- if-else (条件分支节点)")
         
     except Exception as e:
         print(f"\n❌ 测试失败: {str(e)}")

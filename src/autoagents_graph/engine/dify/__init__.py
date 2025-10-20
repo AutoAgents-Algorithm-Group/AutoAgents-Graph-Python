@@ -4,7 +4,8 @@ from .models import (
     DifyNode, DifyEdge, DifyWorkflowConfig, DifyApp, DifyWorkflow,
     DifyGraph as DifyGraphModel, DifyStartState, DifyLLMState, 
     DifyKnowledgeRetrievalState, DifyEndState, DifyAnswerState,
-    DifyCodeState, DifyToolState, DifyIfElseState, create_dify_node_state
+    DifyCodeState, DifyToolState, DifyIfElseState, DifyIterationState,
+    DifyIterationStartState, create_dify_node_state
 )
 
 __all__ = [
@@ -12,6 +13,7 @@ __all__ = [
     "DifyNode", "DifyEdge", "DifyWorkflowConfig", "DifyApp", "DifyWorkflow",
     "DifyGraphModel", "DifyStartState", "DifyLLMState", 
     "DifyKnowledgeRetrievalState", "DifyEndState", "DifyAnswerState",
-    "DifyCodeState", "DifyToolState", "DifyIfElseState", "create_dify_node_state"
+    "DifyCodeState", "DifyToolState", "DifyIfElseState", "DifyIterationState",
+    "DifyIterationStartState", "create_dify_node_state"
 ]
 

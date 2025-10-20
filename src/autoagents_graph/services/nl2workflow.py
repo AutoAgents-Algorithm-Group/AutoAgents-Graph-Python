@@ -83,7 +83,9 @@ class NL2Workflow:
             "DifyAnswerState": "answer",
             "DifyCodeState": "code",
             "DifyToolState": "tool",
-            "DifyIfElseState": "if-else"
+            "DifyIfElseState": "if-else",
+            "DifyIterationState": "iteration",
+            "DifyIterationStartState": "iteration-start"
         }
         
         state_class_name = state.__class__.__name__
@@ -98,7 +100,8 @@ class NL2Workflow:
     def add_node(self, 
                  id: str,
                  state: BaseModel,
-                 position: Optional[Dict[str, float]] = None) -> Any:
+                 position: Optional[Dict[str, float]] = None,
+                 parent_id: Optional[str] = None) -> Any:
         """
         通用节点添加方法，根据传入的BaseModel自动判断节点类型
         
@@ -106,6 +109,7 @@ class NL2Workflow:
             id: 节点ID
             state: BaseModel实例，用于确定节点类型和配置
             position: 节点位置
+            parent_id: 父节点ID（用于iteration等嵌套结构）
             
         Returns:
             创建的节点实例
@@ -125,13 +129,13 @@ class NL2Workflow:
             node_type = self._get_node_type_from_state(state)
             
             if node_type == "unknown":
-                raise ValueError(f"Unsupported state type for Dify platform: {state.__class__.__name__}. Please use DifyTypes (DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState, DifyAnswerState, DifyCodeState, DifyToolState, DifyIfElseState).")
+                raise ValueError(f"Unsupported state type for Dify platform: {state.__class__.__name__}. Please use DifyTypes (DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState, DifyEndState, DifyAnswerState, DifyCodeState, DifyToolState, DifyIfElseState, DifyIterationState, DifyIterationStartState).")
             
             # 直接使用Dify节点数据
             node_data = state.dict()
             
             # 创建节点时直接使用节点数据
-            node = self.graph._create_node_direct(id, node_type, position or {"x": 100, "y": 200}, node_data)
+            node = self.graph._create_node_direct(id, node_type, position or {"x": 100, "y": 200}, node_data, parent_id)
             self.graph.nodes.append(node)
             return node
     
@@ -139,16 +143,16 @@ class NL2Workflow:
     def add_edge(self, 
                 source: str, 
                 target: str,
-                source_handle: str = "",
-                target_handle: str = "") -> Any:
+                source_handle: str = "source",
+                target_handle: str = "target") -> Any:
         """
         添加连接边
         
         Args:
             source: 源节点ID
             target: 目标节点ID
-            source_handle: 源句柄
-            target_handle: 目标句柄
+            source_handle: 源句柄（默认"source"，if-else可能是"true"/"false"）
+            target_handle: 目标句柄（默认"target"）
             
         Returns:
             创建的边实例

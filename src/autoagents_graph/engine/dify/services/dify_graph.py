@@ -1,5 +1,4 @@
 import yaml
-import uuid
 from typing import Optional, List, Dict, Any
 
 from ..models.dify_types import (
@@ -137,21 +136,14 @@ class DifyGraph:
             data=node_data.dict()
         )
         
-        # 设置节点的源和目标位置
-        if type == "start":
-            node.sourcePosition = "right"
-            node.targetPosition = "left"
-        elif type == "end":
-            node.sourcePosition = "right"
-            node.targetPosition = "left"
-        else:
-            node.sourcePosition = "right"
-            node.targetPosition = "left"
+        # 设置节点的源和目标位置（所有节点都使用相同的位置）
+        node.sourcePosition = "right"
+        node.targetPosition = "left"
         
         self.nodes.append(node)
         return node
     
-    def _create_node_direct(self, id: str, type: str, position: Dict[str, float], node_data: Dict[str, Any]) -> DifyNode:
+    def _create_node_direct(self, id: str, type: str, position: Dict[str, float], node_data: Dict[str, Any], parent_id: Optional[str] = None) -> DifyNode:
         """
         直接创建节点，跳过数据验证（用于处理已验证的Dify原生数据）
         
@@ -160,69 +152,117 @@ class DifyGraph:
             type: 节点类型
             position: 节点位置
             node_data: 节点数据
+            parent_id: 父节点ID（用于iteration等嵌套结构）
             
         Returns:
             创建的DifyNode实例
         """
+        # 根据节点类型确定尺寸（从 data 中获取，如果有的话）
+        node_type = node_data.get("type", "")
+        
+        # 使用 data 中的 width 和 height（如果存在）
+        width = node_data.get("width", 244)
+        height = node_data.get("height", 54)
+        
+        # 特殊节点类型的默认尺寸和属性
+        custom_type = "custom"
+        draggable = None
+        selectable = None
+        
+        if node_type == "iteration" and width == 244:
+            # iteration 节点作为容器需要更大的尺寸
+            width = 497
+            height = 268
+        elif node_type == "iteration-start":
+            # iteration-start 节点的特殊属性
+            custom_type = "custom-iteration-start"
+            width = 55
+            height = 60
+            draggable = False
+            selectable = False
+        
+        # 设置 zIndex：iteration 内部的节点需要更高的层级（1002）
+        zIndex = 1002 if parent_id else None
+        
         # 创建节点
         node = DifyNode(
             id=id,
-            type="custom",
+            type=custom_type,
             position=position,
             positionAbsolute=position.copy(),
-            width=244,
-            height=54,
-            data=node_data
+            width=width,
+            height=height,
+            data=node_data,
+            parentId=parent_id,  # 设置父节点ID
+            zIndex=zIndex,  # 设置层级
+            draggable=draggable,
+            selectable=selectable
         )
         
-        # 设置节点的源和目标位置
-        if type == "start":
-            node.sourcePosition = "right"
-            node.targetPosition = "left"
-        elif type == "end":
-            node.sourcePosition = "right"
-            node.targetPosition = "left"
-        else:
-            node.sourcePosition = "right"
-            node.targetPosition = "left"
+        # 设置节点的源和目标位置（所有节点都使用相同的位置）
+        node.sourcePosition = "right"
+        node.targetPosition = "left"
         
         return node
     
     def add_edge(self, 
                  source: str, 
                  target: str,
-                 source_handle: str = "",
-                 target_handle: str = "") -> DifyEdge:
+                 source_handle: str = "source",
+                 target_handle: str = "target",
+                 edge_id: str = None,
+                 edge_data: Dict[str, Any] = None) -> DifyEdge:
         """
         添加边连接两个节点
         
         Args:
             source: 源节点ID
             target: 目标节点ID
-            source_handle: 源句柄（默认为"source"）
+            source_handle: 源句柄（默认为"source"，if-else节点可能是"true"或"false"）
             target_handle: 目标句柄（默认为"target"）
+            edge_id: 可选的自定义边ID
+            edge_data: 可选的边数据字典（包含 iteration_id, isInIteration 等）
             
         Returns:
             创建的DifyEdge实例
         """
-        # Dify平台的默认句柄处理
-        if not source_handle:
-            source_handle = "source"
-        if not target_handle:
-            target_handle = "target"
+        # 生成边ID（如果未提供）
+        if not edge_id:
+            edge_id = f"{source}-{source_handle}-{target}-{target_handle}"
             
-        # 生成边ID
-        edge_id = f"{source}-{source_handle}-{target}-{target_handle}"
-        
-        # 获取节点类型用于边数据
+        # 获取节点类型和iteration信息
         source_node = next((n for n in self.nodes if n.id == source), None)
         target_node = next((n for n in self.nodes if n.id == target), None)
         
-        edge_data = {
-            "isInLoop": False,
-            "sourceType": source_node.data.get("type", "unknown") if source_node else "unknown",
-            "targetType": target_node.data.get("type", "unknown") if target_node else "unknown"
-        }
+        # 构建边数据
+        if edge_data is None:
+            edge_data = {}
+        
+        # 设置基本字段（如果未提供）
+        if "isInLoop" not in edge_data:
+            edge_data["isInLoop"] = False
+        if "sourceType" not in edge_data:
+            edge_data["sourceType"] = source_node.data.get("type", "unknown") if source_node else "unknown"
+        if "targetType" not in edge_data:
+            edge_data["targetType"] = target_node.data.get("type", "unknown") if target_node else "unknown"
+        
+        # 检测是否在iteration内：如果源节点或目标节点有parentId，则这条边在iteration内
+        is_in_iteration = False
+        if source_node and source_node.parentId:
+            is_in_iteration = True
+            if "isInIteration" not in edge_data:
+                edge_data["isInIteration"] = True
+            if "iteration_id" not in edge_data:
+                edge_data["iteration_id"] = source_node.parentId
+        elif target_node and target_node.parentId:
+            is_in_iteration = True
+            if "isInIteration" not in edge_data:
+                edge_data["isInIteration"] = True
+            if "iteration_id" not in edge_data:
+                edge_data["iteration_id"] = target_node.parentId
+        
+        # 设置 zIndex：iteration 内部的边需要更高的层级（1002）以在容器上方显示
+        zIndex = 1002 if is_in_iteration else 0
         
         edge = DifyEdge(
             id=edge_id,
@@ -230,15 +270,13 @@ class DifyGraph:
             target=target,
             sourceHandle=source_handle,
             targetHandle=target_handle,
-            data=edge_data
+            data=edge_data,
+            zIndex=zIndex
         )
         
         self.edges.append(edge)
         return edge
     
-    def set_viewport(self, x: float = 0, y: float = 0, zoom: float = 1.0):
-        """设置视口"""
-        self.workflow.graph.viewport = {"x": x, "y": y, "zoom": zoom}
     
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典格式"""
@@ -246,9 +284,34 @@ class DifyGraph:
         if hasattr(self, '_original_data') and self._original_data:
             result = self._original_data.copy()
             
-            # 更新图数据
-            result["workflow"]["graph"]["edges"] = [edge.dict() for edge in self.edges]
-            result["workflow"]["graph"]["nodes"] = [node.dict() for node in self.nodes]
+            # 更新图数据 - 使用exclude_none和by_alias确保完整性
+            result["workflow"]["graph"]["edges"] = [
+                edge.dict(exclude_none=False, by_alias=True) for edge in self.edges
+            ]
+            
+            # 序列化节点并清理不应该在data里的字段
+            nodes_list = []
+            for node in self.nodes:
+                node_dict = node.dict(exclude_none=False, by_alias=True)
+                
+                # 清理 iteration-start 节点的 data 中不应该存在的字段
+                if node_dict.get('data', {}).get('type') == 'iteration-start':
+                    # iteration-start 的 data 里不应该有 parentId 和 iteration_id
+                    node_dict['data'].pop('parentId', None)
+                    node_dict['data'].pop('iteration_id', None)
+                
+                # 清理节点层级的 None 值字段（除非是明确设置为 False 的字段）
+                # 只有 iteration-start 节点才应该有 draggable=False, selectable=False
+                if node_dict.get('data', {}).get('type') != 'iteration-start':
+                    # 对于普通节点，移除值为 None 的 draggable 和 selectable
+                    if node_dict.get('draggable') is None:
+                        node_dict.pop('draggable', None)
+                    if node_dict.get('selectable') is None:
+                        node_dict.pop('selectable', None)
+                
+                nodes_list.append(node_dict)
+            
+            result["workflow"]["graph"]["nodes"] = nodes_list
             
             # 更新应用信息
             result["app"]["name"] = self.app.name
@@ -258,10 +321,32 @@ class DifyGraph:
             
             return result
         else:
+            # 序列化节点并清理不应该在data里的字段
+            nodes_list = []
+            for node in self.nodes:
+                node_dict = node.dict(exclude_none=False, by_alias=True)
+                
+                # 清理 iteration-start 节点的 data 中不应该存在的字段
+                if node_dict.get('data', {}).get('type') == 'iteration-start':
+                    # iteration-start 的 data 里不应该有 parentId 和 iteration_id
+                    node_dict['data'].pop('parentId', None)
+                    node_dict['data'].pop('iteration_id', None)
+                
+                # 清理节点层级的 None 值字段（除非是明确设置为 False 的字段）
+                # 只有 iteration-start 节点才应该有 draggable=False, selectable=False
+                if node_dict.get('data', {}).get('type') != 'iteration-start':
+                    # 对于普通节点，移除值为 None 的 draggable 和 selectable
+                    if node_dict.get('draggable') is None:
+                        node_dict.pop('draggable', None)
+                    if node_dict.get('selectable') is None:
+                        node_dict.pop('selectable', None)
+                
+                nodes_list.append(node_dict)
+            
             # 创建图模型
             graph = DifyGraphModel(
-                edges=[edge.dict() for edge in self.edges],
-                nodes=[node.dict() for node in self.nodes],
+                edges=[edge.dict(exclude_none=False, by_alias=True) for edge in self.edges],
+                nodes=nodes_list,
                 viewport=self.workflow.graph.viewport
             )
             
@@ -274,7 +359,7 @@ class DifyGraph:
                 workflow=self.workflow
             )
             
-            return config.dict()
+            return config.dict(exclude_none=False, by_alias=True)
     
     def to_yaml(self, **yaml_kwargs) -> str:
         """
@@ -295,7 +380,44 @@ class DifyGraph:
         }
         default_kwargs.update(yaml_kwargs)
         
-        return yaml.dump(self.to_dict(), **default_kwargs)
+        # 获取字典并清理 None 值
+        data_dict = self.to_dict()
+        self._clean_none_values(data_dict)
+        
+        return yaml.dump(data_dict, **default_kwargs)
+    
+    def _clean_none_values(self, obj):
+        """
+        递归清理字典中的 None 值（但保留明确设置为 False 的值）
+        特殊规则：只有 iteration-start 节点才保留 draggable=False
+        """
+        if isinstance(obj, dict):
+            # 获取需要删除的键
+            keys_to_delete = []
+            
+            for key, value in obj.items():
+                if value is None:
+                    # 特殊处理：如果是节点且是 iteration-start 类型，保留某些字段
+                    if key in ['draggable', 'selectable', 'zIndex', 'parentId']:
+                        # 检查是否是 iteration-start 节点
+                        node_type = obj.get('data', {}).get('type') if isinstance(obj.get('data'), dict) else None
+                        
+                        # iteration-start 的 draggable 和 selectable 应该是 False，不是 None
+                        # 其他节点的 None 值都应该删除
+                        if node_type != 'iteration-start':
+                            keys_to_delete.append(key)
+                    else:
+                        keys_to_delete.append(key)
+                elif isinstance(value, (dict, list)):
+                    self._clean_none_values(value)
+            
+            for key in keys_to_delete:
+                del obj[key]
+                
+        elif isinstance(obj, list):
+            for item in obj:
+                if isinstance(item, (dict, list)):
+                    self._clean_none_values(item)
     
     def save_yaml(self, file_path: str, **yaml_kwargs):
         """
@@ -352,52 +474,6 @@ class DifyGraph:
         
         return builder
     
-    def add_dependency(self, plugin_id: str):
-        """添加插件依赖"""
-        if not hasattr(self, 'dependencies'):
-            self.dependencies = []
-        
-        dependency = {
-            "current_identifier": None,
-            "type": "marketplace",
-            "value": {
-                "marketplace_plugin_unique_identifier": plugin_id
-            }
-        }
-        self.dependencies.append(dependency)
-    
-    def set_environment_variable(self, name: str, value: str, description: str = ""):
-        """设置环境变量"""
-        if not hasattr(self.workflow, 'environment_variables'):
-            self.workflow.environment_variables = []
-        
-        env_var = {
-            "description": description,
-            "id": str(uuid.uuid4()),
-            "name": name,
-            "selector": ["env", name],
-            "value": value,
-            "value_type": "string"
-        }
-        self.workflow.environment_variables.append(env_var)
-    
-    def enable_file_upload(self, allowed_extensions: List[str] = None, 
-                          allowed_types: List[str] = None, 
-                          number_limits: int = 3):
-        """启用文件上传功能"""
-        if allowed_extensions is None:
-            allowed_extensions = [".JPG", ".JPEG", ".PNG", ".GIF", ".WEBP", ".SVG"]
-        if allowed_types is None:
-            allowed_types = ["image"]
-        
-        self.workflow.features["file_upload"]["enabled"] = True
-        self.workflow.features["file_upload"]["allowed_file_extensions"] = allowed_extensions
-        self.workflow.features["file_upload"]["allowed_file_types"] = allowed_types
-        self.workflow.features["file_upload"]["number_limits"] = number_limits
-    
-    def set_opening_statement(self, statement: str):
-        """设置开场白"""
-        self.workflow.features["opening_statement"] = statement
     
     @classmethod
     def from_yaml_file(cls, file_path: str) -> 'DifyGraph':
