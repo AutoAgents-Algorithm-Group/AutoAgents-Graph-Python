@@ -36,6 +36,7 @@ class NL2Workflow:
             self.graph = AgentifyGraph(
                 personal_auth_key=config.personal_auth_key,
                 personal_auth_secret=config.personal_auth_secret,
+                jwt_token=config.jwt_token,
                 base_url=config.base_url
             )
         
