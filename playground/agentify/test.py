@@ -5,14 +5,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 from src.autoagents_graph import NL2Workflow, AgentifyConfig
 from src.autoagents_graph.engine.agentify import START
 from src.autoagents_graph.engine.agentify.models import QuestionInputState, AiChatState, ConfirmReplyState, KnowledgeSearchState, Pdf2MdState, AddMemoryVariableState,CodeFragmentState,InfoClassState,ForEachState,OfficeWordExportState,MarkdownToWordState,CodeExtractState,DatabaseQueryState
-import uuid
 
 def main():
     workflow = NL2Workflow(
         platform="agentify",
         config=AgentifyConfig(
-            personal_auth_key="7217394b7d3e4becab017447adeac239",
-            personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
+            # personal_auth_key="7217394b7d3e4becab017447adeac239",
+            # personal_auth_secret="f4Ziua6B0NexIMBGj1tQEVpe62EhkCWB",
+            jwt_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiWkxsN21DVW0wWXRvUkxIT0JOM3VNMSttRzc5QWJGemdlc0hMc2dFWlJGNmtaeUszZTlSYUVBdFF0emo2Uy9hblVkelRpY1NVbGszQW11cnh3bHdQYk9Za3hwS1gzV2kvemlUbERHbExaNUNzcVpkUUtxM2s5WWlVY3Q4eEJkYm5TREJmc1EyaGhmUk96OXIzMVg1MnpoZ1ZoSzZNdmJiRzdGWktlaTIwd0VBR2RFeE50NTViRmlMSjNnNXhoOE5Kcm03bjlyM280dTZhS05BeXR4U2JHb0FteUxUVGZwZGxRbXMySnNoam9NVT0iLCJleHAiOjE3NjM2NTIzNTh9.xHyHrM2Vz1NauaPjvSdR8PEX0MM8rJdHVeujQ75qYrE",
             base_url="https://uat.agentspro.cn"
         )
     )
