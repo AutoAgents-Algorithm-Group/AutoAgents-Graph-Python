@@ -189,7 +189,7 @@ class AgentifyGraph:
             **kwargs
         )
         
-        create_app_api(
+        response = create_app_api(
             data=data, 
             personal_auth_key=self.personal_auth_key, 
             personal_auth_secret=self.personal_auth_secret, 
@@ -197,3 +197,8 @@ class AgentifyGraph:
             jwt_token=self.jwt_token
         )
 
+        workflow_id = response.get("data").get("id")
+        
+        print("workflow_id:", workflow_id)
+
+        return workflow_id
