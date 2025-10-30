@@ -244,18 +244,59 @@ class DifyIterationStartState(BaseModel):
     # iteration_id 对于 iteration-start 节点不需要（它本身就是迭代的起点）
 
 
+class DifyAnswerState(BaseModel):
+    """Dify直接回复节点状态"""
+    desc: str = ""
+    selected: bool = False
+    title: str = "直接回复"
+    type: str = "answer"
+    variables: List = Field(default_factory=list)
+
+
+class DifyCodeState(BaseModel):
+    """Dify代码执行节点状态"""
+    code: str = ""
+    code_language: str = "python3"
+    desc: str = ""
+    outputs: Dict[str, Any] = Field(default_factory=dict)
+    selected: bool = False
+    title: str = "代码执行"
+    type: str = "code"
+    variables: List = Field(default_factory=list)
+
+
+class DifyToolState(BaseModel):
+    """Dify工具调用节点状态"""
+    desc: str = ""
+    provider_id: str = ""
+    provider_name: str = ""
+    provider_type: str = "builtin"
+    selected: bool = False
+    title: str = "工具调用"
+    tool_configurations: Dict[str, Any] = Field(default_factory=dict)
+    tool_description: str = ""
+    tool_label: str = ""
+    tool_name: str = ""
+    tool_parameters: Dict[str, Any] = Field(default_factory=dict)
+    type: str = "tool"
+
+
+class DifyIfElseState(BaseModel):
+    """Dify条件分支节点状态"""
+    conditions: List[Dict[str, Any]] = Field(default_factory=list)
+    desc: str = ""
+    logical_operator: str = "and"
+    selected: bool = False
+    title: str = "条件分支"
+    type: str = "if-else"
+
+
 # 节点状态工厂
 DIFY_NODE_STATE_FACTORY = {
     "start": DifyStartState,
     "llm": DifyLLMState,
     "knowledge-retrieval": DifyKnowledgeRetrievalState,
     "end": DifyEndState,
-    "answer": DifyAnswerState,
-    "code": DifyCodeState,
-    "tool": DifyToolState,
-    "if-else": DifyIfElseState,
-    "iteration": DifyIterationState,
-    "iteration-start": DifyIterationStartState,
 }
 
 

@@ -455,6 +455,9 @@ class DifyGraph:
         # 保存原始数据以便完整重建
         builder._original_data = data
         
+        # 保存原始数据以便完整重建
+        builder._original_data = data
+        
         # 加载工作流配置
         workflow_data = data.get("workflow", {})
         builder.workflow = DifyWorkflow(**workflow_data)

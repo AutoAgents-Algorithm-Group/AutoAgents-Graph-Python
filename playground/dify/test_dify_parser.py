@@ -56,6 +56,49 @@ def test_from_yaml_file():
             print(f"⚠️  文件不存在: {yaml_file}")
     
     print(f"\n🎉 测试完成!")
+    # 测试文件列表
+    test_files = [
+        "playground/dify/inputs/example.yml"
+    ]
+    
+    for yaml_file in test_files:
+        print(f"\n📁 处理文件: {yaml_file}")
+        
+        if os.path.exists(yaml_file):
+            try:
+                # 生成输出文件名
+                base_name = os.path.splitext(os.path.basename(yaml_file))[0]
+                output_file = f"playground/dify/outputs/generated_{base_name}.py"
+                
+                # 生成代码
+                generated_code = parser.from_yaml_file(
+                    yaml_file_path=yaml_file,
+                    output_path=output_file
+                )
+                
+                print(f"✅ 代码已生成并保存到: {output_file}")
+                
+                # 显示生成代码的前几行
+                lines = generated_code.split('\n')
+                print(f"📊 生成代码统计: 共 {len(lines)} 行")
+                
+                # 显示代码预览
+                print("\n代码预览 (前15行):")
+                print("-" * 40)
+                for i, line in enumerate(lines[:15], 1):
+                    print(f"{i:2d} | {line}")
+                if len(lines) > 15:
+                    print(f"    ... (还有 {len(lines) - 15} 行)")
+                print("-" * 40)
+                
+            except Exception as e:
+                print(f"❌ 处理失败: {str(e)}")
+                import traceback
+                traceback.print_exc()
+        else:
+            print(f"⚠️  文件不存在: {yaml_file}")
+    
+    print(f"\n🎉 测试完成!")
 
 
 def main():
@@ -74,8 +117,38 @@ def main():
         print("\n" + "=" * 60)
         print("测试完成!")
         print("=" * 60)
-      
         
+        print("\n使用说明:")
+        print("1. 从Dify平台导出工作流YAML文件")
+        print("2. 使用DifyParser将YAML转换为Python SDK代码")
+        print("3. 运行生成的Python代码来重建工作流")
+        
+        print("\n示例代码:")
+        print("-" * 60)
+        print("""
+from autoagents_graph.engine.dify import DifyParser
+
+parser = DifyParser()
+
+# 方法1: 从YAML文件生成代码
+code = parser.from_yaml_file(
+    yaml_file_path="dify_workflow.yaml",
+    output_path="generated_workflow.py"
+)
+
+# 方法2: 从YAML字符串生成代码  
+code = parser.from_yaml_to_code(
+    yaml_content=yaml_string,
+    output_path="generated_workflow.py"
+)
+
+# 方法3: 从JSON文件生成代码
+code = parser.from_json_file(
+    json_file_path="dify_workflow.json",
+    output_path="generated_workflow.py"
+)
+        """)
+        print("-" * 60)
         
     except Exception as e:
         print(f"\n❌ 测试失败: {str(e)}")

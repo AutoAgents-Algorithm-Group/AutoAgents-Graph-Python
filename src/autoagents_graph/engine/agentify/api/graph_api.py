@@ -4,8 +4,31 @@ from typing import Dict, List, Any, Tuple, Optional, Union
 import requests
 from ..models import CreateAppParams
 
-def create_app_api(data: CreateAppParams, personal_auth_key: str, personal_auth_secret: str, base_url: str) -> requests.Response:
-    jwt_token = get_jwt_token_api(personal_auth_key, personal_auth_secret, base_url)
+def create_app_api(
+    data: CreateAppParams, 
+    personal_auth_key: Optional[str] = None, 
+    personal_auth_secret: Optional[str] = None, 
+    base_url: str = "https://uat.agentspro.cn",
+    jwt_token: Optional[str] = None
+) -> requests.Response:
+    """
+    创建智能体应用
+    
+    Args:
+        data: 创建应用的参数
+        personal_auth_key: 认证密钥（如果提供了 jwt_token 则可选）
+        personal_auth_secret: 认证密钥（如果提供了 jwt_token 则可选）
+        base_url: API 服务基础地址
+        jwt_token: JWT 认证令牌（可选，如果提供则直接使用，不再调用 get_jwt_token_api）
+        
+    Returns:
+        requests.Response: API 响应
+    """
+    # 如果没有提供 jwt_token，则通过 personal_auth_key 和 personal_auth_secret 获取
+    if jwt_token is None:
+        if personal_auth_key is None or personal_auth_secret is None:
+            raise ValueError("必须提供 jwt_token 或者同时提供 personal_auth_key 和 personal_auth_secret")
+        jwt_token = get_jwt_token_api(personal_auth_key, personal_auth_secret, base_url)
 
     headers = {
         "Authorization": f"Bearer {jwt_token}",

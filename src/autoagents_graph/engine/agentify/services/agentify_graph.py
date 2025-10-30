@@ -69,18 +69,27 @@ class AgentifyEdge:
 
 
 class AgentifyGraph:
+<<<<<<< HEAD
     def __init__(
         self,
         personal_auth_key: str,
         personal_auth_secret: str,
         base_url: str = "https://uat.agentspro.cn",
     ):
+=======
+    def __init__(self, 
+                 personal_auth_key: Optional[str] = None, 
+                 personal_auth_secret: Optional[str] = None, 
+                 jwt_token: Optional[str] = None,
+                 base_url: str = "https://uat.agentspro.cn"):
+>>>>>>> main
         """
         初始化 AgentifyGraph
 
         Args:
-            personal_auth_key: 个人认证密钥
-            personal_auth_secret: 个人认证密码
+            personal_auth_key: 个人认证密钥（如果提供了 jwt_token 则可选）
+            personal_auth_secret: 个人认证密码（如果提供了 jwt_token 则可选）
+            jwt_token: JWT 认证令牌（可选，如果提供则直接使用，不再调用获取 token 接口）
             base_url: API 基础URL，默认为 "https://uat.agentspro.cn"
         """
         # 结构信息
@@ -91,6 +100,7 @@ class AgentifyGraph:
         # 认证信息
         self.personal_auth_key = personal_auth_key
         self.personal_auth_secret = personal_auth_secret
+        self.jwt_token = jwt_token
         self.base_url = base_url
 
     def add_node(self, id: str, *, position=None, state):
@@ -192,6 +202,7 @@ class AgentifyGraph:
             autoSendVoice=autoSendVoice,
             **kwargs,
         )
+<<<<<<< HEAD
 
         create_app_api(
             data, self.personal_auth_key, self.personal_auth_secret, self.base_url
@@ -236,3 +247,19 @@ class AgentifyGraph:
             **kwargs,
         )
         update_app_api(agent_id= agent_id, data=data, personal_auth_key=self.personal_auth_key, personal_auth_secret=self.personal_auth_secret, base_url=self.base_url)
+=======
+        
+        response = create_app_api(
+            data=data, 
+            personal_auth_key=self.personal_auth_key, 
+            personal_auth_secret=self.personal_auth_secret, 
+            base_url=self.base_url,
+            jwt_token=self.jwt_token
+        )
+
+        workflow_id = response.get("data").get("id")
+        
+        print("workflow_id:", workflow_id)
+
+        return workflow_id
+>>>>>>> main

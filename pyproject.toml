@@ -1,6 +1,6 @@
 [project]
 name = "autoagents-graph"
-version = "0.1.11"
+version = "0.1.13"
 description = "The AI Workflow Cross-Platform Engine"
 readme = "README.md"
 license = {text = "MIT"}

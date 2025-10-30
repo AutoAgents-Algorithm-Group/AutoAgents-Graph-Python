@@ -83,6 +83,7 @@ class DifyParser:
             if "multiple_retrieval_config" in node_data:
                 params["multiple_retrieval_config"] = node_data["multiple_retrieval_config"]
 
+
         elif node_type == "end":
             if "title" in node_data:
                 params["title"] = node_data["title"]
@@ -340,6 +341,12 @@ class DifyParser:
             "",
             "from src.autoagents_graph import NL2Workflow, DifyConfig",
             "from src.autoagents_graph.engine.dify import (",
+            "import os",
+            "import sys",
+            "sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))",
+            "",
+            "from src.autoagents_graph import NL2Workflow, DifyConfig",
+            "from src.autoagents_graph.engine.dify import (",
             "    DifyStartState, DifyLLMState, DifyKnowledgeRetrievalState,",
             "    DifyEndState, DifyAnswerState, DifyCodeState, DifyToolState,",
             "    DifyIfElseState, DifyIterationState, DifyIterationStartState,",
@@ -369,6 +376,7 @@ class DifyParser:
             "    # 编译并保存",
             "    yaml_result = workflow.compile()",
             '    workflow.save("playground/dify/outputs/dify_workflow_output.yaml")',
+            '    workflow.save("playground/dify/outputs/dify_workflow_output.yaml")',
             "    print(f\"工作流已生成，YAML长度: {len(yaml_result)} 字符\")",
             "",
             "",
@@ -387,6 +395,10 @@ class DifyParser:
         Returns:
             生成的Python SDK代码字符串
         """
+        # 读取YAML文件
+        with open(yaml_file_path, 'r', encoding='utf-8') as f:
+            yaml_content = f.read()
+        
         # 读取YAML文件
         with open(yaml_file_path, 'r', encoding='utf-8') as f:
             yaml_content = f.read()
