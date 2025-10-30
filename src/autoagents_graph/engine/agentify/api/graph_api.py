@@ -30,6 +30,9 @@ def get_jwt_token_api(
     personal_auth_secret: str,
     base_url: str = "https://uat.agentspro.cn",
 ) -> str:
+    if personal_auth_key is None or personal_auth_secret is None:
+        raise Exception("认证密钥或认证密码不能为空")
+
     """
     获取 AutoAgents AI 平台的 JWT 认证令牌，用户级认证，用于后续的 API 调用认证。
     JWT token 具有时效性，30天过期后需要重新获取。
@@ -70,3 +73,24 @@ def get_jwt_token_api(
         raise Exception(f"认证失败: {response_data.get('msg', '未知错误')}")
     
     return response_data["data"]["token"]
+
+def update_app_api(agent_id: int, data: CreateAppParams, personal_auth_key: str, personal_auth_secret: str, base_url: str) -> requests.Response:
+    jwt_token = get_jwt_token_api(personal_auth_key, personal_auth_secret, base_url)
+
+    headers = {
+        "Authorization": f"Bearer {jwt_token}",
+        "Content-Type": "application/json"
+    }
+    url=f"{base_url}/api/agent/update?agentId={agent_id}"
+    response = requests.post(url, json=data.model_dump(), headers=headers)
+  
+    
+    if response.status_code == 200:
+        response_data = response.json()
+        if response_data.get("code") == 1:
+            print(f"《{data.name}》智能体更新成功，请在灵搭平台查看")
+            return response_data
+        else:
+            raise Exception(f"更新智能体失败: {response_data.get('msg', 'Unknown error')}")
+    else:
+        raise Exception(f"更新智能体失败: {response.status_code} - {response.text}")

@@ -2,15 +2,14 @@ import json
 import uuid
 from typing import Optional, List, Dict
 
-from ..utils import (
-    NodeValidator, NodeBuilder, EdgeValidator, GraphProcessor
-)
-from ..api.graph_api import create_app_api
+from ..utils import NodeValidator, NodeBuilder, EdgeValidator, GraphProcessor
+from ..api.graph_api import create_app_api, update_app_api
 from ..models.graph_types import CreateAppParams
 
 
 START = "simpleInputId"
 # END = None
+
 
 class AgentifyNode:
     def __init__(self, node_id, module_type, position, inputs=None, outputs=None):
@@ -31,8 +30,9 @@ class AgentifyNode:
             "type": self.type,
             "initialized": self.initialized,
             "position": self.position,
-            "data": self.data
+            "data": self.data,
         }
+
 
 class AgentifyEdge:
     def __init__(self, source, target, source_handle="", target_handle=""):
@@ -64,14 +64,20 @@ class AgentifyEdge:
             "sourceX": self.sourceX,
             "sourceY": self.sourceY,
             "targetX": self.targetX,
-            "targetY": self.targetY
+            "targetY": self.targetY,
         }
 
+
 class AgentifyGraph:
-    def __init__(self, personal_auth_key: str, personal_auth_secret: str, base_url: str = "https://uat.agentspro.cn"):
+    def __init__(
+        self,
+        personal_auth_key: str,
+        personal_auth_secret: str,
+        base_url: str = "https://uat.agentspro.cn",
+    ):
         """
         初始化 AgentifyGraph
-        
+
         Args:
             personal_auth_key: 个人认证密钥
             personal_auth_secret: 个人认证密码
@@ -81,17 +87,16 @@ class AgentifyGraph:
         self.nodes = []
         self.edges = []
         self.viewport = {"x": 0, "y": 0, "zoom": 1.0}
-        
+
         # 认证信息
         self.personal_auth_key = personal_auth_key
         self.personal_auth_secret = personal_auth_secret
         self.base_url = base_url
 
-
     def add_node(self, id: str, *, position=None, state):
         """
         添加节点到工作流图中
-        
+
         Args:
             id: 节点ID
             position: 节点位置，格式为 {"x": 100, "y": 200}，默认自动布局
@@ -99,22 +104,25 @@ class AgentifyGraph:
         """
         # 1. 参数验证
         NodeValidator.validate_node_params(id, state)
-        
+
         # 2. 处理位置布局
         position = NodeBuilder.resolve_node_position(position, len(self.nodes))
-        
+
         # 3. 提取state配置
-        module_type, inputs, outputs = NodeBuilder.extract_node_config(state, id, position)
-        
+        module_type, inputs, outputs = NodeBuilder.extract_node_config(
+            state, id, position
+        )
+
         # 4. 创建节点
         node = NodeBuilder.create_node(id, position, module_type, inputs, outputs)
         self.nodes.append(node)
 
-
-    def add_edge(self, source: str, target: str, source_handle: str = "", target_handle: str = ""):
+    def add_edge(
+        self, source: str, target: str, source_handle: str = "", target_handle: str = ""
+    ):
         """
         添加边连接两个节点
-        
+
         Args:
             source: 源节点ID
             target: 目标节点ID
@@ -124,41 +132,43 @@ class AgentifyGraph:
         # 验证参数
         EdgeValidator.validate_edge_params(source, target, source_handle, target_handle)
         EdgeValidator.validate_nodes_exist(source, target, self.nodes)
-        
+
         # 检查并修正句柄类型兼容性
-        source_handle, target_handle = GraphProcessor.check_and_fix_handle_type(source, target, source_handle, target_handle, self.nodes)
-        
+        source_handle, target_handle = GraphProcessor.check_and_fix_handle_type(
+            source, target, source_handle, target_handle, self.nodes
+        )
+
         # 创建并添加边
         edge = AgentifyEdge(source, target, source_handle, target_handle)
         self.edges.append(edge)
-
 
     def to_json(self):
         return json.dumps(
             {
                 "nodes": [node.to_dict() for node in self.nodes],
                 "edges": [edge.to_dict() for edge in self.edges],
-                "viewport": self.viewport
-            }, 
-            indent=2, 
-            ensure_ascii=False
+                "viewport": self.viewport,
+            },
+            indent=2,
+            ensure_ascii=False,
         )
 
-
-    def compile(self,
-                name: str = "未命名智能体", # 智能体名称
-                avatar: str = "https://uat.agentspro.cn/assets/agent/avatar.png", # 头像URL
-                intro: Optional[str] = None, # 智能体介绍
-                chatAvatar: Optional[str] = None, # 对话头像URL
-                shareAble: Optional[bool] = True, # 是否可分享
-                guides: Optional[List] = None, # 引导配置
-                category: Optional[str] = None, # 分类
-                state: Optional[int] = None, # 状态
-                prologue: Optional[str] = None, # 开场白
-                extJsonObj: Optional[Dict] = None, # 扩展JSON对象
-                allowVoiceInput: Optional[bool] = False, # 是否允许语音输入
-                autoSendVoice: Optional[bool] = False, # 是否自动发送语音
-                **kwargs) -> None: # 其他参数
+    def compile(
+        self,
+        name: str = "未命名智能体",  # 智能体名称
+        avatar: str = "https://uat.agentspro.cn/assets/agent/avatar.png",  # 头像URL
+        intro: Optional[str] = None,  # 智能体介绍
+        chatAvatar: Optional[str] = None,  # 对话头像URL
+        shareAble: Optional[bool] = True,  # 是否可分享
+        guides: Optional[List] = None,  # 引导配置
+        category: Optional[str] = None,  # 分类
+        state: Optional[int] = None,  # 状态
+        prologue: Optional[str] = None,  # 开场白
+        extJsonObj: Optional[Dict] = None,  # 扩展JSON对象
+        allowVoiceInput: Optional[bool] = False,  # 是否允许语音输入
+        autoSendVoice: Optional[bool] = False,  # 是否自动发送语音
+        **kwargs,
+    ) -> None:  # 其他参数
         """
         编译并创建智能体应用
         """
@@ -180,8 +190,49 @@ class AgentifyGraph:
             extJsonObj=extJsonObj,
             allowVoiceInput=allowVoiceInput,
             autoSendVoice=autoSendVoice,
-            **kwargs
+            **kwargs,
         )
-        
-        create_app_api(data, self.personal_auth_key, self.personal_auth_secret, self.base_url)
 
+        create_app_api(
+            data, self.personal_auth_key, self.personal_auth_secret, self.base_url
+        )
+
+    def update(
+        self,
+        agent_id: int,
+        name: str = None,
+        avatar: str = None,
+        intro: str = None,
+        chatAvatar: str = None,
+        shareAble: bool = None,
+        guides: Optional[List] = None,
+        category: Optional[str] = None,
+        state: Optional[int] = None,
+        prologue: Optional[str] = None,
+        extJsonObj: Optional[Dict] = None,
+        allowVoiceInput: Optional[bool] = False,
+        autoSendVoice: Optional[bool] = False,
+        **kwargs) -> None:
+        """
+        更新智能体应用
+
+        """
+        GraphProcessor.update_nodes_targets(self.nodes, self.edges)
+        
+        data = CreateAppParams(
+            name=name,
+            avatar=avatar,
+            intro=intro,
+            chatAvatar=chatAvatar,
+            shareAble=shareAble,
+            guides=guides,
+            appModel=self.to_json(),
+            category=category,
+            state=state,
+            prologue=prologue,
+            extJsonObj=extJsonObj,
+            allowVoiceInput=allowVoiceInput,
+            autoSendVoice=autoSendVoice,
+            **kwargs,
+        )
+        update_app_api(agent_id= agent_id, data=data, personal_auth_key=self.personal_auth_key, personal_auth_secret=self.personal_auth_secret, base_url=self.base_url)
